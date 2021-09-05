@@ -13,6 +13,7 @@ import javax.mail.internet.MimeMessage;
  * 发送邮件
  *
  * @author zhou
+ * @date 2021/09/05
  */
 @Component
 public class SendEmailManager {

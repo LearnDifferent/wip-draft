@@ -10,9 +10,10 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- *
+ * 异步配置
  *
  * @author zhou
+ * @date 2021/09/05
  */
 @EnableAsync
 @Configuration

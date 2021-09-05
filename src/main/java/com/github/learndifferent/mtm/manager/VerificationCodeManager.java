@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  * 操作验证码
  *
  * @author zhou
+ * @date 2021/09/05
  */
 @Component
 public class VerificationCodeManager {

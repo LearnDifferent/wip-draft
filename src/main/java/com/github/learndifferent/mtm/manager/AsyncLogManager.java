@@ -16,6 +16,7 @@ import java.util.List;
  * 系统记录相关，存放在 Redis 内
  *
  * @author zhou
+ * @date 2021/09/05
  */
 @Component
 public class AsyncLogManager {
