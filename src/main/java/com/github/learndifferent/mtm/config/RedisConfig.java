@@ -36,8 +36,7 @@ public class RedisConfig {
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
-//        return new LettuceConnectionFactory(new RedisStandaloneConfiguration("mid", 6379));
-        return new LettuceConnectionFactory(new RedisStandaloneConfiguration("localhost", 6379));
+        return new LettuceConnectionFactory(new RedisStandaloneConfiguration("mid", 6379));
     }
 
     @Bean(name = "springSessionDefaultRedisSerializer")

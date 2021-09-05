@@ -6,8 +6,7 @@ spring:
     #    driver-class-name: com.mysql.cj.jdbc.Driver # 版本 8
     driver-class-name: com.mysql.jdbc.Driver # 版本 5
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://localhost:3306/mtm?characterEncoding=UTF-8&useTimezone=true&serverTimezone=Asia/Shanghai
-    # jdbc:mysql://db:3306/mtm?characterEncoding=UTF-8&useTimezone=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://db:3306/mtm?characterEncoding=UTF-8&useTimezone=true&serverTimezone=Asia/Shanghai
     username: root
     password: rootroot
   mail:
