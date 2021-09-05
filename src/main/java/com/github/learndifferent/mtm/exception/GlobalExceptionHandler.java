@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * 全局处理异常
  *
  * @author zhou
+ * @date 2021/09/05
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {

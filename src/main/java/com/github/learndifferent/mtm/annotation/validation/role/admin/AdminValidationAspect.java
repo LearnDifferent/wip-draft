@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
  * 检查是否为管理员，如果不是管理员账户，就抛出异常
  *
  * @author zhou
+ * @date 2021/09/05
  */
 @Aspect
 @Component

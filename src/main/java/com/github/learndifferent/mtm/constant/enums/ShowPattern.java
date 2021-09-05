@@ -4,6 +4,7 @@ package com.github.learndifferent.mtm.constant.enums;
  * 展示网页的模式
  *
  * @author zhou
+ * @date 2021/09/05
  */
 public enum ShowPattern {
 

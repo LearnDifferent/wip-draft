@@ -4,6 +4,7 @@ package com.github.learndifferent.mtm.constant.consist;
  * Elasticsearch 的 index
  *
  * @author zhou
+ * @date 2021/09/05
  */
 public final class EsConstant {
 

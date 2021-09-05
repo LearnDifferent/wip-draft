@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
  * 注册用户之前，对验证码进行判断。如果是 admin，还需要判断邀请码。
  *
  * @author zhou
+ * @date 2021/09/05
  */
 @Aspect
 @Component

@@ -6,6 +6,7 @@ import com.github.learndifferent.mtm.constant.enums.ResultCode;
  * 可以根据 ResultCode 自定义的服务错误
  *
  * @author zhou
+ * @date 2021/09/05
  */
 public class ServiceException extends BaseException {
 

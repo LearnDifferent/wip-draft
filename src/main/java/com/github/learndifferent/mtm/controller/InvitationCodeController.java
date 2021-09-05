@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 发送邀请码邮件邮件
  *
  * @author zhou
+ * @date 2021/09/05
  */
 @Controller
 @RequestMapping("/invitation")

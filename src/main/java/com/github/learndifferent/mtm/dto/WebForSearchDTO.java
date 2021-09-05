@@ -12,6 +12,7 @@ import java.io.Serializable;
  * Elasticsearch 索引的数据结构（这里归为了 DTO，实际上也是 DO）
  *
  * @author zhou
+ * @date 2021/09/05
  */
 @Data
 @AllArgsConstructor

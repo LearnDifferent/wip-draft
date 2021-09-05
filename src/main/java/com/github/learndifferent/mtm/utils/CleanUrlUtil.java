@@ -4,6 +4,7 @@ package com.github.learndifferent.mtm.utils;
  * 第一次存入的时候，需要把结尾的 / 符号去掉
  *
  * @author zhou
+ * @date 2021/09/05
  */
 public class CleanUrlUtil {
     public static String cleanup(String url) {

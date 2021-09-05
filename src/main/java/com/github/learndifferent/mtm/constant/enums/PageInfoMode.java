@@ -4,6 +4,7 @@ package com.github.learndifferent.mtm.constant.enums;
  * 传入的值 num，表示 Current Page 或者 from
  *
  * @author zhou
+ * @date 2021/09/05
  */
 public enum PageInfoMode {
 

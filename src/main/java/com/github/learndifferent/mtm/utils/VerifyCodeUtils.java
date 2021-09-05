@@ -16,6 +16,7 @@ import java.util.Random;
  * 生成验证码图片的工具类。来源自网络，仅做简单修改。
  *
  * @author 来源自网络
+ * @date 未知
  */
 public class VerifyCodeUtils {
 

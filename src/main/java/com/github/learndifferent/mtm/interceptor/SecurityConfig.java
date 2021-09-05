@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * 实际使用的时候，应该使用拦截所有路径，然后放行个别路径的白名单模式。</p>
  *
  * @author zhou
+ * @date 2021/09/05
  */
 @Configuration
 public class SecurityConfig implements WebMvcConfigurer {
