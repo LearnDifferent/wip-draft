@@ -27,7 +27,7 @@ public final class EsConstant {
 
     public static final String TRENDING = "trending";
 
-    public static final String ANALYER_JAPANESE = "kuromoji";
+    public static final String ANALYZER_JAPANESE = "kuromoji";
 
-    public static final String ANALYER_CHINESE = "ik_smart";
+    public static final String ANALYZER_CHINESE = "ik_smart";
 }

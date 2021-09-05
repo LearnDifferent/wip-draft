@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/notify")
 public class NoticeController {
 
-    private NoticeManager noticeManager;
+    private final NoticeManager noticeManager;
 
     @Autowired
-    public void setNoticeManager(NoticeManager noticeManager) {
+    public NoticeController(NoticeManager noticeManager) {
         this.noticeManager = noticeManager;
     }
 

@@ -131,6 +131,7 @@ public class ElasticsearchManager implements ApplicationContextAware {
         } catch (IOException e) {
             // 如果无法存放，就放弃存放
             log.info("网络故障，无法将数据存放到 Elasticsearch 中……");
+            e.printStackTrace();
         }
     }
 
@@ -163,7 +164,8 @@ public class ElasticsearchManager implements ApplicationContextAware {
      */
     public boolean reGenerateSearchData() {
 
-        if (!checkAndDeleteIndex()) {
+        boolean notClear = !checkAndDeleteIndex();
+        if (notClear) {
             // 如果无法清空之前的数据，抛出未知异常
             throw new ServiceException(ResultCode.ERROR);
         }
@@ -250,12 +252,12 @@ public class ElasticsearchManager implements ApplicationContextAware {
 
         if (Language.JAPANESE.equals(lan)) {
             // 如果是日语，使用日语的分词器
-            analyzer = EsConstant.ANALYER_JAPANESE;
+            analyzer = EsConstant.ANALYZER_JAPANESE;
         }
 
         if (Language.CHINESE.equals(lan)) {
             // 如果是中文，使用中文的分词器
-            analyzer = EsConstant.ANALYER_CHINESE;
+            analyzer = EsConstant.ANALYZER_CHINESE;
         }
 
         return analyzer;

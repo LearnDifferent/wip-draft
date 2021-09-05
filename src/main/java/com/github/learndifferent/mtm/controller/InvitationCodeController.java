@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/invitation")
 public class InvitationCodeController {
 
-    private SendEmailManager sendEmailManager;
+    private final SendEmailManager sendEmailManager;
 
     @Autowired
-    public void setSendEmailManager(SendEmailManager sendEmailManager) {
+    public InvitationCodeController(SendEmailManager sendEmailManager) {
         this.sendEmailManager = sendEmailManager;
     }
 

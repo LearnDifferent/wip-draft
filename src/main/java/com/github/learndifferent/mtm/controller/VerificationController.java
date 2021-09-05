@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/verify")
 public class VerificationController {
 
-    private VerificationCodeManager codeManager;
+    private final VerificationCodeManager codeManager;
 
     @Autowired
-    public void setCodeManager(VerificationCodeManager codeManager) {
+    public VerificationController(VerificationCodeManager codeManager) {
         this.codeManager = codeManager;
     }
 

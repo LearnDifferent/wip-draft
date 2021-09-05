@@ -30,18 +30,15 @@ import java.util.List;
 @RequestMapping("/mypage")
 public class MyPageController {
 
-    private WebsiteService websiteService;
+    private final WebsiteService websiteService;
 
-    private UserService userService;
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserService userService;
 
     @Autowired
-    public void setWebsiteService(WebsiteService websiteService) {
+    public MyPageController(WebsiteService websiteService,
+                            UserService userService) {
         this.websiteService = websiteService;
+        this.userService = userService;
     }
 
     @GetMapping

@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/web")
 public class WebController {
 
-    private WebsiteService websiteService;
+    private final WebsiteService websiteService;
 
     @Autowired
-    public void setWebsiteService(WebsiteService websiteService) {
+    public WebController(WebsiteService websiteService) {
         this.websiteService = websiteService;
     }
 
