@@ -1,9 +1,9 @@
 package com.github.learndifferent.mtm.annotation.validation.delete.user;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.constant.enums.RoleType;
+import com.github.learndifferent.mtm.exception.ServiceException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;

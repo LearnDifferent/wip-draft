@@ -1,8 +1,8 @@
 package com.github.learndifferent.mtm.manager;
 
-import com.github.learndifferent.mtm.vo.SysLog;
 import com.github.learndifferent.mtm.constant.consist.KeyConstant;
 import com.github.learndifferent.mtm.utils.JsonUtils;
+import com.github.learndifferent.mtm.vo.SysLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;

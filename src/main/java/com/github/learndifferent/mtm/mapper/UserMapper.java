@@ -1,7 +1,7 @@
 package com.github.learndifferent.mtm.mapper;
 
-import com.github.learndifferent.mtm.entity.UserDO;
 import com.github.learndifferent.mtm.dto.UserWithWebCountDTO;
+import com.github.learndifferent.mtm.entity.UserDO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

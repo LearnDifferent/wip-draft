@@ -1,19 +1,19 @@
 package com.github.learndifferent.mtm.service.impl;
 
+import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck;
+import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck.ExceptionIfEmpty;
+import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.UserDTO;
+import com.github.learndifferent.mtm.dto.UserWithWebCountDTO;
+import com.github.learndifferent.mtm.entity.UserDO;
 import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.mapper.UserMapper;
 import com.github.learndifferent.mtm.service.UserService;
+import com.github.learndifferent.mtm.utils.DozerUtils;
 import com.github.learndifferent.mtm.utils.Md5Util;
 import com.github.learndifferent.mtm.utils.UUIDUtils;
 import com.github.learndifferent.mtm.vo.UserBasicInfoVO;
 import com.github.learndifferent.mtm.vo.UserChangePwdVO;
-import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck;
-import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck.ExceptionIfEmpty;
-import com.github.learndifferent.mtm.constant.enums.ResultCode;
-import com.github.learndifferent.mtm.dto.UserWithWebCountDTO;
-import com.github.learndifferent.mtm.entity.UserDO;
-import com.github.learndifferent.mtm.utils.DozerUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;

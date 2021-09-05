@@ -1,5 +1,7 @@
 package com.github.learndifferent.mtm.annotation.modify.string;
 
+import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck.DefaultValueIfEmpty;
+import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck.ExceptionIfEmpty;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.exception.ServiceException;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -9,7 +11,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

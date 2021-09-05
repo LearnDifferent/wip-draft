@@ -1,9 +1,9 @@
 package com.github.learndifferent.mtm.annotation.general.page;
 
+import com.github.learndifferent.mtm.constant.enums.PageInfoMode;
 import com.github.learndifferent.mtm.dto.PageInfoDTO;
 import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.utils.PageUtil;
-import com.github.learndifferent.mtm.constant.enums.PageInfoMode;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;

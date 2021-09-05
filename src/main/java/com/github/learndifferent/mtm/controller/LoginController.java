@@ -3,10 +3,10 @@ package com.github.learndifferent.mtm.controller;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.github.learndifferent.mtm.annotation.validation.login.LoginCheck;
-import com.github.learndifferent.mtm.response.ResultCreator;
-import com.github.learndifferent.mtm.vo.UserNameAndPwdVO;
 import com.github.learndifferent.mtm.constant.consist.CodeConstant;
+import com.github.learndifferent.mtm.response.ResultCreator;
 import com.github.learndifferent.mtm.response.ResultVO;
+import com.github.learndifferent.mtm.vo.UserNameAndPwdVO;
 import org.springframework.web.bind.annotation.*;
 
 /**
