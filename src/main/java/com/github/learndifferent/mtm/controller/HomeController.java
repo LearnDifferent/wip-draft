@@ -18,10 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 /**
- *
+ * 首页的 Controller
  *
  * @author zhou
+ * @date 2021/09/05
  */
 @RestController
 @RequestMapping("/home")

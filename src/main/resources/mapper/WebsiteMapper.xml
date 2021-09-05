@@ -122,21 +122,22 @@
         from website
         where webId = #{webId,jdbcType=INTEGER}
     </delete>
-    <insert id="addWeb" keyColumn="webId" keyProperty="webId" parameterType="com.github.learndifferent.mtm.entity.WebsiteDO"
+    <insert id="addWeb" keyColumn="webId" keyProperty="webId"
+            parameterType="com.github.learndifferent.mtm.entity.WebsiteDO"
             useGeneratedKeys="true">
         insert into website(userName, title, url,
-        img, `desc`, `createTime`)
+                            img, `desc`, `createTime`)
         values (#{userName}, #{title}, #{url}, #{img}, #{desc}, #{createTime})
     </insert>
 
     <update id="updateWebById" parameterType="com.github.learndifferent.mtm.entity.WebsiteDO">
         update website
-        set userName = #{userName,jdbcType=VARCHAR},
-        title = #{title,jdbcType=VARCHAR},
-        url = #{url,jdbcType=VARCHAR},
-        img = #{img,jdbcType=VARCHAR},
-        `desc` = #{desc,jdbcType=VARCHAR},
-        `createTime` = #{createTime,jdbcType=DATE}
+        set userName     = #{userName,jdbcType=VARCHAR},
+            title        = #{title,jdbcType=VARCHAR},
+            url          = #{url,jdbcType=VARCHAR},
+            img          = #{img,jdbcType=VARCHAR},
+            `desc`       = #{desc,jdbcType=VARCHAR},
+            `createTime` = #{createTime,jdbcType=DATE}
         where webId = #{webId,jdbcType=INTEGER}
     </update>
 </mapper>

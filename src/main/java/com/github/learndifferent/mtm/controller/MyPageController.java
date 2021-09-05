@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
 /**
- *
+ * 我的页面的 Controller
  *
  * @author zhou
+ * @date 2021/09/05
  */
 @RestController
 @RequestMapping("/mypage")

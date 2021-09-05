@@ -26,9 +26,9 @@
 
     <insert id="addUser" parameterType="com.github.learndifferent.mtm.entity.UserDO">
         insert into user (userId, userName, `password`,
-        createTime, `role`)
+                          createTime, `role`)
         values (#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-        #{createTime,jdbcType=DATE}, #{role,jdbcType=VARCHAR})
+                #{createTime,jdbcType=DATE}, #{role,jdbcType=VARCHAR})
     </insert>
     <delete id="delUserByName">
         delete
@@ -40,7 +40,7 @@
         select *
         from user
         where userName = #{param1}
-        and password = #{param2};
+          and password = #{param2};
     </select>
     <select id="getUserRoleById" resultType="java.lang.String">
         select role
