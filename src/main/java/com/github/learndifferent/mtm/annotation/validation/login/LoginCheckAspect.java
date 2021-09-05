@@ -30,17 +30,14 @@ import java.util.Map;
 @Component
 public class LoginCheckAspect {
 
-    private VerificationCodeManager codeManager;
+    private final VerificationCodeManager codeManager;
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
-    public void setCodeManager(VerificationCodeManager codeManager) {
+    public LoginCheckAspect(VerificationCodeManager codeManager,
+                            UserService userService) {
         this.codeManager = codeManager;
-    }
-
-    @Autowired
-    public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
@@ -68,8 +65,12 @@ public class LoginCheckAspect {
         String passwordParamName = loginCheck.passwordParamName();
 
         // <param's name, param's value>
-        Map<String, String> contents = getContents(request, codeParamName,
-                verifyTokenParamName, usernameParamName, passwordParamName);
+        Map<String, String> contents = getContents(
+                request,
+                codeParamName,
+                verifyTokenParamName,
+                usernameParamName,
+                passwordParamName);
 
         // 如果参数的值中，有 null 的话，就从 Request 的 Body 中获取值
         boolean shouldRenewValueFromBody = contents.containsValue(null);

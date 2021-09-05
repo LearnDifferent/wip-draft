@@ -4,6 +4,7 @@ import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.WebsiteDTO;
 import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.service.WebsiteService;
+import com.github.learndifferent.mtm.utils.ReverseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -27,10 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class DeleteWebsitePermissionValidation {
 
-    private WebsiteService websiteService;
+    private final WebsiteService websiteService;
 
     @Autowired
-    public void setWebsiteService(WebsiteService websiteService) {
+    public DeleteWebsitePermissionValidation(WebsiteService websiteService) {
         this.websiteService = websiteService;
     }
 
@@ -94,10 +95,7 @@ public class DeleteWebsitePermissionValidation {
 
         WebsiteDTO web = websiteService.findWebById(webId);
 
-        boolean hasPermissionToDelete =
-                web != null && web.getUserName().equals(userName);
-
-        if (!hasPermissionToDelete) {
+        if (ReverseUtils.hasNoPermissionToDelete(userName, web)) {
             // 没有权限就抛出异常
             throw new ServiceException(ResultCode.PERMISSION_DENIED);
         }

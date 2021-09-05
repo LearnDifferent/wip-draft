@@ -2,15 +2,15 @@ package com.github.learndifferent.mtm.annotation.validation.delete.user;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
-import com.github.learndifferent.mtm.constant.enums.RoleType;
 import com.github.learndifferent.mtm.exception.ServiceException;
+import com.github.learndifferent.mtm.utils.ReverseUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 
@@ -46,7 +46,7 @@ public class DeleteUserPermissionValidationAspect {
         for (int i = 0; i < parameterTypes.length; i++) {
             if (usernameParamName.equalsIgnoreCase(parameterNames[i])
                     && String.class.isAssignableFrom(parameterTypes[i]) &&
-                    !StringUtils.isEmpty(args[i])) {
+                    ObjectUtils.isNotEmpty(args[i])) {
 
                 userNameValue = (String) args[i];
                 break;
@@ -66,8 +66,8 @@ public class DeleteUserPermissionValidationAspect {
 
         String currentUsername = (String) StpUtil.getLoginId();
 
-        if (!StpUtil.hasRole(RoleType.ADMIN.role())
-                && !currentUsername.equals(userName)) {
+        if (ReverseUtils.notAdmin()
+                && ReverseUtils.compareStringNotEquals(currentUsername, userName)) {
             // 如果不是管理员，且要删除的用户不是当前用户，就抛出异常
             throw new ServiceException(ResultCode.PERMISSION_DENIED);
         }

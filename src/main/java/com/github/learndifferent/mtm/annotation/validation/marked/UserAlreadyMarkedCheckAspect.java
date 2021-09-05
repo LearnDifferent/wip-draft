@@ -5,13 +5,13 @@ import com.github.learndifferent.mtm.dto.WebsiteDTO;
 import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.service.WebsiteService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -27,10 +27,10 @@ import java.lang.reflect.Field;
 @Component
 public class UserAlreadyMarkedCheckAspect {
 
-    private WebsiteService websiteService;
+    private final WebsiteService websiteService;
 
     @Autowired
-    public void setWebsiteMapper(WebsiteService websiteService) {
+    public UserAlreadyMarkedCheckAspect(WebsiteService websiteService) {
         this.websiteService = websiteService;
     }
 
@@ -63,7 +63,7 @@ public class UserAlreadyMarkedCheckAspect {
 
             if (usernameParamName.equals(parameterNames[i]) &&
                     String.class.isAssignableFrom(parameterTypes[i]) &&
-                    !StringUtils.isEmpty(args[i])) {
+                    ObjectUtils.isNotEmpty(args[i])) {
                 username = (String) args[i];
                 count++;
             }

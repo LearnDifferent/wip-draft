@@ -5,9 +5,9 @@ import com.github.learndifferent.mtm.dto.PageInfoDTO;
 import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.utils.PageUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -71,7 +71,7 @@ public class PageInfoMethodArgumentResolver implements HandlerMethodArgumentReso
 
     private int getNumIfNotEmpty(String paramValue, int num) {
 
-        if (!StringUtils.isEmpty(paramValue)) {
+        if (StringUtils.isNotEmpty(paramValue)) {
             try {
                 num = Integer.parseInt(paramValue);
             } catch (NumberFormatException e) {

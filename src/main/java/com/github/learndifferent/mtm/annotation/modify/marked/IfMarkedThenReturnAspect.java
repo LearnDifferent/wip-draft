@@ -6,6 +6,7 @@ import com.github.learndifferent.mtm.dto.WebsiteDTO;
 import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.service.WebsiteService;
 import com.github.learndifferent.mtm.utils.DozerUtils;
+import com.github.learndifferent.mtm.utils.ReverseUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -27,10 +28,10 @@ import java.util.List;
 @Order(2)
 public class IfMarkedThenReturnAspect {
 
-    private WebsiteService websiteService;
+    private final WebsiteService websiteService;
 
     @Autowired
-    public void setWebsiteService(WebsiteService websiteService) {
+    public IfMarkedThenReturnAspect(WebsiteService websiteService) {
         this.websiteService = websiteService;
     }
 
@@ -73,8 +74,8 @@ public class IfMarkedThenReturnAspect {
         // 先在数据库中查找是否有相同 URL 的网页数据
         List<WebsiteDTO> websInDb = websiteService.findWebsByUrl(url);
 
-        // 如果数据库中存在该链接的网页数据
-        if (!websInDb.isEmpty()) {
+        // 如果数据库中存在该链接的网页数据（也就是该列表不为空）
+        if (ReverseUtils.listNotEmpty(websInDb)) {
             // 先检查用户是否已经收藏了该网页（收藏了会报错）
             checkIfMarked(username, websInDb);
             // 如果该用户还没有收藏，就直接返回数据库中已经查找到的数据

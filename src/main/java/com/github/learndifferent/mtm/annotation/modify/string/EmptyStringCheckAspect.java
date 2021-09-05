@@ -4,13 +4,14 @@ import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck.D
 import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck.ExceptionIfEmpty;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.exception.ServiceException;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -64,7 +65,7 @@ public class EmptyStringCheckAspect {
 
     private Object replaceIfEmpty(Object arg, DefaultValueIfEmpty defaultValue) {
 
-        if (!StringUtils.isEmpty(arg)) {
+        if (ObjectUtils.isNotEmpty(arg)) {
             // 不为空字符串或 null 的时候，不需要进行处理，直接返回即可
             return arg;
         }
@@ -74,7 +75,7 @@ public class EmptyStringCheckAspect {
 
     private void throwExceptionIfEmpty(Object arg, ExceptionIfEmpty exceptionInfo) {
 
-        if (!StringUtils.isEmpty(arg)) {
+        if (ObjectUtils.isNotEmpty(arg)) {
             // 不为空字符串或 null 的时候，不需要进行处理
             return;
         }
@@ -87,7 +88,7 @@ public class EmptyStringCheckAspect {
     private void throwExceptionWithInfo(ResultCode resultCode,
                                         String errorMessage) {
 
-        if (!StringUtils.isEmpty(errorMessage)) {
+        if (StringUtils.isNotEmpty(errorMessage)) {
             throw new ServiceException(resultCode, errorMessage);
         }
 

@@ -2,13 +2,13 @@ package com.github.learndifferent.mtm.annotation.modify.url;
 
 import com.github.learndifferent.mtm.utils.CleanUrlUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 /**
  * 用于固定 URL 格式
@@ -38,7 +38,7 @@ public class UrlCleanAspect {
         for (int i = 0; i < parameterNames.length; i++) {
             if (urlParamName.equalsIgnoreCase(parameterNames[i]) &&
                     String.class.isAssignableFrom(parameterTypes[i]) &&
-                    !StringUtils.isEmpty(args[i])) {
+                    ObjectUtils.isNotEmpty(args[i])) {
 
                 args[i] = CleanUrlUtil.cleanup((String) args[i]);
                 findUrl = true;
@@ -46,7 +46,8 @@ public class UrlCleanAspect {
             }
         }
 
-        if (!findUrl) {
+        boolean cantFindUrl = !findUrl;
+        if (cantFindUrl) {
             log.info("没有找到 URL，请检查参数名称是否正确");
         }
 

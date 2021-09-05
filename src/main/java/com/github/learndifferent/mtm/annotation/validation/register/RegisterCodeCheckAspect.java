@@ -4,13 +4,14 @@ import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.constant.enums.RoleType;
 import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.manager.VerificationCodeManager;
+import com.github.learndifferent.mtm.utils.ReverseUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -27,10 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class RegisterCodeCheckAspect {
 
-    private VerificationCodeManager codeManager;
+    private final VerificationCodeManager codeManager;
 
     @Autowired
-    public void setCodeManager(VerificationCodeManager codeManager) {
+    public RegisterCodeCheckAspect(VerificationCodeManager codeManager) {
         this.codeManager = codeManager;
     }
 
@@ -75,7 +76,7 @@ public class RegisterCodeCheckAspect {
         String roleString = request.getParameter(parameterName);
         RoleType role = RoleType.USER;
 
-        if (!StringUtils.isEmpty(roleString)) {
+        if (StringUtils.isNotEmpty(roleString)) {
             role = castRoleStringToRoleType(roleString);
         }
 
@@ -92,7 +93,10 @@ public class RegisterCodeCheckAspect {
         }
     }
 
-    private void checkCodes(String code, String verifyToken, RoleType role, String invitationCode) {
+    private void checkCodes(String code,
+                            String verifyToken,
+                            RoleType role,
+                            String invitationCode) {
 
         // 如果验证码错误，抛出自定义异常
         codeManager.checkCode(verifyToken, code);
@@ -112,7 +116,7 @@ public class RegisterCodeCheckAspect {
 
         // 邀请码这里设置为固定的 1234，如果邀请码不为 1234（包括 null）说明出错了
         String code = "1234";
-        if (!code.equalsIgnoreCase(invitationCode)) {
+        if (ReverseUtils.compareStringNotEquals(code, invitationCode)) {
             // 如果邀请码错误，抛出自定义的异常
             throw new ServiceException(ResultCode.INVITATION_CODE_FAILED);
         }
