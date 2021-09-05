@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * 用户映射器
+ * UserMapper
  *
  * @author zhou
  * @date 2021/09/05

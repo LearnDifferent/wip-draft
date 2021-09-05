@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * 网站数据映射器
+ * WebsiteMapper
  *
  * @author zhou
  * @date 2021/09/05

@@ -13,6 +13,7 @@ import java.util.List;
  * 筛选器（根据用户名和日期，筛选网页，并根据需要加载的数量显示网页）
  *
  * @author zhou
+ * @date 2021/09/05
  */
 public class WebFilter implements Serializable {
 
