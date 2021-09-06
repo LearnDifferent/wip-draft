@@ -26,22 +26,26 @@ public class SysLog implements Serializable {
     private String title;
 
     /**
-     * 0 CREATE, 1 READ, 2 UPDATE, 3 DELETE, 4 OTHER
+     * 0 CREATE,
+     * 1 READ,
+     * 2 UPDATE,
+     * 3 DELETE,
+     * 4 OTHERS
      */
-    private Integer optType;
+    private String optType;
 
     private String method;
 
-    private String errorMsg;
+    private String msg;
 
-    private Integer status;
+    /**
+     * Normal,
+     * Error
+     */
+    private String status;
 
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date optTime;
-
-    {
-        optTime = new Date();
-    }
 
     private static final long serialVersionUID = 1L;
 

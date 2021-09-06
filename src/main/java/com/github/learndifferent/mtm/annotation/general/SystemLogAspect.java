@@ -61,7 +61,7 @@ public class SystemLogAspect {
             if (e != null) {
                 sysLogBuilder
                         .status(1)
-                        .errorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
+                        .msg(StringUtils.substring(e.getMessage(), 0, 2000));
             }
 
             String className = joinPoint.getTarget().getClass().getName();

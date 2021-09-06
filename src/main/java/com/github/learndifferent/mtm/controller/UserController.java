@@ -1,6 +1,6 @@
 package com.github.learndifferent.mtm.controller;
 
-import com.github.learndifferent.mtm.annotation.general.SystemLog;
+import com.github.learndifferent.mtm.annotation.general.log.SystemLog;
 import com.github.learndifferent.mtm.annotation.validation.delete.user.DeleteUserPermissionValidation;
 import com.github.learndifferent.mtm.annotation.validation.register.RegisterCodeCheck;
 import com.github.learndifferent.mtm.annotation.validation.role.guest.NotGuest;
@@ -35,7 +35,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @SystemLog(title = "user", optsType = OptsType.OTHER)
+    @SystemLog(title = "user", optsType = OptsType.OTHERS)
     @GetMapping
     public ResultVO<List<UserDTO>> getUsers() {
         return ResultCreator.okResult(userService.getUsers());

@@ -2,12 +2,12 @@ package com.github.learndifferent.mtm.manager;
 
 import com.github.learndifferent.mtm.constant.consist.KeyConstant;
 import com.github.learndifferent.mtm.utils.JsonUtils;
+import com.github.learndifferent.mtm.utils.ReverseUtils;
 import com.github.learndifferent.mtm.vo.SysLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +28,15 @@ public class AsyncLogManager {
         this.template = template;
     }
 
+    /**
+     * 获取日志
+     *
+     * @return {@code List<SysLog>}
+     */
     public List<SysLog> getLogs() {
         List<SysLog> sysLogs = new ArrayList<>();
         List<String> data = template.opsForList().range(KeyConstant.SYSTEM_LOG, 0, -1);
-        if (!CollectionUtils.isEmpty(data)) {
+        if (ReverseUtils.collectionNotEmpty(data)) {
             for (String d : data) {
                 sysLogs.add(JsonUtils.toObject(d, SysLog.class));
             }

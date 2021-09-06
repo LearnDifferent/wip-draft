@@ -10,32 +10,31 @@ public enum OptsType {
     /**
      * 创建
      */
-    CREATE(0),
+    CREATE("Create"),
     /**
      * 读
      */
-    READ(1),
+    READ("Read"),
     /**
      * 更新
      */
-    UPDATE(2),
+    UPDATE("Update"),
     /**
      * 删除
      */
-    DELETE(3),
+    DELETE("Delete"),
     /**
      * 其他
      */
-    OTHER(4);
+    OTHERS("Others");
 
+    private final String value;
 
-    private final Integer value;
-
-    private OptsType(final Integer value) {
+    private OptsType(final String value) {
         this.value = value;
     }
 
-    public Integer value() {
+    public String value() {
         return value;
     }
 }

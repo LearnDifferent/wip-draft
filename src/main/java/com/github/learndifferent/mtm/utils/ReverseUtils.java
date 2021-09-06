@@ -3,7 +3,9 @@ package com.github.learndifferent.mtm.utils;
 import cn.dev33.satoken.stp.StpUtil;
 import com.github.learndifferent.mtm.constant.enums.RoleType;
 import com.github.learndifferent.mtm.dto.WebsiteDTO;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -16,6 +18,10 @@ public class ReverseUtils {
 
     public static boolean listNotEmpty(List<?> list) {
         return !list.isEmpty();
+    }
+
+    public static boolean collectionNotEmpty(Collection<?> collection) {
+        return !CollectionUtils.isEmpty(collection);
     }
 
     public static boolean compareStringNotEquals(String baseString,

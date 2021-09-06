@@ -1,6 +1,6 @@
 package com.github.learndifferent.mtm.controller;
 
-import com.github.learndifferent.mtm.annotation.general.SystemLog;
+import com.github.learndifferent.mtm.annotation.general.log.SystemLog;
 import com.github.learndifferent.mtm.constant.enums.OptsType;
 import com.github.learndifferent.mtm.manager.NoticeManager;
 import com.github.learndifferent.mtm.response.ResultCreator;
@@ -25,7 +25,7 @@ public class NoticeController {
         this.noticeManager = noticeManager;
     }
 
-    @SystemLog(title = "notice", optsType = OptsType.OTHER)
+    @SystemLog(title = "notice", optsType = OptsType.OTHERS)
     @GetMapping
     public ResultVO<String> getNotifications() {
         return ResultCreator.okResult(noticeManager.getNotificationsHtml());

@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * 系统日志
- *
+ *todo 测试
  * @author zhou
  * @date 2021/09/05
  */
@@ -17,5 +17,5 @@ public @interface SystemLog {
 
     String title() default "";
 
-    OptsType optsType() default OptsType.OTHER;
+    OptsType optsType() default OptsType.OTHERS;
 }
