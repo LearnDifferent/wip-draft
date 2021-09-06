@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/notify")
-public class NoticeController {
+public class NotificationController {
 
     private final NoticeManager noticeManager;
 
     @Autowired
-    public NoticeController(NoticeManager noticeManager) {
+    public NotificationController(NoticeManager noticeManager) {
         this.noticeManager = noticeManager;
     }
 
-    @SystemLog(title = "notice", optsType = OptsType.OTHERS)
+    @SystemLog(title = "Notification", optsType = OptsType.READ)
     @GetMapping
     public ResultVO<String> getNotifications() {
         return ResultCreator.okResult(noticeManager.getNotificationsHtml());
@@ -37,7 +37,7 @@ public class NoticeController {
         return ResultCreator.okResult(delOrAlreadyDeleted);
     }
 
-    @SystemLog(title = "notice", optsType = OptsType.CREATE)
+    @SystemLog(title = "Notification", optsType = OptsType.CREATE)
     @GetMapping("/{content}")
     public ResultVO<?> sendNotice(@PathVariable String content) {
         noticeManager.sendNotification(content);

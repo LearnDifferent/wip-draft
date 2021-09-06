@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -30,18 +31,23 @@ public class SystemLogAspect {
     @Around("@annotation(annotation)")
     public Object around(ProceedingJoinPoint pjp, SystemLog annotation) {
 
-        String title = annotation.title();
-        OptsType optsType = annotation.optsType();
 
         SysLog.SysLogBuilder sysLog = SysLog.builder();
-        sysLog.title(title).optType(optsType.value()).optTime(new Date());
+        OptsType optsType = annotation.optsType();
+        sysLog.optType(optsType.value()).optTime(new Date());
 
         MethodSignature signature = (MethodSignature) pjp.getSignature();
 
         Method method = signature.getMethod();
         String methodName = method.getName();
-        String className = signature.getClass().getName();
-        sysLog.method(className + "." + methodName + "()");
+        sysLog.method(methodName + "()");
+
+        String title = annotation.title();
+        if (StringUtils.isEmpty(title)) {
+            // 如果没有 Title，就让类名作为 title
+            title = signature.getClass().getName();
+        }
+        sysLog.title(title);
 
         sysLog.status(LogStatus.NORMAL.status())
                 .msg(LogStatus.NORMAL.name());

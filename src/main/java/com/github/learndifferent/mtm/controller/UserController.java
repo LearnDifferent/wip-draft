@@ -35,7 +35,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @SystemLog(title = "user", optsType = OptsType.OTHERS)
+    @SystemLog(optsType = OptsType.READ)
     @GetMapping
     public ResultVO<List<UserDTO>> getUsers() {
         return ResultCreator.okResult(userService.getUsers());

@@ -1,6 +1,8 @@
 package com.github.learndifferent.mtm.controller;
 
+import com.github.learndifferent.mtm.annotation.general.log.SystemLog;
 import com.github.learndifferent.mtm.annotation.general.page.PageInfo;
+import com.github.learndifferent.mtm.constant.enums.OptsType;
 import com.github.learndifferent.mtm.dto.PageInfoDTO;
 import com.github.learndifferent.mtm.dto.SearchResultsDTO;
 import com.github.learndifferent.mtm.manager.ElasticsearchManager;
@@ -80,6 +82,7 @@ public class FindController {
      * @param keyword  关键词（可以为空字符串或 null）
      * @return 查询到的网页结果
      */
+    @SystemLog(optsType = OptsType.READ)
     @GetMapping("/search")
     public ResultVO<SearchResultsVO> search(@PageInfo PageInfoDTO pageInfo
             , @RequestParam("keyword") String keyword) {
