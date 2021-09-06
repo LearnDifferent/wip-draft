@@ -16,6 +16,12 @@ import org.springframework.util.StringUtils;
 import java.lang.reflect.Method;
 import java.util.Date;
 
+/**
+ * 系统日志
+ *
+ * @author zhou
+ * @date 2021/09/05
+ */
 @Slf4j
 @Aspect
 @Component

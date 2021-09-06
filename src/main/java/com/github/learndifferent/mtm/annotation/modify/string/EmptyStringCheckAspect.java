@@ -56,6 +56,7 @@ public class EmptyStringCheckAspect {
 
                 if (annotation instanceof ExceptionIfEmpty &&
                         String.class.isAssignableFrom(parameterTypes[i])) {
+
                     throwExceptionIfEmpty(
                             (String) args[i],
                             (ExceptionIfEmpty) annotation);

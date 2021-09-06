@@ -1,5 +1,11 @@
 package com.github.learndifferent.mtm.constant.enums;
 
+/**
+ * 日志：状态
+ *
+ * @author zhou
+ * @date 2021/09/05
+ */
 public enum LogStatus {
 
     /**
