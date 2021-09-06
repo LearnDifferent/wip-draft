@@ -10,6 +10,7 @@ import com.github.learndifferent.mtm.utils.JsonUtils;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -28,6 +29,7 @@ import java.util.Map;
  */
 @Aspect
 @Component
+@Order(1)
 public class LoginCheckAspect {
 
     private final VerificationCodeManager codeManager;

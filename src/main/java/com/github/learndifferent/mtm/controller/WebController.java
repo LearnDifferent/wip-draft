@@ -1,6 +1,8 @@
 package com.github.learndifferent.mtm.controller;
 
+import com.github.learndifferent.mtm.annotation.general.log.SystemLog;
 import com.github.learndifferent.mtm.annotation.validation.delete.website.DeleteWebsitePermission;
+import com.github.learndifferent.mtm.constant.enums.OptsType;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.WebWithNoIdentityDTO;
 import com.github.learndifferent.mtm.exception.ServiceException;
@@ -67,6 +69,7 @@ public class WebController {
      * @param urlAndName 网页链接和用户信息
      * @return 响应文本
      */
+    @SystemLog(title = "Mark", optsType = OptsType.CREATE)
     @PostMapping("/add")
     public ResultVO<?> saveWeb(@RequestBody WebUrlAndNameVO urlAndName) {
 

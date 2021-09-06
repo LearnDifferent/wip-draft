@@ -31,6 +31,7 @@ public class NotificationController {
         return ResultCreator.okResult(noticeManager.getNotificationsHtml());
     }
 
+    @SystemLog(title = "Notification", optsType = OptsType.DELETE)
     @DeleteMapping
     public ResultVO<Boolean> delNotifications() {
         Boolean delOrAlreadyDeleted = noticeManager.ifDelNotifyOrAlreadyDeleted();
@@ -39,7 +40,7 @@ public class NotificationController {
 
     @SystemLog(title = "Notification", optsType = OptsType.CREATE)
     @GetMapping("/{content}")
-    public ResultVO<?> sendNotice(@PathVariable String content) {
+    public ResultVO<?> sendNotification(@PathVariable String content) {
         noticeManager.sendNotification(content);
         return ResultCreator.okResult();
     }

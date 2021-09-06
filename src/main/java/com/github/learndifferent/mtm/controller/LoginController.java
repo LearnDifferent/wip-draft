@@ -2,6 +2,7 @@ package com.github.learndifferent.mtm.controller;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
+import com.github.learndifferent.mtm.annotation.general.log.SystemLog;
 import com.github.learndifferent.mtm.annotation.validation.login.LoginCheck;
 import com.github.learndifferent.mtm.constant.consist.CodeConstant;
 import com.github.learndifferent.mtm.response.ResultCreator;
@@ -30,6 +31,7 @@ public class LoginController {
             usernameParamName = "userName",
             passwordParamName = "password")
     @PostMapping("/in")
+    @SystemLog
     public ResultVO<SaTokenInfo> login(@RequestBody UserNameAndPwdVO nameAndPwd) {
 
         // 存放登陆信息，以用户名为 ID 即可

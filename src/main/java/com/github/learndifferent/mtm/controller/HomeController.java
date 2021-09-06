@@ -1,7 +1,9 @@
 package com.github.learndifferent.mtm.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.github.learndifferent.mtm.annotation.general.log.SystemLog;
 import com.github.learndifferent.mtm.annotation.general.page.PageInfo;
+import com.github.learndifferent.mtm.constant.enums.OptsType;
 import com.github.learndifferent.mtm.dto.PageInfoDTO;
 import com.github.learndifferent.mtm.dto.UserWithWebCountDTO;
 import com.github.learndifferent.mtm.dto.WebsiteDTO;
@@ -40,11 +42,13 @@ public class HomeController {
         this.websiteManager = websiteManager;
     }
 
+    @SystemLog(title = "Filter", optsType = OptsType.READ)
     @GetMapping("/filter")
     public List<UserWithWebCountDTO> getUsernamesAndCountTheirMarkedWebs() {
         return userService.getNamesAndCountMarkedWebDesc();
     }
 
+    @SystemLog(title = "Filter", optsType = OptsType.READ)
     @PostMapping("/filter")
     public ResultVO<WebsByFilterVO> getFilterAndReturnResult(@RequestBody WebFilter filter) {
 
