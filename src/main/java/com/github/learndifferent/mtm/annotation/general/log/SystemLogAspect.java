@@ -45,22 +45,24 @@ public class SystemLogAspect {
         String title = annotation.title();
         if (StringUtils.isEmpty(title)) {
             // 如果没有 Title，就让类名作为 title
-            title = signature.getClass().getName();
+            title = pjp.getTarget().getClass().getSimpleName();
         }
         sysLog.title(title);
 
         sysLog.status(LogStatus.NORMAL.status())
                 .msg(LogStatus.NORMAL.name());
 
-        Object result = null;
         try {
-            result = pjp.proceed();
+            Object result = pjp.proceed();
+            asyncLogManager.saveSysLog(sysLog.build());
+            return result;
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             sysLog.status(LogStatus.ERROR.status())
                     .msg(throwable.getMessage());
+            asyncLogManager.saveSysLog(sysLog.build());
+            // 包装为 RuntimeException 并抛出
+            throw new RuntimeException(throwable);
         }
-        asyncLogManager.saveSysLog(sysLog.build());
-        return result;
     }
 }

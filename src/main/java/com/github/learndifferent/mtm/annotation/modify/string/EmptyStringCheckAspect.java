@@ -4,20 +4,20 @@ import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck.D
 import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck.ExceptionIfEmpty;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.exception.ServiceException;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
- * 空字符串检查
+ * 空字符串检查。
+ * <p>如果 String 类型的参数为空或 null，进行下一步处理</p>
  *
  * @author zhou
  * @date 2021/09/05
@@ -48,13 +48,17 @@ public class EmptyStringCheckAspect {
                         String.class.isAssignableFrom(parameterTypes[i])) {
 
                     // 检查是否为空字符串或 null，并返回处理过的值
-                    args[i] = replaceIfEmpty(args[i], (DefaultValueIfEmpty) annotation);
+                    args[i] = replaceIfEmpty(
+                            (String) args[i],
+                            (DefaultValueIfEmpty) annotation);
                     break;
                 }
 
                 if (annotation instanceof ExceptionIfEmpty &&
                         String.class.isAssignableFrom(parameterTypes[i])) {
-                    throwExceptionIfEmpty(args[i], (ExceptionIfEmpty) annotation);
+                    throwExceptionIfEmpty(
+                            (String) args[i],
+                            (ExceptionIfEmpty) annotation);
                     break;
                 }
             }
@@ -63,35 +67,33 @@ public class EmptyStringCheckAspect {
         return joinPoint.proceed(args);
     }
 
-    private Object replaceIfEmpty(Object arg, DefaultValueIfEmpty defaultValue) {
+    private Object replaceIfEmpty(String str, DefaultValueIfEmpty defaultValue) {
 
-        if (ObjectUtils.isNotEmpty(arg)) {
-            // 不为空字符串或 null 的时候，不需要进行处理，直接返回即可
-            return arg;
+        if (StringUtils.isEmpty(str)) {
+            return defaultValue.value();
         }
 
-        return defaultValue.value();
+        // 不为空字符串或 null 的时候，不需要进行处理，直接返回即可
+        return str;
     }
 
-    private void throwExceptionIfEmpty(Object arg, ExceptionIfEmpty exceptionInfo) {
+    private void throwExceptionIfEmpty(String str, ExceptionIfEmpty exceptionInfo) {
 
-        if (ObjectUtils.isNotEmpty(arg)) {
-            // 不为空字符串或 null 的时候，不需要进行处理
-            return;
+        // 为空字符串或 null 的时候，需要抛出异常
+        if (StringUtils.isEmpty(str)) {
+            ResultCode resultCode = exceptionInfo.resultCode();
+            String errorMessage = exceptionInfo.errorMessage();
+            throwExceptionWithInfo(resultCode, errorMessage);
         }
-
-        ResultCode resultCode = exceptionInfo.resultCode();
-        String errorMessage = exceptionInfo.errorMessage();
-        throwExceptionWithInfo(resultCode, errorMessage);
     }
 
     private void throwExceptionWithInfo(ResultCode resultCode,
                                         String errorMessage) {
 
-        if (StringUtils.isNotEmpty(errorMessage)) {
-            throw new ServiceException(resultCode, errorMessage);
+        if (StringUtils.isEmpty(errorMessage)) {
+            throw new ServiceException(resultCode);
         }
 
-        throw new ServiceException(resultCode);
+        throw new ServiceException(resultCode, errorMessage);
     }
 }

@@ -42,6 +42,7 @@ public class FindController {
      *
      * @return 热搜数据和数据库是否存在
      */
+    @SystemLog(optsType = OptsType.READ)
     @GetMapping
     public ResultVO<FindPageInitVO> load() {
 
@@ -60,6 +61,7 @@ public class FindController {
      * @param word 被删除的热搜词
      * @return 是否删除成功
      */
+    @SystemLog(optsType = OptsType.DELETE)
     @DeleteMapping("/trends/{word}")
     public boolean delTrendsByWord(@PathVariable("word") String word) {
         return trendsManager.delTrendsByWord(word);
@@ -70,6 +72,7 @@ public class FindController {
      *
      * @return 是否成功
      */
+    @SystemLog(optsType = OptsType.DELETE)
     @DeleteMapping("/trends")
     public boolean delAllTrends() {
         return trendsManager.delAllTrends();
@@ -98,6 +101,7 @@ public class FindController {
      *
      * @return 是否成功
      */
+    @SystemLog(optsType = OptsType.UPDATE)
     @GetMapping("/build")
     public boolean reGenerateSearchDataBasedOnDatabase() {
         return elasticsearchManager.reGenerateSearchData();
@@ -108,11 +112,13 @@ public class FindController {
      *
      * @return 是否删除成功
      */
+    @SystemLog(optsType = OptsType.DELETE)
     @DeleteMapping("/build")
     public boolean deleteSearch() {
         return elasticsearchManager.checkAndDeleteIndex();
     }
 
+    @SystemLog(optsType = OptsType.CREATE)
     @GetMapping("/createIndex")
     public boolean hasIndexOrCreate() {
         // 初始化操作，生成用于搜索的 index（网络问题会抛出自定义的网络异常）
