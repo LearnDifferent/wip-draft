@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService, ApplicationContextAware {
         UserDTO userDTO = DozerUtils.convert(userBasicInfo, UserDTO.class);
 
         // 启用事务的时候，调用内部类的方法需要通过代理类
-        UserService userService = (UserService) applicationContext.getBean("userServiceImpl");
+        UserService userService = applicationContext.getBean(UserService.class);
 
         return userService.addUser(userDTO);
     }

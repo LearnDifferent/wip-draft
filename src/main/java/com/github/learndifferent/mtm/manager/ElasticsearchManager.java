@@ -280,8 +280,7 @@ public class ElasticsearchManager implements ApplicationContextAware {
 
 
         // 因为要调用内部类的代理方法，所以先获取代理类
-        ElasticsearchManager elasticsearchManager =
-                (ElasticsearchManager) applicationContext.getBean("elasticsearchManager");
+        ElasticsearchManager elasticsearchManager = applicationContext.getBean(ElasticsearchManager.class);
         // 将搜索词分词后放入热搜统计
         elasticsearchManager.analyzeKeywordAndPutToTrendingList(keyword);
 
