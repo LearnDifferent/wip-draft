@@ -15,7 +15,17 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IfMarkedThenReturn {
 
+    /**
+     * 存放 url 值的参数的名称
+     *
+     * @return {@code String}
+     */
     String urlParamName();
 
+    /**
+     * 存放用户名的参数的名称
+     *
+     * @return {@code String}
+     */
     String usernameParamName();
 }

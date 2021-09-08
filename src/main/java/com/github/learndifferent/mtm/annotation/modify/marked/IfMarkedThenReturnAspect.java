@@ -6,7 +6,6 @@ import com.github.learndifferent.mtm.dto.WebsiteDTO;
 import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.service.WebsiteService;
 import com.github.learndifferent.mtm.utils.DozerUtils;
-import com.github.learndifferent.mtm.utils.ReverseUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -35,6 +34,14 @@ public class IfMarkedThenReturnAspect {
         this.websiteService = websiteService;
     }
 
+    /**
+     * 检查该 url 是否已经被收藏了，并作出相应判断。
+     *
+     * @param pjp        ProceedingJoinPoint
+     * @param annotation IfMarkedThenReturn annotation
+     * @return {@code Object}
+     * @throws Throwable 如果该用户已经收藏过了，就抛出 ServiceException 异常
+     */
     @Around("@annotation(annotation)")
     public Object around(ProceedingJoinPoint pjp, IfMarkedThenReturn annotation) throws Throwable {
 
@@ -74,16 +81,17 @@ public class IfMarkedThenReturnAspect {
         // 先在数据库中查找是否有相同 URL 的网页数据
         List<WebsiteDTO> websInDb = websiteService.findWebsByUrl(url);
 
-        // 如果数据库中存在该链接的网页数据（也就是该列表不为空）
-        if (ReverseUtils.listNotEmpty(websInDb)) {
-            // 先检查用户是否已经收藏了该网页（收藏了会报错）
-            checkIfMarked(username, websInDb);
-            // 如果该用户还没有收藏，就直接返回数据库中已经查找到的数据
-            return DozerUtils.convert(websInDb.get(0), WebWithNoIdentityDTO.class);
+        // 如果数据库中没有该链接的网页数据（也就是该列表为空）
+        if (websInDb.isEmpty()) {
+            // 就按照原来的值
+            return pjp.proceed();
         }
 
-        // 如果数据库中没有，就按照原来的值
-        return pjp.proceed();
+        // 如果数据库中存在该链接的网页数据（也就是该列表不为空）
+        // 先检查用户是否已经收藏了该网页（收藏了会报错）
+        checkIfMarked(username, websInDb);
+        // 如果该用户还没有收藏，就直接返回数据库中已经查找到的数据
+        return DozerUtils.convert(websInDb.get(0), WebWithNoIdentityDTO.class);
     }
 
     /**
