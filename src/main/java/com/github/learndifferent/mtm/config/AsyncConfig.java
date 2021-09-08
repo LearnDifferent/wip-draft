@@ -1,5 +1,6 @@
 package com.github.learndifferent.mtm.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
@@ -19,19 +20,24 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 public class AsyncConfig implements AsyncConfigurer {
 
-    private static final int CORE_POOL_SIZE = 3;
-    private static final int ALIVE_SECONDS = 30;
-    private static final int QUEUE_CAPACITY = 50;
+    @Value("${custom-async.core-pool-size}")
+    private int corePoolSize;
+
+    @Value("${custom-async.alive-seconds}")
+    private int aliveSeconds;
+
+    @Value("${custom-async.queue-capacity}")
+    private int queueCapacity;
 
     @Bean("asyncTaskExecutor")
     @Override
     public Executor getAsyncExecutor() {
 
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(CORE_POOL_SIZE);
+        executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(Runtime.getRuntime().availableProcessors());
-        executor.setKeepAliveSeconds(ALIVE_SECONDS);
-        executor.setQueueCapacity(QUEUE_CAPACITY);
+        executor.setKeepAliveSeconds(aliveSeconds);
+        executor.setQueueCapacity(queueCapacity);
         // 这里处理的任务不重要，可以允许丢失
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());
         executor.setThreadNamePrefix("custom-async-");

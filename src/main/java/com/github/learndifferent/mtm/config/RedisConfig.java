@@ -40,7 +40,7 @@ public class RedisConfig {
     }
 
     @Bean(name = "springSessionDefaultRedisSerializer")
-    public RedisSerializer springSessionDefaultRedisSerializer() {
+    public RedisSerializer<Object> springSessionDefaultRedisSerializer() {
         return RedisSerializer.json();
     }
 

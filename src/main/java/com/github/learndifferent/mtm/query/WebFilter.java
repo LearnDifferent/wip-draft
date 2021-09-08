@@ -20,7 +20,7 @@ public class WebFilter implements Serializable {
     /**
      * 需要加载多少条数据
      */
-    @Value("${websitefilter.load}")
+    @Value("${website-filter.load}")
     private int load;
 
     /**
@@ -45,13 +45,13 @@ public class WebFilter implements Serializable {
     /**
      * 按照什么字段排序
      */
-    @Value("${websitefilter.order}")
+    @Value("${website-filter.order}")
     private String order;
 
     /**
      * 是否按照 desc 排序
      */
-    @Value("${websitefilter.isDesc}")
+    @Value("${website-filter.isDesc}")
     private Boolean desc;
 
     private static final String CREATE_TIME = "createTime";

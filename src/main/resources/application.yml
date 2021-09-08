@@ -30,7 +30,12 @@ elasticsearch:
   port: 9200
   isHttps: false
 # 筛选 Website 数据的 Filter 类的初始值
-websitefilter:
+website-filter:
   load: 10
   order: "userName"
   isDesc: false
+# 自定义的异步配置
+custom-async:
+  core-pool-size: 3
+  alive-seconds: 30
+  queue-capacity: 50
