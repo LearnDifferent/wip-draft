@@ -75,8 +75,9 @@ public class UserServiceImpl implements UserService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public boolean addUser(UserDTO user) {
 
-        if (getUserByName(user.getUserName()) != null) {
-            // 如果用户名已存在，抛出异常
+        String usernameInDb = user.getUserName();
+        if (getUserByName(usernameInDb) != null) {
+            // 如果用户名已经在 Database 中存在，就抛出异常
             throw new ServiceException(ResultCode.USER_ALREADY_EXIST);
         }
 
