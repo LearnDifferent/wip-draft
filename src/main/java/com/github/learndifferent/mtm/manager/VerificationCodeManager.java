@@ -60,7 +60,6 @@ public class VerificationCodeManager {
             redisTemplate.opsForValue().set(verifyToken, "1234", 5, TimeUnit.MINUTES);
             return "http://pic.616pic.com/ys_bnew_img/00/58/36/hETS14h5rO.jpg";
         }
-
     }
 
     /**
