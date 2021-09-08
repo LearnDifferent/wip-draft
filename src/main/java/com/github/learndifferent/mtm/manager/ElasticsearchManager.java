@@ -9,6 +9,7 @@ import com.github.learndifferent.mtm.dto.SearchResultsDTO;
 import com.github.learndifferent.mtm.dto.WebForSearchDTO;
 import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.mapper.WebsiteMapper;
+import com.github.learndifferent.mtm.utils.ApplicationContextUtils;
 import com.github.learndifferent.mtm.utils.JsonUtils;
 import com.github.learndifferent.mtm.utils.PageUtil;
 import com.github.pemistahl.lingua.api.Language;
@@ -34,11 +35,8 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -57,13 +55,11 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-public class ElasticsearchManager implements ApplicationContextAware {
+public class ElasticsearchManager {
 
     private final RestHighLevelClient client;
     private final WebsiteMapper websiteMapper;
     private final TrendsManager trendsManager;
-
-    private ApplicationContext applicationContext;
 
     @Autowired
     public ElasticsearchManager(@Qualifier("restHighLevelClient") RestHighLevelClient client,
@@ -72,11 +68,6 @@ public class ElasticsearchManager implements ApplicationContextAware {
         this.client = client;
         this.websiteMapper = websiteMapper;
         this.trendsManager = trendsManager;
-    }
-
-    @Override
-    public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
     /**
@@ -280,7 +271,8 @@ public class ElasticsearchManager implements ApplicationContextAware {
 
 
         // 因为要调用内部类的代理方法，所以先获取代理类
-        ElasticsearchManager elasticsearchManager = applicationContext.getBean(ElasticsearchManager.class);
+        ElasticsearchManager elasticsearchManager = ApplicationContextUtils.
+                getBean(ElasticsearchManager.class);
         // 将搜索词分词后放入热搜统计
         elasticsearchManager.analyzeKeywordAndPutToTrendingList(keyword);
 

@@ -9,16 +9,13 @@ import com.github.learndifferent.mtm.entity.UserDO;
 import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.mapper.UserMapper;
 import com.github.learndifferent.mtm.service.UserService;
+import com.github.learndifferent.mtm.utils.ApplicationContextUtils;
 import com.github.learndifferent.mtm.utils.DozerUtils;
 import com.github.learndifferent.mtm.utils.Md5Util;
 import com.github.learndifferent.mtm.utils.UUIDUtils;
 import com.github.learndifferent.mtm.vo.UserBasicInfoVO;
 import com.github.learndifferent.mtm.vo.UserChangePwdVO;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,20 +31,13 @@ import java.util.List;
  * @date 2021/09/05
  */
 @Service
-public class UserServiceImpl implements UserService, ApplicationContextAware {
+public class UserServiceImpl implements UserService{
 
     private final UserMapper userMapper;
-
-    private ApplicationContext applicationContext;
 
     @Autowired
     public UserServiceImpl(UserMapper userMapper) {
         this.userMapper = userMapper;
-    }
-
-    @Override
-    public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -75,7 +65,9 @@ public class UserServiceImpl implements UserService, ApplicationContextAware {
             throw new ServiceException(ResultCode.PASSWORD_INCORRECT);
         }
 
-        return updateUser(user.setPassword(newPassword));
+        // 调用当前类的事务方法，需要使用代理类
+        UserService userService = ApplicationContextUtils.getBean(UserService.class);
+        return userService.updateUser(user.setPassword(newPassword));
     }
 
 
@@ -109,7 +101,8 @@ public class UserServiceImpl implements UserService, ApplicationContextAware {
         UserDTO userDTO = DozerUtils.convert(userBasicInfo, UserDTO.class);
 
         // 启用事务的时候，调用内部类的方法需要通过代理类
-        UserService userService = applicationContext.getBean(UserService.class);
+        UserService userService = ApplicationContextUtils.
+                getBean(UserService.class);
 
         return userService.addUser(userDTO);
     }
@@ -161,10 +154,12 @@ public class UserServiceImpl implements UserService, ApplicationContextAware {
      * @return 是否更新成功
      */
     @Override
-    @Transactional(rollbackFor = ServiceException.class)
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateUser(UserDTO user) {
-        user.setPassword(Md5Util.getMd5(user.getPassword()));
-        return userMapper.updateUser(DozerUtils.convert(user, UserDO.class));
+        String pwdNew = Md5Util.getMd5(user.getPassword());
+        user.setPassword(pwdNew);
+        UserDO u = DozerUtils.convert(user, UserDO.class);
+        return userMapper.updateUser(u);
     }
 
     @Override
