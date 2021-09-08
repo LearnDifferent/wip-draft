@@ -31,7 +31,7 @@ import java.util.List;
  * @date 2021/09/05
  */
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
 
@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService{
      * @return 是否更新成功
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public boolean updateUser(UserDTO user) {
         String pwdNew = Md5Util.getMd5(user.getPassword());
         user.setPassword(pwdNew);
