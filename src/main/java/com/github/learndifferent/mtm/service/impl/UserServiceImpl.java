@@ -41,13 +41,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserWithWebCountDTO> getNamesAndCountMarkedWebDesc() {
-        return userMapper.getNamesAndCountMarkedWebDesc();
+    public List<UserWithWebCountDTO> getNamesAndCountMarkedWebsDesc() {
+        return userMapper.getNamesAndCountMarkedWebsDesc();
     }
 
     @Override
-    public List<UserWithWebCountDTO> getNamesAndCountMarkedWebDesc(List<String> usernames) {
-        return userMapper.getNamesAndCountMarkedWebDesc(usernames);
+    public List<UserWithWebCountDTO> getNamesAndCountMarkedWebsDesc(List<String> usernames) {
+        return userMapper.getNamesAndCountMarkedWebsDesc(usernames);
     }
 
     @Override
@@ -57,7 +57,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean changePassword(String userName, String oldPassword, String newPassword) {
+    public boolean changePassword(String userName,
+                                  String oldPassword,
+                                  String newPassword) {
 
         UserDTO user = getUserByNameAndPwd(userName, oldPassword);
 
@@ -144,8 +146,8 @@ public class UserServiceImpl implements UserService {
 
     @EmptyStringCheck
     @Override
-    public boolean delUserByName(@ExceptionIfEmpty String userName) {
-        return userMapper.delUserByName(userName);
+    public boolean deleteUserByName(@ExceptionIfEmpty String userName) {
+        return userMapper.deleteUserByName(userName);
     }
 
     /**

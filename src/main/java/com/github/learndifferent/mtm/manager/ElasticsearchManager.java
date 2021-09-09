@@ -83,7 +83,9 @@ public class ElasticsearchManager {
     private boolean createIndex() {
         CreateIndexRequest request = new CreateIndexRequest(EsConstant.INDEX);
         try {
-            CreateIndexResponse response = client.indices().create(request, RequestOptions.DEFAULT);
+            CreateIndexResponse response = client
+                    .indices()
+                    .create(request, RequestOptions.DEFAULT);
             return response.isAcknowledged();
         } catch (IOException e) {
             throw new ServiceException(ResultCode.CONNECTION_ERROR);
@@ -141,7 +143,9 @@ public class ElasticsearchManager {
     private boolean deleteIndex() {
         DeleteIndexRequest request = new DeleteIndexRequest(EsConstant.INDEX);
         try {
-            AcknowledgedResponse response = client.indices().delete(request, RequestOptions.DEFAULT);
+            AcknowledgedResponse response = client
+                    .indices()
+                    .delete(request, RequestOptions.DEFAULT);
             return response.isAcknowledged();
         } catch (IOException e) {
             throw new ServiceException(ResultCode.CONNECTION_ERROR);
@@ -162,7 +166,7 @@ public class ElasticsearchManager {
         }
 
         // 清空之前的数据后，开始进行批量生成数据的操作
-        return bulkAdd(getAllWebForSearch());
+        return bulkAdd(getAllWebsitesDataForSearch());
     }
 
     /**
@@ -170,8 +174,8 @@ public class ElasticsearchManager {
      *
      * @return 获取到的网页数据
      */
-    private List<WebForSearchDTO> getAllWebForSearch() {
-        return websiteMapper.getAllWebForSearch();
+    private List<WebForSearchDTO> getAllWebsitesDataForSearch() {
+        return websiteMapper.getAllWebsitesDataForSearch();
     }
 
     private boolean bulkAdd(List<WebForSearchDTO> webs) {
@@ -210,9 +214,12 @@ public class ElasticsearchManager {
         // 检测 keyword 的语言并选择合适的分词器
         String analyzer = detectLanguageAndGetAnalyzer(keyword);
 
-        AnalyzeRequest request = AnalyzeRequest.withIndexAnalyzer(EsConstant.INDEX, analyzer, keyword);
+        AnalyzeRequest request = AnalyzeRequest
+                .withIndexAnalyzer(EsConstant.INDEX, analyzer, keyword);
         try {
-            AnalyzeResponse analyze = client.indices().analyze(request, RequestOptions.DEFAULT);
+            AnalyzeResponse analyze = client
+                    .indices()
+                    .analyze(request, RequestOptions.DEFAULT);
             List<AnalyzeResponse.AnalyzeToken> tokens = analyze.getTokens();
             for (AnalyzeResponse.AnalyzeToken token : tokens) {
                 String val = token.getTerm();
@@ -223,6 +230,7 @@ public class ElasticsearchManager {
             }
         } catch (IOException e) {
             log.info("出错就算了，这个热搜数据不重要");
+            e.printStackTrace();
         }
     }
 
@@ -235,7 +243,9 @@ public class ElasticsearchManager {
     @NotNull
     private String detectLanguageAndGetAnalyzer(String keyword) {
 
-        LanguageDetector detector = LanguageDetectorBuilder.fromLanguages(Language.JAPANESE, Language.CHINESE).build();
+        LanguageDetector detector = LanguageDetectorBuilder
+                .fromLanguages(Language.JAPANESE, Language.CHINESE)
+                .build();
         Language lan = detector.detectLanguageOf(keyword);
 
         // 默认使用英文分词器
@@ -271,8 +281,8 @@ public class ElasticsearchManager {
 
 
         // 因为要调用内部类的代理方法，所以先获取代理类
-        ElasticsearchManager elasticsearchManager = ApplicationContextUtils.
-                getBean(ElasticsearchManager.class);
+        ElasticsearchManager elasticsearchManager = ApplicationContextUtils
+                .getBean(ElasticsearchManager.class);
         // 将搜索词分词后放入热搜统计
         elasticsearchManager.analyzeKeywordAndPutToTrendingList(keyword);
 
@@ -311,7 +321,7 @@ public class ElasticsearchManager {
         int totalPage = PageUtil.getAllPages((int) totalCount, size);
 
         // 获取需要的网页数据
-        List<WebForSearchDTO> webs = getWebForSearchByHits(hits);
+        List<WebForSearchDTO> webs = getWebsitesDataForSearchByHits(hits);
 
         return SearchResultsDTO.builder()
                 .totalCount(totalCount)
@@ -327,11 +337,13 @@ public class ElasticsearchManager {
      * @return 需要的网页数据
      */
     @NotNull
-    private List<WebForSearchDTO> getWebForSearchByHits(SearchHits hits) {
+    private List<WebForSearchDTO> getWebsitesDataForSearchByHits(SearchHits hits) {
 
         List<WebForSearchDTO> webs = new ArrayList<>();
         for (SearchHit hit : hits) {
-            WebForSearchDTO web = hitHighlightAndGetWeb(hit, EsConstant.DESC, EsConstant.TITLE);
+            WebForSearchDTO web = hitHighlightAndGetWeb(hit,
+                    EsConstant.DESC,
+                    EsConstant.TITLE);
             webs.add(web);
         }
 
@@ -346,7 +358,9 @@ public class ElasticsearchManager {
      * @param field2 字段2
      * @return 高亮后的实体类
      */
-    private WebForSearchDTO hitHighlightAndGetWeb(SearchHit hit, String field1, String field2) {
+    private WebForSearchDTO hitHighlightAndGetWeb(SearchHit hit,
+                                                  String field1,
+                                                  String field2) {
 
         Map<String, Object> source = hit.getSourceAsMap();
 
@@ -391,7 +405,13 @@ public class ElasticsearchManager {
         String img = (String) source.get(EsConstant.IMG);
         String desc = (String) source.get(EsConstant.DESC);
 
-        return WebForSearchDTO.builder().title(title).url(url).img(img).desc(desc).build();
+        return WebForSearchDTO
+                .builder()
+                .title(title)
+                .url(url)
+                .img(img)
+                .desc(desc)
+                .build();
     }
 
 }

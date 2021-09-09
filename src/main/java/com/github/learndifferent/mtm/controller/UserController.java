@@ -67,7 +67,7 @@ public class UserController {
     @DeleteMapping("/delete")
     public ResultVO<?> deleteUser(@RequestParam("userName") String userName) {
 
-        return userService.delUserByName(userName) ? ResultCreator.okResult()
+        return userService.deleteUserByName(userName) ? ResultCreator.okResult()
                 : ResultCreator.result(ResultCode.DELETE_FAILED);
     }
 }

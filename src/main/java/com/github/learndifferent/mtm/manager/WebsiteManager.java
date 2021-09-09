@@ -60,22 +60,22 @@ public class WebsiteManager {
                 break;
             case USER_PAGE:
                 // 查看某个用户所有收藏的情况
-                List<WebsiteDTO> userPageWebs = websiteService.findWebsByUserPaging(username, from, size);
+                List<WebsiteDTO> userPageWebs = websiteService.findWebsitesDataByUser(username, from, size);
                 int userPageTotalCount = websiteService.countUserPost(username);
                 int userPageTotalPage = PageUtil.getAllPages(userPageTotalCount, size);
                 builder.webs(userPageWebs).totalPage(userPageTotalPage);
                 break;
             case WITHOUT_USER_PAGE:
                 // 查看除去某个用户的所有收藏的情况
-                List<WebsiteDTO> withoutUserPageWebs = websiteService.findWebsWithoutUserPaging(username, from, size);
-                int withoutUserPageTotalCount = websiteService.countWithoutUserPost(username);
+                List<WebsiteDTO> withoutUserPageWebs = websiteService.findWebsitesDataExcludeUser(username, from, size);
+                int withoutUserPageTotalCount = websiteService.countExcludeUserPost(username);
                 int withoutUserPageTotalPage = PageUtil.getAllPages(withoutUserPageTotalCount, size);
                 builder.webs(withoutUserPageWebs).totalPage(withoutUserPageTotalPage);
                 break;
             case DEFAULT:
             default:
                 // 默认查看全部的情况（如果 pattern 不是以上的情况，也是按照默认情况处理）
-                List<WebsiteDTO> webs = websiteService.showAllWebDesc(from, size);
+                List<WebsiteDTO> webs = websiteService.showAllWebsiteDataDesc(from, size);
                 int totalCount = websiteService.countAll();
                 int totalPage = PageUtil.getAllPages(totalCount, size);
                 builder.webs(webs).totalPage(totalPage);

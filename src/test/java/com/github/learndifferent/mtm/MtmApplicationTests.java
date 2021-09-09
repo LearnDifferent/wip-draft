@@ -42,13 +42,13 @@ class MtmApplicationTests {
 
         System.out.println(webFilter);
 
-        List<WebsiteDTO> webs = websiteService.findWebsiteByFilter(webFilter);
+        List<WebsiteDTO> webs = websiteService.findWebsitesDataByFilter(webFilter);
         webs.forEach(w -> System.out.println(w.getCreateTime()));
     }
 
     @Test
     void webForSearchTest() {
-        List<WebForSearchDTO> allWebForSearch = websiteService.getAllWebForSearch();
+        List<WebForSearchDTO> allWebForSearch = websiteService.getAllWebsitesDataForSearch();
         allWebForSearch.forEach(System.out::println);
     }
 }

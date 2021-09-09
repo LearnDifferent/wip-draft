@@ -36,7 +36,9 @@ public class HomeController {
     private final WebsiteManager websiteManager;
 
     @Autowired
-    public HomeController(WebsiteService websiteService, UserService userService, WebsiteManager websiteManager) {
+    public HomeController(WebsiteService websiteService,
+                          UserService userService,
+                          WebsiteManager websiteManager) {
         this.websiteService = websiteService;
         this.userService = userService;
         this.websiteManager = websiteManager;
@@ -45,14 +47,14 @@ public class HomeController {
     @SystemLog(title = "Filter", optsType = OptsType.READ)
     @GetMapping("/filter")
     public List<UserWithWebCountDTO> getUsernamesAndCountTheirMarkedWebs() {
-        return userService.getNamesAndCountMarkedWebDesc();
+        return userService.getNamesAndCountMarkedWebsDesc();
     }
 
     @SystemLog(title = "Filter", optsType = OptsType.READ)
     @PostMapping("/filter")
     public ResultVO<WebsByFilterVO> getFilterAndReturnResult(@RequestBody WebFilter filter) {
 
-        List<WebsiteDTO> webs = websiteService.findWebsiteByFilter(filter);
+        List<WebsiteDTO> webs = websiteService.findWebsitesDataByFilter(filter);
         int count = webs.size();
 
         WebsByFilterVO result = WebsByFilterVO.builder()

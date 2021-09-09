@@ -51,7 +51,7 @@ public class MyPageController {
         int size = pageInfo.getSize();
         int totalCount = websiteService.countUserPost(userName);
 
-        List<WebsiteDTO> myWebs = websiteService.findWebsByUserPaging(
+        List<WebsiteDTO> myWebs = websiteService.findWebsitesDataByUser(
                 userName, from, size);
 
         int totalPage = PageUtil.getAllPages(

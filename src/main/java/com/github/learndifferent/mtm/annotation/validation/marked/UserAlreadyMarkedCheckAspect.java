@@ -98,7 +98,7 @@ public class UserAlreadyMarkedCheckAspect {
      */
     private void testIfUserMarkedWeb(String userName, String url) {
 
-        WebsiteDTO web = websiteService.findWebsByUrl(url).stream()
+        WebsiteDTO web = websiteService.findWebsitesDataByUrl(url).stream()
                 .filter(w -> w.getUserName().equals(userName))
                 .findFirst().orElse(null);
 

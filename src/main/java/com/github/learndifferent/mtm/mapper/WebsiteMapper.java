@@ -28,7 +28,7 @@ public interface WebsiteMapper {
      *               ，desc 为 false 或 null 时，不按照 desc 排序
      * @return 符合条件的网页数据
      */
-    List<WebsiteDO> findWebsiteByFilter(WebFilter filter);
+    List<WebsiteDO> findWebsitesDataByFilter(WebFilter filter);
 
 
     /**
@@ -45,14 +45,15 @@ public interface WebsiteMapper {
      * @param size 大小
      * @return {@code List<WebsiteWithCountDTO>}
      */
-    List<WebsiteWithCountDTO> showMostMarked(@Param("from") int from, @Param("size") int size);
+    List<WebsiteWithCountDTO> showMostMarked(@Param("from") int from,
+                                             @Param("size") int size);
 
     /**
-     * 得到所有 web（用于搜索）
+     * 得到所有用于搜索的网页数据
      *
      * @return {@code List<WebForSearchDTO>}
      */
-    List<WebForSearchDTO> getAllWebForSearch();
+    List<WebForSearchDTO> getAllWebsitesDataForSearch();
 
     /**
      * 计算所有网页数据的条数
@@ -75,7 +76,7 @@ public interface WebsiteMapper {
      * @param userName 用户名
      * @return int
      */
-    int countWithoutUserPost(String userName);
+    int countExcludeUserPost(String userName);
 
     /**
      * 根据用户得到的网页数据（分页）
@@ -85,7 +86,9 @@ public interface WebsiteMapper {
      * @param size     大小
      * @return {@code List<WebsiteDO>}
      */
-    List<WebsiteDO> findWebsByUserPaging(@Param("userName") String userName, @Param("from") int from, @Param("size") int size);
+    List<WebsiteDO> findWebsitesDataByUser(@Param("userName") String userName,
+                                           @Param("from") int from,
+                                           @Param("size") int size);
 
     /**
      * 排除某用户得到的网页数据（分页）
@@ -95,7 +98,9 @@ public interface WebsiteMapper {
      * @param size     大小
      * @return {@code List<WebsiteDO>}
      */
-    List<WebsiteDO> findWebsWithoutUserPaging(@Param("userName") String userName, @Param("from") int from, @Param("size") int size);
+    List<WebsiteDO> findWebsitesDataExcludeUser(@Param("userName") String userName,
+                                                @Param("from") int from,
+                                                @Param("size") int size);
 
     /**
      * 通过url找到所有网页数据
@@ -103,7 +108,7 @@ public interface WebsiteMapper {
      * @param url url
      * @return {@code List<WebsiteDO>}
      */
-    List<WebsiteDO> findAllWebsByUrl(String url);
+    List<WebsiteDO> findWebsitesDataByUrl(String url);
 
     /**
      * 显示所有网页数据（desc 排序）
@@ -112,14 +117,15 @@ public interface WebsiteMapper {
      * @param size 大小
      * @return {@code List<WebsiteDO>}
      */
-    List<WebsiteDO> showAllWebDesc(@Param("from") int from, @Param("size") int size);
+    List<WebsiteDO> showAllWebsiteDataDesc(@Param("from") int from,
+                                           @Param("size") int size);
 
     /**
      * 显示所有网页数据（desc 排序）
      *
      * @return {@code List<WebsiteDO>}
      */
-    List<WebsiteDO> showAllWebDesc();
+    List<WebsiteDO> showAllWebsiteDataDesc();
 
     /**
      * 通过 id 删除网页
@@ -127,7 +133,7 @@ public interface WebsiteMapper {
      * @param webId id
      * @return boolean
      */
-    boolean delWebById(Integer webId);
+    boolean delWebsiteDataById(Integer webId);
 
     /**
      * 添加网页数据
@@ -135,7 +141,7 @@ public interface WebsiteMapper {
      * @param websiteDO 网页数据
      * @return boolean
      */
-    boolean addWeb(WebsiteDO websiteDO);
+    boolean addWebsiteData(WebsiteDO websiteDO);
 
     /**
      * 通过id获取网页数据
@@ -143,7 +149,7 @@ public interface WebsiteMapper {
      * @param webId id
      * @return {@code WebsiteDO}
      */
-    WebsiteDO getWebById(Integer webId);
+    WebsiteDO getWebsiteDataById(Integer webId);
 
     /**
      * 通过id更新网页数据
@@ -151,12 +157,12 @@ public interface WebsiteMapper {
      * @param websiteDO 网页数据
      * @return boolean
      */
-    boolean updateWebById(WebsiteDO websiteDO);
+    boolean updateWebsiteDataById(WebsiteDO websiteDO);
 
     /**
      * 显示所有网页数据
      *
      * @return {@code List<WebsiteDO>}
      */
-    List<WebsiteDO> showAllWebs();
+    List<WebsiteDO> showAllWebsitesData();
 }

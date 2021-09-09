@@ -93,7 +93,7 @@ public class DeleteWebsitePermissionValidation {
      */
     private void checkDeletePermission(int webId, String userName) {
 
-        WebsiteDTO web = websiteService.findWebById(webId);
+        WebsiteDTO web = websiteService.findWebsiteDataById(webId);
 
         if (ReverseUtils.hasNoPermissionToDelete(userName, web)) {
             // 没有权限就抛出异常

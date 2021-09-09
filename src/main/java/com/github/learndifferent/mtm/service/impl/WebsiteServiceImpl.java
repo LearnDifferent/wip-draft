@@ -49,8 +49,8 @@ public class WebsiteServiceImpl implements WebsiteService {
     }
 
     @Override
-    public List<WebsiteDTO> findWebsiteByFilter(WebFilter filter) {
-        List<WebsiteDO> webs = websiteMapper.findWebsiteByFilter(filter);
+    public List<WebsiteDTO> findWebsitesDataByFilter(WebFilter filter) {
+        List<WebsiteDO> webs = websiteMapper.findWebsitesDataByFilter(filter);
         return DozerUtils.convertList(webs, WebsiteDTO.class);
     }
 
@@ -70,14 +70,14 @@ public class WebsiteServiceImpl implements WebsiteService {
     }
 
     @Override
-    public List<WebsiteDTO> showAllWebDesc(int from, int size) {
-        List<WebsiteDO> webs = websiteMapper.showAllWebDesc(from, size);
+    public List<WebsiteDTO> showAllWebsiteDataDesc(int from, int size) {
+        List<WebsiteDO> webs = websiteMapper.showAllWebsiteDataDesc(from, size);
         return DozerUtils.convertList(webs, WebsiteDTO.class);
     }
 
     @Override
-    public List<WebsiteDTO> showAllWebDesc() {
-        List<WebsiteDO> webs = websiteMapper.showAllWebDesc();
+    public List<WebsiteDTO> showAllWebsiteDataDesc() {
+        List<WebsiteDO> webs = websiteMapper.showAllWebsiteDataDesc();
         return DozerUtils.convertList(webs, WebsiteDTO.class);
     }
 
@@ -87,25 +87,25 @@ public class WebsiteServiceImpl implements WebsiteService {
     }
 
     @Override
-    public int countWithoutUserPost(String userName) {
-        return websiteMapper.countWithoutUserPost(userName);
+    public int countExcludeUserPost(String userName) {
+        return websiteMapper.countExcludeUserPost(userName);
     }
 
     @Override
-    public List<WebsiteDTO> findWebsWithoutUserPaging(String userName, int from, int size) {
-        List<WebsiteDO> webs = websiteMapper.findWebsWithoutUserPaging(userName, from, size);
+    public List<WebsiteDTO> findWebsitesDataExcludeUser(String userName, int from, int size) {
+        List<WebsiteDO> webs = websiteMapper.findWebsitesDataExcludeUser(userName, from, size);
         return DozerUtils.convertList(webs, WebsiteDTO.class);
     }
 
     @Override
-    public List<WebsiteDTO> findWebsByUserPaging(String userName, int from, int size) {
-        List<WebsiteDO> webs = websiteMapper.findWebsByUserPaging(userName, from, size);
+    public List<WebsiteDTO> findWebsitesDataByUser(String userName, int from, int size) {
+        List<WebsiteDO> webs = websiteMapper.findWebsitesDataByUser(userName, from, size);
         return DozerUtils.convertList(webs, WebsiteDTO.class);
     }
 
     @Override
-    public WebsiteDTO findWebById(int webId) {
-        WebsiteDO web = websiteMapper.getWebById(webId);
+    public WebsiteDTO findWebsiteDataById(int webId) {
+        WebsiteDO web = websiteMapper.getWebsiteDataById(webId);
         return DozerUtils.convert(web, WebsiteDTO.class);
     }
 
@@ -115,7 +115,7 @@ public class WebsiteServiceImpl implements WebsiteService {
             paramNameContainsUrl = "rawWebsite",
             paramClassContainsUrl = WebWithNoIdentityDTO.class,
             urlFieldName = "url")
-    public boolean saveWebWithNoIdentity(WebWithNoIdentityDTO rawWebsite, String userName) {
+    public boolean saveWebsiteData(WebWithNoIdentityDTO rawWebsite, String userName) {
 
         // 异步，放入 Elasticsearch
         WebForSearchDTO searchWeb = DozerUtils.convert(rawWebsite, WebForSearchDTO.class);
@@ -123,7 +123,7 @@ public class WebsiteServiceImpl implements WebsiteService {
 
         // 添加信息后，放入数据库
         WebsiteDO websiteDO = DozerUtils.convert(rawWebsite, WebsiteDO.class);
-        return websiteMapper.addWeb(websiteDO
+        return websiteMapper.addWebsiteData(websiteDO
                 .setUserName(userName).setCreateTime(new Date()));
     }
 
@@ -142,7 +142,7 @@ public class WebsiteServiceImpl implements WebsiteService {
     @UrlClean(urlParamName = "url")
     @IfMarkedThenReturn(urlParamName = "url", usernameParamName = "userName")
     @Override
-    public WebWithNoIdentityDTO grabRawWebByUrl(String url, String userName) {
+    public WebWithNoIdentityDTO scrapeWebsiteDataFromUrl(String url, String userName) {
 
         try {
             Document document = Jsoup.parse(new URL(url), 3000);
@@ -189,24 +189,24 @@ public class WebsiteServiceImpl implements WebsiteService {
     }
 
     @Override
-    public List<WebForSearchDTO> getAllWebForSearch() {
-        return websiteMapper.getAllWebForSearch();
+    public List<WebForSearchDTO> getAllWebsitesDataForSearch() {
+        return websiteMapper.getAllWebsitesDataForSearch();
     }
 
     @Override
-    public boolean updateWebById(WebsiteDTO website) {
+    public boolean updateWebsiteDataById(WebsiteDTO website) {
         WebsiteDO websiteDO = DozerUtils.convert(website, WebsiteDO.class);
-        return websiteMapper.updateWebById(websiteDO);
+        return websiteMapper.updateWebsiteDataById(websiteDO);
     }
 
     @Override
-    public List<WebsiteDTO> findWebsByUrl(String url) {
-        List<WebsiteDO> webs = websiteMapper.findAllWebsByUrl(url);
+    public List<WebsiteDTO> findWebsitesDataByUrl(String url) {
+        List<WebsiteDO> webs = websiteMapper.findWebsitesDataByUrl(url);
         return DozerUtils.convertList(webs, WebsiteDTO.class);
     }
 
     @Override
-    public boolean delWebById(int webId) {
-        return websiteMapper.delWebById(webId);
+    public boolean delWebsiteDataById(int webId) {
+        return websiteMapper.delWebsiteDataById(webId);
     }
 }

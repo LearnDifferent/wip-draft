@@ -45,7 +45,7 @@ public class TrendsManager {
      * @throws ServiceException 如果 word 为空，就抛出异常
      */
     @EmptyStringCheck
-    public boolean delTrendsByWord(
+    public boolean deleteTrendsByWord(
             @ExceptionIfEmpty(errorMessage = "关键词为空，无法删除") String word) {
 
         Long success = redisTemplate.opsForZSet().remove(EsConstant.TRENDING, word);
@@ -58,7 +58,7 @@ public class TrendsManager {
      *
      * @return 是否成功
      */
-    public boolean delAllTrends() {
+    public boolean deleteAllTrends() {
         Boolean deleted = redisTemplate.delete(EsConstant.TRENDING);
         return deleted != null ? deleted : false;
     }

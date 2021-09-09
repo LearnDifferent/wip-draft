@@ -63,8 +63,8 @@ public class FindController {
      */
     @SystemLog(optsType = OptsType.DELETE)
     @DeleteMapping("/trends/{word}")
-    public boolean delTrendsByWord(@PathVariable("word") String word) {
-        return trendsManager.delTrendsByWord(word);
+    public boolean deleteTrendsByWord(@PathVariable("word") String word) {
+        return trendsManager.deleteTrendsByWord(word);
     }
 
     /**
@@ -74,8 +74,8 @@ public class FindController {
      */
     @SystemLog(optsType = OptsType.DELETE)
     @DeleteMapping("/trends")
-    public boolean delAllTrends() {
-        return trendsManager.delAllTrends();
+    public boolean deleteAllTrends() {
+        return trendsManager.deleteAllTrends();
     }
 
     /**

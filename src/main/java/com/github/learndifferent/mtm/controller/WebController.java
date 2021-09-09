@@ -40,26 +40,26 @@ public class WebController {
      */
     @DeleteMapping
     @DeleteWebsitePermission(webIdParamName = "webId", usernameParamName = "userName")
-    public ResultVO<?> delWeb(@RequestParam("webId") int webId) {
+    public ResultVO<?> deleteWebsiteData(@RequestParam("webId") int webId) {
 
-        boolean success = websiteService.delWebById(webId);
+        boolean success = websiteService.delWebsiteDataById(webId);
         return success ? ResultCreator.result(ResultCode.DELETE_SUCCESS)
                 : ResultCreator.result(ResultCode.DELETE_FAILED);
     }
 
     /**
-     * 根据用户名和网页数据收藏网页
+     * 根据用户名和没有 ID、用户名和创建时间的网页数据来收藏网页
      *
      * @param website  没有 ID、用户名和创建时间的网页数据
      * @param userName 收藏该网页的用户名称
      * @return 是否收藏成功？（如果已经收藏过了，就不能收藏第二次，会报错）
      */
     @PostMapping
-    public ResultVO<?> saveWebWithNoIdentity(
+    public ResultVO<?> saveWebsiteData(
             @RequestBody WebWithNoIdentityDTO website
             , @RequestParam("userName") String userName) {
 
-        boolean success = websiteService.saveWebWithNoIdentity(website, userName);
+        boolean success = websiteService.saveWebsiteData(website, userName);
         return success ? ResultCreator.okResult() : ResultCreator.failResult();
     }
 
@@ -71,14 +71,14 @@ public class WebController {
      */
     @SystemLog(title = "Mark", optsType = OptsType.CREATE)
     @PostMapping("/add")
-    public ResultVO<?> saveWeb(@RequestBody WebUrlAndNameVO urlAndName) {
+    public ResultVO<?> saveWebsiteData(@RequestBody WebUrlAndNameVO urlAndName) {
 
         String userName = urlAndName.getUserName();
         String url = urlAndName.getUrl();
 
-        WebWithNoIdentityDTO rawWebsite = websiteService.grabRawWebByUrl(url, userName);
+        WebWithNoIdentityDTO rawWebsite = websiteService.scrapeWebsiteDataFromUrl(url, userName);
 
-        boolean success = websiteService.saveWebWithNoIdentity(rawWebsite, userName);
+        boolean success = websiteService.saveWebsiteData(rawWebsite, userName);
         return success ? ResultCreator.okResult() : ResultCreator.failResult();
     }
 }

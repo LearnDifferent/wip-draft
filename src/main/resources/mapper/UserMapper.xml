@@ -9,7 +9,7 @@
         <result column="role" jdbcType="VARCHAR" property="role"/>
     </resultMap>
 
-    <select id="getNamesAndCountMarkedWebDesc" resultType="com.github.learndifferent.mtm.dto.UserWithWebCountDTO">
+    <select id="getNamesAndCountMarkedWebsDesc" resultType="com.github.learndifferent.mtm.dto.UserWithWebCountDTO">
         select count(webId) webCount, u.userName
         from website w
         left join user u on w.userName = u.userName
@@ -30,7 +30,7 @@
         values (#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
                 #{createTime,jdbcType=DATE}, #{role,jdbcType=VARCHAR})
     </insert>
-    <delete id="delUserByName">
+    <delete id="deleteUserByName">
         delete
         from user
         where userName = #{userName};

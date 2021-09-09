@@ -15,21 +15,21 @@ import java.util.List;
  * @date 2021/09/05
  */
 @Component
-public class NoticeManager {
+public class NotificationManager {
 
     private final StringRedisTemplate template;
 
     @Autowired
-    public NoticeManager(StringRedisTemplate template) {
+    public NotificationManager(StringRedisTemplate template) {
         this.template = template;
     }
 
     /**
      * 删除通知
      *
-     * @return true 表示删除成功，false 之前已经删除了
+     * @return true 表示刚刚删除成功，false 之前已经删除了
      */
-    public Boolean ifDelNotifyOrAlreadyDeleted() {
+    public Boolean trueMeansDeleteFalseMeansAlreadyDeleted() {
         return template.delete(KeyConstant.NOTICE);
     }
 
@@ -41,7 +41,7 @@ public class NoticeManager {
     public String getNotificationsHtml() {
 
         // 获取 notice 为 key 的所有值
-        List<String> msg = getRedisNotifications();
+        List<String> msg = getNotificationsFromRedis();
 
         int size = msg.size();
 
@@ -74,7 +74,7 @@ public class NoticeManager {
      *
      * @return Redis 该通知相关 key 内的所有值
      */
-    private List<String> getRedisNotifications() {
+    private List<String> getNotificationsFromRedis() {
         return template.opsForList().range(KeyConstant.NOTICE, 0, -1);
     }
 

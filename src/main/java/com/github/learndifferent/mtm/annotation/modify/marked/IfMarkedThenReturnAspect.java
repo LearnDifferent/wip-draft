@@ -79,7 +79,7 @@ public class IfMarkedThenReturnAspect {
         }
 
         // 先在数据库中查找是否有相同 URL 的网页数据
-        List<WebsiteDTO> websInDb = websiteService.findWebsByUrl(url);
+        List<WebsiteDTO> websInDb = websiteService.findWebsitesDataByUrl(url);
 
         // 如果数据库中没有该链接的网页数据（也就是该列表为空）
         if (websInDb.isEmpty()) {

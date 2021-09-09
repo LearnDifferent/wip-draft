@@ -15,7 +15,7 @@
         , userName, title, url, img, `desc`, `createTime`
     </sql>
 
-    <select id="findWebsiteByFilter" resultType="com.github.learndifferent.mtm.entity.WebsiteDO"
+    <select id="findWebsitesDataByFilter" resultType="com.github.learndifferent.mtm.entity.WebsiteDO"
             parameterType="com.github.learndifferent.mtm.query.WebFilter">
         select *
         from website
@@ -60,7 +60,7 @@
         from website;
     </select>
 
-    <select id="showAllWebDesc" resultType="com.github.learndifferent.mtm.entity.WebsiteDO">
+    <select id="showAllWebsiteDataDesc" resultType="com.github.learndifferent.mtm.entity.WebsiteDO">
         <!-- 因为 webId 也是根据时间顺序生成的，所以用 createTime 和 webId 排序是一样的效果 -->
         select * from website order by `webId` desc
         <if test="from!=null and size!=null">
@@ -68,17 +68,17 @@
         </if>
     </select>
 
-    <select id="getWebById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getWebsiteDataById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from website
         where webId = #{webId,jdbcType=INTEGER}
     </select>
-    <select id="showAllWebs" resultType="com.github.learndifferent.mtm.entity.WebsiteDO">
+    <select id="showAllWebsitesData" resultType="com.github.learndifferent.mtm.entity.WebsiteDO">
         select *
         from website;
     </select>
-    <select id="findAllWebsByUrl" resultType="com.github.learndifferent.mtm.entity.WebsiteDO">
+    <select id="findWebsitesDataByUrl" resultType="com.github.learndifferent.mtm.entity.WebsiteDO">
         select *
         from website
         where url = #{url};
@@ -88,7 +88,7 @@
         from website;
     </select>
 
-    <select id="findWebsByUserPaging" resultType="com.github.learndifferent.mtm.entity.WebsiteDO">
+    <select id="findWebsitesDataByUser" resultType="com.github.learndifferent.mtm.entity.WebsiteDO">
         select *
         from website
         where userName = #{userName}
@@ -100,29 +100,29 @@
         from website
         where userName = #{userName};
     </select>
-    <select id="getAllWebForSearch" resultType="com.github.learndifferent.mtm.dto.WebForSearchDTO">
+    <select id="getAllWebsitesDataForSearch" resultType="com.github.learndifferent.mtm.dto.WebForSearchDTO">
         select url, title, img, `desc`
         from website
         group by url, title, `desc`, img;
     </select>
-    <select id="findWebsWithoutUserPaging" resultType="com.github.learndifferent.mtm.entity.WebsiteDO">
+    <select id="findWebsitesDataExcludeUser" resultType="com.github.learndifferent.mtm.entity.WebsiteDO">
         select *
         from website
         where userName != #{userName}
         order by webId desc limit #{from}, #{size};
     </select>
-    <select id="countWithoutUserPost" resultType="java.lang.Integer">
+    <select id="countExcludeUserPost" resultType="java.lang.Integer">
         select count(webId)
         from website
         where userName != #{userName};
     </select>
 
-    <delete id="delWebById" parameterType="java.lang.Integer">
+    <delete id="delWebsiteDataById" parameterType="java.lang.Integer">
         delete
         from website
         where webId = #{webId,jdbcType=INTEGER}
     </delete>
-    <insert id="addWeb" keyColumn="webId" keyProperty="webId"
+    <insert id="addWebsiteData" keyColumn="webId" keyProperty="webId"
             parameterType="com.github.learndifferent.mtm.entity.WebsiteDO"
             useGeneratedKeys="true">
         insert into website(userName, title, url,
@@ -130,7 +130,7 @@
         values (#{userName}, #{title}, #{url}, #{img}, #{desc}, #{createTime})
     </insert>
 
-    <update id="updateWebById" parameterType="com.github.learndifferent.mtm.entity.WebsiteDO">
+    <update id="updateWebsiteDataById" parameterType="com.github.learndifferent.mtm.entity.WebsiteDO">
         update website
         set userName     = #{userName,jdbcType=VARCHAR},
             title        = #{title,jdbcType=VARCHAR},
