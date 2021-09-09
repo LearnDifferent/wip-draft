@@ -164,14 +164,12 @@ public class WebsiteServiceImpl implements WebsiteService {
 
             return WebWithNoIdentityDTO.builder()
                     .title(title).url(url).img(img).desc(desc).build();
+        } catch (MalformedURLException e) {
+            throw new ServiceException(ResultCode.URL_MALFORMED);
+        } catch (SocketTimeoutException e) {
+            throw new ServiceException(ResultCode.URL_ACCESS_DENIED);
         } catch (IOException e) {
-            if (e instanceof MalformedURLException) {
-                throw new ServiceException(ResultCode.URL_MALFORMED);
-            } else if (e instanceof SocketTimeoutException) {
-                throw new ServiceException(ResultCode.URL_ACCESS_DENIED);
-            } else {
-                throw new ServiceException(ResultCode.SAVE_FAILED);
-            }
+            throw new ServiceException(ResultCode.CONNECTION_ERROR);
         }
     }
 
