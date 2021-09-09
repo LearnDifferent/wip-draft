@@ -69,6 +69,10 @@ public enum ResultCode {
      */
     NO_RESULTS_FOUND(2013, "There are no results that match your search"),
     /**
+     * 成功修改密码
+     */
+    PASSWORD_CHANGED(2014, "Successfully reset your password!"),
+    /**
      * Deleted
      */
     DELETE_SUCCESS(3001, "Deleted Successfully"),

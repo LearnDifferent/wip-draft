@@ -47,7 +47,7 @@ public class UserController {
 
         boolean success = userService.changePassword(user);
 
-        return success ? ResultCreator.okResult()
+        return success ? ResultCreator.result(ResultCode.PASSWORD_CHANGED)
                 : ResultCreator.result(ResultCode.UPDATE_FAILED);
     }
 
