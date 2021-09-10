@@ -417,40 +417,26 @@ public class ElasticsearchManager {
     /**
      * 实现高亮并返回实体类
      *
-     * @param hit    搜索结果
-     * @param field1 字段1
-     * @param field2 字段2
+     * @param hit   搜索结果
+     * @param field 需要高亮的字段
      * @return 高亮后的实体类
      */
-    private WebForSearchDTO hitHighlightAndGetWeb(SearchHit hit,
-                                                  String field1,
-                                                  String field2) {
+    private WebForSearchDTO hitHighlightAndGetWeb(SearchHit hit, String... field) {
 
         Map<String, Object> source = hit.getSourceAsMap();
 
-        HighlightField highlighted1 = hit.getHighlightFields().get(field1);
-        HighlightField highlighted2 = hit.getHighlightFields().get(field2);
+        for (String f : field) {
+            HighlightField highlightField = hit.getHighlightFields().get(f);
+            if (highlightField != null) {
+                Text[] texts = highlightField.fragments();
 
-        if (highlighted1 != null) {
-            Text[] texts = highlighted1.fragments();
+                StringBuilder sb = new StringBuilder();
+                for (Text text : texts) {
+                    sb.append(text);
+                }
 
-            StringBuilder sb = new StringBuilder();
-            for (Text text : texts) {
-                sb.append(text);
+                source.put(f, sb.toString());
             }
-
-            source.put(field1, sb.toString());
-        }
-
-        if (highlighted2 != null) {
-            Text[] texts = highlighted2.fragments();
-
-            StringBuilder sb = new StringBuilder();
-            for (Text text : texts) {
-                sb.append(text);
-            }
-
-            source.put(field2, sb.toString());
         }
 
         return convertToWeb(source);
