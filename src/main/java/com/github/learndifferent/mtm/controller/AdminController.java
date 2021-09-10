@@ -36,7 +36,7 @@ public class AdminController {
     }
 
     @AdminValidation
-    @GetMapping("/info")
+    @GetMapping
     public ResultVO<AdminPageVO> getLogsAndUsersAndIsAdminAndCode() {
 
         // @AdminValidation 注解：如果不是管理员，就抛出异常

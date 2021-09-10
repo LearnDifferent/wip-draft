@@ -387,7 +387,8 @@ public class ElasticsearchManager {
         // 获取需要的网页数据
         List<WebForSearchDTO> webs = getWebsitesDataForSearchByHits(hits);
 
-        return SearchResultsDTO.builder()
+        return SearchResultsDTO
+                .builder()
                 .totalCount(totalCount)
                 .totalPage(totalPage)
                 .webs(webs)
