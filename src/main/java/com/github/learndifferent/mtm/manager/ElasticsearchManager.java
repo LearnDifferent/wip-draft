@@ -135,6 +135,35 @@ public class ElasticsearchManager {
     }
 
     /**
+     * Elasticsearch 和数据库中的数据不同步
+     *
+     * @return true 表示 Elasticsearch 中的数据和数据库中的数据条数不同
+     */
+    public boolean differentFromDatabase() {
+        // 数据库中的 distinct url 的数量
+        long databaseUrlCount = websiteMapper.countDistinctUrl();
+        // Elasticsearch 中的文档的数量
+        long elasticsearchDocCount = countDocs();
+        // 两者数量是否相同
+        return databaseUrlCount - elasticsearchDocCount != 0;
+    }
+
+    /**
+     * 在执行 differentFromDatabase() 方法之前，判断一下 Elasticsearch 中是否存在该 index。
+     * <p>如果存在了，再执行。</p>
+     * <p>如果不存在该 index，直接返回 true，表示 Elasticsearch 中的数据和数据库中的数据不同</p>
+     *
+     * @param existIndex Elasticsearch 中是否存在该 index
+     * @return true 表示 Elasticsearch 中的数据和数据库中的数据条数不同
+     */
+    public boolean differentFromDatabase(boolean existIndex) {
+        if (existIndex) {
+            return differentFromDatabase();
+        }
+        return true;
+    }
+
+    /**
      * 异步存放文档
      *
      * @param web 需要存放的数据
@@ -143,15 +172,17 @@ public class ElasticsearchManager {
     public void saveDocAsync(WebForSearchDTO web) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            String data = mapper.writeValueAsString(web);
+            String json = mapper.writeValueAsString(web);
             IndexRequest request = new IndexRequest(EsConstant.INDEX);
-            // 用网址作为 ID
+            // 用网址 url 作为 ID
             request.id(web.getUrl());
             request.timeout("10s");
-            request.source(data, XContentType.JSON);
+            request.source(json, XContentType.JSON);
+            client.index(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             // 如果无法存放，就放弃存放
-            log.info("网络故障，无法将数据存放到 Elasticsearch 中……");
+            log.error("IOException while saving document to Elasticsearch. " +
+                    "Dropped this data because it can be added manually.");
             e.printStackTrace();
         }
     }
@@ -260,7 +291,8 @@ public class ElasticsearchManager {
                 }
             }
         } catch (IOException e) {
-            log.info("出错就算了，这个热搜数据不重要");
+            log.info("IOException while adding data to trending list. " +
+                    "Dropped this data because it's not important.");
             e.printStackTrace();
         }
     }
