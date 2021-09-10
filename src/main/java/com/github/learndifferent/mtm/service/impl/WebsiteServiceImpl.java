@@ -115,11 +115,15 @@ public class WebsiteServiceImpl implements WebsiteService {
             paramNameContainsUrl = "rawWebsite",
             paramClassContainsUrl = WebWithNoIdentityDTO.class,
             urlFieldName = "url")
-    public boolean saveWebsiteData(WebWithNoIdentityDTO rawWebsite, String userName) {
+    public boolean saveWebsiteData(WebWithNoIdentityDTO rawWebsite,
+                                   String userName,
+                                   boolean syncToElasticsearch) {
 
-        // 异步，放入 Elasticsearch
-        WebForSearchDTO webForSearch = DozerUtils.convert(rawWebsite, WebForSearchDTO.class);
-        elasticsearchManager.saveDocAsync(webForSearch);
+        if (syncToElasticsearch) {
+            // 异步，放入 Elasticsearch 中
+            WebForSearchDTO webForSearch = DozerUtils.convert(rawWebsite, WebForSearchDTO.class);
+            elasticsearchManager.saveDocAsync(webForSearch);
+        }
 
         // 添加信息后，放入数据库
         WebsiteDO websiteDO = DozerUtils.convert(rawWebsite, WebsiteDO.class);

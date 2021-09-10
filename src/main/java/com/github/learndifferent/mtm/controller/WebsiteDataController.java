@@ -22,12 +22,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/web")
-public class WebController {
+public class WebsiteDataController {
 
     private final WebsiteService websiteService;
 
     @Autowired
-    public WebController(WebsiteService websiteService) {
+    public WebsiteDataController(WebsiteService websiteService) {
         this.websiteService = websiteService;
     }
 
@@ -59,26 +59,29 @@ public class WebController {
             @RequestBody WebWithNoIdentityDTO website
             , @RequestParam("userName") String userName) {
 
-        boolean success = websiteService.saveWebsiteData(website, userName);
+        // 第三个参数传入 false，表示不要同步到 Elasticsearch。因为该数据已经在 Elasticsearch 中存在
+        boolean success = websiteService.saveWebsiteData(website, userName, false);
         return success ? ResultCreator.okResult() : ResultCreator.failResult();
     }
 
     /**
-     * 根据 URL 和用户名，收藏新的网页
+     * 根据 URL 和用户名，收藏新的网页数据
      *
      * @param urlAndName 网页链接和用户信息
+     * @param syncToEs   是否同步数据到 Elasticsearch
      * @return 响应文本
      */
     @SystemLog(title = "Mark", optsType = OptsType.CREATE)
     @PostMapping("/add")
-    public ResultVO<?> saveWebsiteData(@RequestBody WebUrlAndNameVO urlAndName) {
+    public ResultVO<?> saveWebsiteData(@RequestBody WebUrlAndNameVO urlAndName,
+                                       @RequestParam("syncToEs") boolean syncToEs) {
 
         String userName = urlAndName.getUserName();
         String url = urlAndName.getUrl();
 
         WebWithNoIdentityDTO rawWebsite = websiteService.scrapeWebsiteDataFromUrl(url, userName);
 
-        boolean success = websiteService.saveWebsiteData(rawWebsite, userName);
+        boolean success = websiteService.saveWebsiteData(rawWebsite, userName, syncToEs);
         return success ? ResultCreator.okResult() : ResultCreator.failResult();
     }
 }
