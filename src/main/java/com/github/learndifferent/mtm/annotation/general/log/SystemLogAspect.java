@@ -60,13 +60,13 @@ public class SystemLogAspect {
 
         try {
             Object result = pjp.proceed();
-            asyncLogManager.saveSysLog(sysLog.build());
+            asyncLogManager.saveSysLogAsync(sysLog.build());
             return result;
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             sysLog.status(LogStatus.ERROR.status())
                     .msg(throwable.getMessage());
-            asyncLogManager.saveSysLog(sysLog.build());
+            asyncLogManager.saveSysLogAsync(sysLog.build());
             // 包装为 RuntimeException 并抛出
             throw new RuntimeException(throwable);
         }

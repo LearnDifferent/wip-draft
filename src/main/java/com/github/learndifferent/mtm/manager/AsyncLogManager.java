@@ -50,7 +50,7 @@ public class AsyncLogManager {
      * @param log 操作记录
      */
     @Async
-    public void saveSysLog(SysLog log) {
+    public void saveSysLogAsync(SysLog log) {
         template.opsForList().leftPush(KeyConstant.SYSTEM_LOG, JsonUtils.toJson(log));
     }
 }

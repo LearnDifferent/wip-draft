@@ -119,7 +119,7 @@ public class WebsiteServiceImpl implements WebsiteService {
 
         // 异步，放入 Elasticsearch
         WebForSearchDTO searchWeb = DozerUtils.convert(rawWebsite, WebForSearchDTO.class);
-        elasticsearchManager.saveDoc(searchWeb);
+        elasticsearchManager.saveDocAsync(searchWeb);
 
         // 添加信息后，放入数据库
         WebsiteDO websiteDO = DozerUtils.convert(rawWebsite, WebsiteDO.class);

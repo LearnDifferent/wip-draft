@@ -16,6 +16,7 @@ import com.github.pemistahl.lingua.api.Language;
 import com.github.pemistahl.lingua.api.LanguageDetector;
 import com.github.pemistahl.lingua.api.LanguageDetectorBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -24,6 +25,8 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.CountRequest;
+import org.elasticsearch.client.core.CountResponse;
 import org.elasticsearch.client.indices.*;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.unit.TimeValue;
@@ -88,6 +91,7 @@ public class ElasticsearchManager {
                     .create(request, RequestOptions.DEFAULT);
             return response.isAcknowledged();
         } catch (IOException e) {
+            e.printStackTrace();
             throw new ServiceException(ResultCode.CONNECTION_ERROR);
         }
     }
@@ -102,17 +106,37 @@ public class ElasticsearchManager {
             GetIndexRequest request = new GetIndexRequest(EsConstant.INDEX);
             return client.indices().exists(request, RequestOptions.DEFAULT);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ServiceException(ResultCode.CONNECTION_ERROR);
         }
     }
 
+
     /**
-     * 存放文档
+     * 统计数据条数
+     *
+     * @return int 数据条数
+     */
+    public long countDocs() {
+        CountRequest request = new CountRequest(EsConstant.INDEX);
+        try {
+            CountResponse countResponse = client.count(request, RequestOptions.DEFAULT);
+            return countResponse.getCount();
+        } catch (IOException | ElasticsearchStatusException e) {
+            // 出现错误的时候，直接返回 -1，不需要 e.printStackTrace();
+            // 出现 ElasticsearchStatusException，表示没有该 Index
+            log.error("Exception while counting. Returned minus one.");
+            return -1L;
+        }
+    }
+
+    /**
+     * 异步存放文档
      *
      * @param web 需要存放的数据
      */
     @Async("asyncTaskExecutor")
-    public void saveDoc(WebForSearchDTO web) {
+    public void saveDocAsync(WebForSearchDTO web) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             String data = mapper.writeValueAsString(web);
@@ -148,16 +172,18 @@ public class ElasticsearchManager {
                     .delete(request, RequestOptions.DEFAULT);
             return response.isAcknowledged();
         } catch (IOException e) {
+            e.printStackTrace();
             throw new ServiceException(ResultCode.CONNECTION_ERROR);
         }
     }
 
     /**
-     * 确保之前的数据已经清空，再根据数据库中的数据生成 Elasticsearch 的数据
+     * 重新生成搜索数据。
+     * <p>确保之前的数据已经清空，再根据数据库中的数据生成 Elasticsearch 的数据。</p>
      *
      * @return 是否成功
      */
-    public boolean reGenerateSearchData() {
+    public boolean generateSearchData() {
 
         boolean notClear = !checkAndDeleteIndex();
         if (notClear) {
@@ -195,17 +221,18 @@ public class ElasticsearchManager {
             // 没问题返回 true，出现问题返回 false
             return !response.hasFailures();
         } catch (IOException e) {
+            e.printStackTrace();
             throw new ServiceException(ResultCode.CONNECTION_ERROR);
         }
     }
 
     /**
-     * 分解搜索的关键词，并加入到热搜列表中
+     * 异步分解搜索的关键词，并加入到热搜列表中
      *
      * @param keyword 没有进行分词处理和语言识别的搜索词
      */
     @Async("asyncTaskExecutor")
-    public void analyzeKeywordAndPutToTrendingList(String keyword) {
+    public void analyzeKeywordAndPutToTrendsListAsync(String keyword) {
 
         if (StringUtils.isEmpty(keyword)) {
             return;
@@ -284,7 +311,7 @@ public class ElasticsearchManager {
         ElasticsearchManager elasticsearchManager = ApplicationContextUtils
                 .getBean(ElasticsearchManager.class);
         // 将搜索词分词后放入热搜统计
-        elasticsearchManager.analyzeKeywordAndPutToTrendingList(keyword);
+        elasticsearchManager.analyzeKeywordAndPutToTrendsListAsync(keyword);
 
         int from = pageInfo.getFrom();
         int size = pageInfo.getSize();
@@ -307,6 +334,7 @@ public class ElasticsearchManager {
         try {
             hits = client.search(request, RequestOptions.DEFAULT).getHits();
         } catch (IOException e) {
+            e.printStackTrace();
             throw new ServiceException(ResultCode.CONNECTION_ERROR);
         }
 

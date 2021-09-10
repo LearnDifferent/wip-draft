@@ -9,6 +9,7 @@ import com.github.learndifferent.mtm.manager.ElasticsearchManager;
 import com.github.learndifferent.mtm.manager.TrendsManager;
 import com.github.learndifferent.mtm.response.ResultCreator;
 import com.github.learndifferent.mtm.response.ResultVO;
+import com.github.learndifferent.mtm.service.WebsiteService;
 import com.github.learndifferent.mtm.utils.DozerUtils;
 import com.github.learndifferent.mtm.vo.FindPageInitVO;
 import com.github.learndifferent.mtm.vo.SearchResultsVO;
@@ -29,12 +30,15 @@ public class FindController {
 
     private final ElasticsearchManager elasticsearchManager;
     private final TrendsManager trendsManager;
+    private final WebsiteService websiteService;
 
     @Autowired
     public FindController(ElasticsearchManager elasticsearchManager,
-                          TrendsManager trendsManager) {
+                          TrendsManager trendsManager,
+                          WebsiteService websiteService) {
         this.elasticsearchManager = elasticsearchManager;
         this.trendsManager = trendsManager;
+        this.websiteService = websiteService;
     }
 
     /**
@@ -46,11 +50,24 @@ public class FindController {
     @GetMapping
     public ResultVO<FindPageInitVO> load() {
 
+        // 热搜数据
         Set<String> trendingList = trendsManager.getTrends();
+        // 是否存在可供搜索的数据
         boolean exist = elasticsearchManager.existsIndex();
 
-        FindPageInitVO data = FindPageInitVO.builder()
-                .trendingList(trendingList).dataStatus(exist).build();
+        // 数据库中的 distinct url 的数量
+        long databaseUrlCount = websiteService.countDistinctUrl();
+        // Elasticsearch 中文档的数量
+        long elasticsearchDocCount = elasticsearchManager.countDocs();
+        // 两者数量不等的时候，说明有更新
+        boolean hasNewUpdate = databaseUrlCount - elasticsearchDocCount != 0;
+
+        FindPageInitVO data = FindPageInitVO
+                .builder()
+                .trendingList(trendingList)
+                .dataStatus(exist)
+                .hasNewUpdate(hasNewUpdate)
+                .build();
 
         return ResultCreator.okResult(data);
     }
@@ -103,8 +120,8 @@ public class FindController {
      */
     @SystemLog(optsType = OptsType.UPDATE)
     @GetMapping("/build")
-    public boolean reGenerateSearchDataBasedOnDatabase() {
-        return elasticsearchManager.reGenerateSearchData();
+    public boolean generateSearchDataBasedOnDatabase() {
+        return elasticsearchManager.generateSearchData();
     }
 
     /**
