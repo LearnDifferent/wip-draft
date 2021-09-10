@@ -123,9 +123,13 @@ public class ElasticsearchManager {
             CountResponse countResponse = client.count(request, RequestOptions.DEFAULT);
             return countResponse.getCount();
         } catch (IOException | ElasticsearchStatusException e) {
-            // 出现错误的时候，直接返回 -1，不需要 e.printStackTrace();
-            // 出现 ElasticsearchStatusException，表示没有该 Index
-            log.error("Exception while counting. Returned minus one.");
+            if (e instanceof ElasticsearchStatusException) {
+                log.warn("ElasticsearchStatusException while counting, " +
+                        "which means the Index has been deleted. Returned minus one.");
+            } else {
+                log.error("IOException while counting. Returned minus one.");
+                e.printStackTrace();
+            }
             return -1L;
         }
     }
