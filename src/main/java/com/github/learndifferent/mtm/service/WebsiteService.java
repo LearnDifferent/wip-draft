@@ -119,16 +119,12 @@ public interface WebsiteService {
     /**
      * 保存没有 ID、用户名和创建时间的网页数据，并添加用户信息，生成时间（ID 会在数据库中生成）。
      * <p>如果已经收藏过了，就不能收藏第二次，会抛出异常</p>
-     * <p>如果 syncToElasticsearch 参数为 true，则还会调用另一个线程将数据放入 Elasticsearch 中</p>
      *
-     * @param rawWebsite          没有 ID、用户名和创建时间的网页数据
-     * @param userName            保存该网页的用户
-     * @param syncToElasticsearch 是否同步网页数据到 elasticsearch
+     * @param rawWebsite 没有 ID、用户名和创建时间的网页数据
+     * @param userName   保存该网页的用户
      * @return 是否成功
      */
-    boolean saveWebsiteData(WebWithNoIdentityDTO rawWebsite,
-                            String userName,
-                            boolean syncToElasticsearch);
+    boolean saveWebsiteData(WebWithNoIdentityDTO rawWebsite, String userName);
 
     /**
      * 根据链接，获取网页的 title、url、img 和简介数据

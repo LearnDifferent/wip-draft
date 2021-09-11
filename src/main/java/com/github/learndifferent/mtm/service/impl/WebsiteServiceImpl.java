@@ -10,7 +10,6 @@ import com.github.learndifferent.mtm.dto.WebsiteDTO;
 import com.github.learndifferent.mtm.dto.WebsiteWithCountDTO;
 import com.github.learndifferent.mtm.entity.WebsiteDO;
 import com.github.learndifferent.mtm.exception.ServiceException;
-import com.github.learndifferent.mtm.manager.ElasticsearchManager;
 import com.github.learndifferent.mtm.mapper.WebsiteMapper;
 import com.github.learndifferent.mtm.query.WebFilter;
 import com.github.learndifferent.mtm.service.WebsiteService;
@@ -40,12 +39,10 @@ import java.util.List;
 public class WebsiteServiceImpl implements WebsiteService {
 
     private final WebsiteMapper websiteMapper;
-    private final ElasticsearchManager elasticsearchManager;
 
     @Autowired
-    public WebsiteServiceImpl(WebsiteMapper websiteMapper, ElasticsearchManager elasticsearchManager) {
+    public WebsiteServiceImpl(WebsiteMapper websiteMapper) {
         this.websiteMapper = websiteMapper;
-        this.elasticsearchManager = elasticsearchManager;
     }
 
     @Override
@@ -115,16 +112,7 @@ public class WebsiteServiceImpl implements WebsiteService {
             paramNameContainsUrl = "rawWebsite",
             paramClassContainsUrl = WebWithNoIdentityDTO.class,
             urlFieldName = "url")
-    public boolean saveWebsiteData(WebWithNoIdentityDTO rawWebsite,
-                                   String userName,
-                                   boolean syncToElasticsearch) {
-
-        if (syncToElasticsearch) {
-            // 异步，放入 Elasticsearch 中
-            WebForSearchDTO webForSearch = DozerUtils.convert(rawWebsite, WebForSearchDTO.class);
-            elasticsearchManager.saveDocAsync(webForSearch);
-        }
-
+    public boolean saveWebsiteData(WebWithNoIdentityDTO rawWebsite, String userName) {
         // 添加信息后，放入数据库
         WebsiteDO websiteDO = DozerUtils.convert(rawWebsite, WebsiteDO.class);
         return websiteMapper.addWebsiteData(websiteDO
@@ -150,7 +138,6 @@ public class WebsiteServiceImpl implements WebsiteService {
 
         try {
             Document document = Jsoup.parse(new URL(url), 3000);
-//        Document document = Jsoup.connect(url).get(); // 这样无法抛出网页格式异常
 
             // 如果获取到了，就保存
             String title = ShortenUtils.shorten(document.title(), 47);
