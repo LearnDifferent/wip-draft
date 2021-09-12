@@ -3,19 +3,21 @@ package com.github.learndifferent.mtm.manager;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck;
 import com.github.learndifferent.mtm.constant.enums.ShowPattern;
-import com.github.learndifferent.mtm.dto.PageInfoDTO;
-import com.github.learndifferent.mtm.dto.WebsiteDTO;
-import com.github.learndifferent.mtm.dto.WebsitePatternDTO;
-import com.github.learndifferent.mtm.dto.WebsiteWithCountDTO;
+import com.github.learndifferent.mtm.dto.*;
 import com.github.learndifferent.mtm.service.WebsiteService;
 import com.github.learndifferent.mtm.utils.PageUtil;
+import com.github.learndifferent.mtm.vo.NewWebVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
- * 操作网页数据
+ * 操作网页数据的一些特殊操作
  *
  * @author zhou
  * @date 2021/09/05
@@ -24,10 +26,48 @@ import java.util.List;
 public class WebsiteManager {
 
     private final WebsiteService websiteService;
+    private final ElasticsearchManager elasticsearchManager;
 
     @Autowired
-    public WebsiteManager(WebsiteService websiteService) {
+    public WebsiteManager(WebsiteService websiteService,
+                          ElasticsearchManager elasticsearchManager) {
         this.websiteService = websiteService;
+        this.elasticsearchManager = elasticsearchManager;
+    }
+
+    /**
+     * 根据 URL 和用户名，收藏新的网页数据
+     *
+     * @param newWebVO URL、用户名，以及是否同步数据到 Elasticsearch
+     * @return {@code boolean[]} boolean 数组 index 为 0 的位置表示是否存放到数据库中，
+     * boolean 数组 index 为 1 的位置表示是否存放到 Elasticsearch 中。
+     */
+    public boolean[] saveNewWebsiteData(NewWebVO newWebVO) {
+
+        String url = newWebVO.getUrl();
+        String username = newWebVO.getUsername();
+        Boolean syncToElasticsearch = newWebVO.getSyncToElasticsearch();
+
+        WebWithNoIdentityDTO rawWebsite = websiteService.scrapeWebsiteDataFromUrl(url, username);
+
+        // 如果选择同步到 Elasticsearch 中，就异步执行保存网页数据的方法并返回结果
+        // 如果选择不同步，也就是 syncToEs 为 false 或 null 的情况：直接返回 true 作为结果，表示无需异步存放
+        Future<Boolean> futureResult = elasticsearchManager
+                .saveDocAsync(rawWebsite, syncToElasticsearch);
+
+        // 将网页数据放入数据库，返回是否成功放入
+        boolean toDatabase = websiteService.saveWebsiteData(rawWebsite, username);
+
+        // true 表示存放成功或无需存放到 Elasticsearch；false 表示存放失败
+        boolean toElasticsearch = true;
+        try {
+            // 获取异步存放数据到 Elasticsearch 的结果
+            toElasticsearch = futureResult.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            e.printStackTrace();
+        }
+
+        return new boolean[]{toDatabase, toElasticsearch};
     }
 
     /**

@@ -15,6 +15,12 @@ import org.springframework.util.StringUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * 清理 Website 数据中 title 和 desc 的长度，判断 url 格式是否正确，以及清理 url
+ *
+ * @author zhou
+ * @date 2021/09/12
+ */
 @Component
 @Aspect
 @Order(3)

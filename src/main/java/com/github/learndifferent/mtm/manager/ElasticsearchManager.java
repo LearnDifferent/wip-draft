@@ -9,7 +9,7 @@ import com.github.learndifferent.mtm.dto.SearchResultsDTO;
 import com.github.learndifferent.mtm.dto.WebForSearchDTO;
 import com.github.learndifferent.mtm.dto.WebWithNoIdentityDTO;
 import com.github.learndifferent.mtm.exception.ServiceException;
-import com.github.learndifferent.mtm.service.WebsiteService;
+import com.github.learndifferent.mtm.mapper.WebsiteMapper;
 import com.github.learndifferent.mtm.utils.ApplicationContextUtils;
 import com.github.learndifferent.mtm.utils.DozerUtils;
 import com.github.learndifferent.mtm.utils.JsonUtils;
@@ -67,15 +67,15 @@ import java.util.concurrent.TimeUnit;
 public class ElasticsearchManager {
 
     private final RestHighLevelClient client;
-    private final WebsiteService websiteService;
+    private final WebsiteMapper websiteMapper;
     private final TrendsManager trendsManager;
 
     @Autowired
     public ElasticsearchManager(@Qualifier("restHighLevelClient") RestHighLevelClient client,
-                                WebsiteService websiteService,
+                                WebsiteMapper websiteMapper,
                                 TrendsManager trendsManager) {
         this.client = client;
-        this.websiteService = websiteService;
+        this.websiteMapper = websiteMapper;
         this.trendsManager = trendsManager;
     }
 
@@ -147,7 +147,7 @@ public class ElasticsearchManager {
      */
     public boolean differentFromDatabase() {
         // 数据库中的 distinct url 的数量
-        long databaseUrlCount = websiteService.countDistinctUrl();
+        long databaseUrlCount = websiteMapper.countDistinctUrl();
         // Elasticsearch 中的文档的数量
         long elasticsearchDocCount = countDocs();
         // 两者数量是否相同
@@ -173,15 +173,17 @@ public class ElasticsearchManager {
      * 异步存放文档
      *
      * @param websiteData                   需要存放的网页原始数据
-     * @param ifFalseThenReturnTrueAsResult 如果传入的是 false，表示不要异步存放文档，
+     * @param ifFalseThenReturnTrueAsResult 如果传入的是 null 或 false，表示不要异步存放文档，
      *                                      此时直接返回 true 作为结果，表示无需异步存放。
      *                                      <p>如果传入的是 true，表示需要异步存放文档</p>
      * @return {@code Future<Boolean>} true 表示成功，或者无需存放；false 表示存放失败
      */
     public Future<Boolean> saveDocAsync(WebWithNoIdentityDTO websiteData,
-                                        boolean ifFalseThenReturnTrueAsResult) {
+                                        Boolean ifFalseThenReturnTrueAsResult) {
         // 如果 dontSave 为 true，表示无需异步存放此 Doc，直接返回 true 作为结果
-        boolean dontSave = !ifFalseThenReturnTrueAsResult;
+        boolean dontSave = ifFalseThenReturnTrueAsResult == null ||
+                !ifFalseThenReturnTrueAsResult;
+
         if (dontSave) {
             return AsyncResult.forValue(true);
         }
@@ -274,7 +276,7 @@ public class ElasticsearchManager {
      * @return 获取到的网页数据
      */
     private List<WebForSearchDTO> getAllWebsitesDataForSearch() {
-        return websiteService.getAllWebsitesDataForSearch();
+        return websiteMapper.getAllWebsitesDataForSearch();
     }
 
     private boolean bulkAdd(List<WebForSearchDTO> webs) {

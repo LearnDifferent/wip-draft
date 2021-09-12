@@ -5,6 +5,8 @@ import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.WebWithNoIdentityDTO;
 import com.github.learndifferent.mtm.dto.WebsiteDTO;
 import com.github.learndifferent.mtm.exception.ServiceException;
+import com.github.learndifferent.mtm.response.ResultCreator;
+import com.github.learndifferent.mtm.response.ResultVO;
 import com.github.learndifferent.mtm.service.WebsiteService;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -12,6 +14,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -39,31 +42,55 @@ public class HtmlFileManager {
         this.websiteService = websiteService;
     }
 
-    public String importWebsDataFromHtmlFile(MultipartFile htmlFile, String username) throws IOException {
+    public ResultVO<String> importWebsDataFromHtmlFile(MultipartFile htmlFile, String username) {
         // [Success][Failure][Already Exists]
         int[] result = new int[3];
 
-        InputStream in = htmlFile.getInputStream();
-        Document document = Jsoup.parse(in, "UTF-8", "");
-        Elements dts = document.getElementsByTag("dt");
+        try (InputStream in = htmlFile.getInputStream()) {
 
-        dts.forEach(dt -> {
-            WebWithNoIdentityDTO web = getWebFromElement(dt);
-            try {
-                boolean success = websiteService.saveWebsiteData(web, username);
-                if (success) {
-                    result[0]++;
-                } else {
-                    result[1]++;
+            Document document = Jsoup.parse(in, "UTF-8", "");
+            Elements dts = document.getElementsByTag("dt");
+
+            dts.forEach(dt -> {
+                WebWithNoIdentityDTO web = getWebFromElement(dt);
+                try {
+                    boolean success = websiteService.saveWebsiteData(web, username);
+                    if (success) {
+                        result[0]++;
+                    } else {
+                        result[1]++;
+                    }
+                } catch (ServiceException e) {
+                    switch (e.getResultCode()) {
+                        case ALREADY_MARKED:
+                            // 如果抛出的是已经收藏过了的异常，就将 Already Exists 结果加一
+                            result[2]++;
+                            break;
+                        case URL_MALFORMED:
+                            // 如果是 URL 格式异常，就按失败来处理
+                            result[1]++;
+                            break;
+                        default:
+                            // 如果是其他情况，就继续抛出
+                            throw new ServiceException(e.getResultCode(), e.getMessage());
+                    }
                 }
-            } catch (ServiceException e) {
-                result[2]++;
-            }
-        });
+            });
 
-        return "Success: " + result[0] +
-                ", Failure: " + result[1] +
-                ", Already Exists: " + result[2];
+        } catch (IOException e) {
+            throw new ServiceException(ResultCode.CONNECTION_ERROR);
+        }
+
+        boolean hasData = result[0] + result[1] + result[2] != 0;
+
+        if (hasData) {
+            String responseMsg = "Success: " + result[0] +
+                    ", Failure: " + result[1] +
+                    ", Already Exists: " + result[2];
+            return ResultCreator.okResult(responseMsg);
+        }
+
+        return ResultCreator.failResult("No Data Available. Please Upload the Correct HTML file.");
     }
 
     private WebWithNoIdentityDTO getWebFromElement(org.jsoup.nodes.Element dt) {
@@ -89,16 +116,18 @@ public class HtmlFileManager {
 
     /**
      * 以 HTML 格式，导出该用户的所有网页数据
+     * <p>如果根据用户名找不到网页数据，就抛出异常</p>
      *
      * @param username 用户名
      * @param response response
+     * @throws ServiceException ResultCode.NO_RESULTS_FOUND
      */
     public void exportWebsDataByUserToHtmlFile(String username,
                                                HttpServletResponse response) {
 
         Date date = Calendar.getInstance().getTime();
         String time = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS").format(date);
-        String filename = "mtm_" + time + ".html";
+        String filename = username + "_" + time + ".html";
 
         String html = getWebsDataByUserInHtml(username);
 
@@ -112,14 +141,21 @@ public class HtmlFileManager {
     }
 
     /**
-     * 根据用户名，生成该用户保存的所有网页数据，并返回 html 格式的字符串
+     * 根据用户名，生成该用户保存的所有网页数据，并返回 html 格式的字符串。
+     * <p>如果根据用户名找不到网页数据，就抛出异常</p>
      *
      * @param username 用户名
      * @return {@code String}
+     * @throws ServiceException ResultCode.NO_RESULTS_FOUND
      */
     private String getWebsDataByUserInHtml(String username) {
 
         List<WebsiteDTO> webs = websiteService.findWebsitesDataByUser(username);
+
+        if (CollectionUtils.isEmpty(webs)) {
+            throw new ServiceException(ResultCode.NO_RESULTS_FOUND);
+        }
+
         StringBuilder sb = new StringBuilder();
 
         sb.append(HtmlFileConstant.FILE_START);

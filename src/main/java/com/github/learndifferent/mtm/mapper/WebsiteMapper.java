@@ -79,7 +79,8 @@ public interface WebsiteMapper {
     int countExcludeUserPost(String userName);
 
     /**
-     * 根据用户得到的网页数据（分页）
+     * 根据用户得到的网页数据
+     * <p>如果 from 和 size 不为 null，则分页。</p>
      *
      * @param userName 用户名
      * @param from     from

@@ -1,9 +1,9 @@
 package com.github.learndifferent.mtm.service.impl;
 
-import com.github.learndifferent.mtm.annotation.modify.marked.IfMarkedThenReturn;
+import com.github.learndifferent.mtm.annotation.modify.marked.MarkCheckReturn;
 import com.github.learndifferent.mtm.annotation.modify.url.UrlClean;
 import com.github.learndifferent.mtm.annotation.modify.webdata.WebsiteDataClean;
-import com.github.learndifferent.mtm.annotation.validation.marked.UserAlreadyMarkedCheck;
+import com.github.learndifferent.mtm.annotation.validation.marked.MarkCheck;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.WebForSearchDTO;
 import com.github.learndifferent.mtm.dto.WebWithNoIdentityDTO;
@@ -15,13 +15,11 @@ import com.github.learndifferent.mtm.mapper.WebsiteMapper;
 import com.github.learndifferent.mtm.query.WebFilter;
 import com.github.learndifferent.mtm.service.WebsiteService;
 import com.github.learndifferent.mtm.utils.DozerUtils;
-import com.github.learndifferent.mtm.utils.ShortenUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -110,13 +108,11 @@ public class WebsiteServiceImpl implements WebsiteService {
 
     @Override
     @WebsiteDataClean
-    @UserAlreadyMarkedCheck(
+    @MarkCheck(
             usernameParamName = "userName",
-            paramNameContainsUrl = "rawWebsite",
             paramClassContainsUrl = WebWithNoIdentityDTO.class,
-            urlFieldName = "url")
+            urlFieldNameInParamClass = "url")
     public boolean saveWebsiteData(WebWithNoIdentityDTO rawWebsite, String userName) {
-        // 检查
         // 添加信息后，放入数据库
         WebsiteDO websiteDO = DozerUtils.convert(rawWebsite, WebsiteDO.class);
         return websiteMapper.addWebsiteData(websiteDO
@@ -133,10 +129,10 @@ public class WebsiteServiceImpl implements WebsiteService {
      * @param url      网页链接
      * @param userName 收藏该网页的用户
      * @return 剔除了唯一信息的网页数据
-     * @throws ServiceException 会判断并抛出异常
+     * @throws ServiceException 会判断并抛出相应的异常
      */
     @UrlClean(urlParamName = "url")
-    @IfMarkedThenReturn(urlParamName = "url", usernameParamName = "userName")
+    @MarkCheckReturn(urlParamName = "url", usernameParamName = "userName")
     @Override
     public WebWithNoIdentityDTO scrapeWebsiteDataFromUrl(String url, String userName) {
 
@@ -144,18 +140,9 @@ public class WebsiteServiceImpl implements WebsiteService {
             Document document = Jsoup.parse(new URL(url), 3000);
 
             // 如果获取到了，就保存
-            String title = ShortenUtils.shorten(document.title(), 47);
+            String title = document.title();
+            String desc = document.body().text();
             String img = getFirstImg(document);
-            String desc = getDesc(document);
-
-            // 如果无法查询到网页名称，就默认设定为 url
-            if (StringUtils.isEmpty(title)) {
-                title = ShortenUtils.shorten(url, 30);
-            }
-            // 如果无法查询到简介，就默认设定为 url
-            if (StringUtils.isEmpty(desc)) {
-                desc = ShortenUtils.shorten(url, 30);
-            }
 
             return WebWithNoIdentityDTO
                     .builder()
@@ -171,11 +158,6 @@ public class WebsiteServiceImpl implements WebsiteService {
         } catch (IOException e) {
             throw new ServiceException(ResultCode.CONNECTION_ERROR);
         }
-    }
-
-    private String getDesc(Document document) {
-        String text = document.body().text();
-        return ShortenUtils.shorten(ShortenUtils.flatten(text), 260);
     }
 
     private String getFirstImg(Document document) {

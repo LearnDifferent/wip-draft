@@ -17,7 +17,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * 如果已经收藏了，就返回
+ * 如果已经收藏了，就抛出异常。
+ * 如果还没收藏，且数据库中有，就返回数据库中的数据。
+ * 如果还没收藏，而数据库中也没有，再继续运行。
  *
  * @author zhou
  * @date 2021/09/05
@@ -25,12 +27,12 @@ import java.util.List;
 @Aspect
 @Component
 @Order(2)
-public class IfMarkedThenReturnAspect {
+public class MarkCheckReturnAspect {
 
     private final WebsiteService websiteService;
 
     @Autowired
-    public IfMarkedThenReturnAspect(WebsiteService websiteService) {
+    public MarkCheckReturnAspect(WebsiteService websiteService) {
         this.websiteService = websiteService;
     }
 
@@ -43,7 +45,7 @@ public class IfMarkedThenReturnAspect {
      * @throws Throwable 如果该用户已经收藏过了，就抛出 ServiceException 异常
      */
     @Around("@annotation(annotation)")
-    public Object around(ProceedingJoinPoint pjp, IfMarkedThenReturn annotation) throws Throwable {
+    public Object around(ProceedingJoinPoint pjp, MarkCheckReturn annotation) throws Throwable {
 
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Class<?>[] parameterTypes = signature.getParameterTypes();
