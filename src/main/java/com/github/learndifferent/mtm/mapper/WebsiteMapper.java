@@ -49,7 +49,7 @@ public interface WebsiteMapper {
                                              @Param("size") int size);
 
     /**
-     * 得到所有用于搜索的网页数据
+     * 获取所有用于搜索的网页数据
      *
      * @return {@code List<WebForSearchDTO>}
      */
@@ -82,16 +82,16 @@ public interface WebsiteMapper {
      * 根据用户得到的网页数据（分页）
      *
      * @param userName 用户名
-     * @param from     从
-     * @param size     大小
+     * @param from     from
+     * @param size     size
      * @return {@code List<WebsiteDO>}
      */
     List<WebsiteDO> findWebsitesDataByUser(@Param("userName") String userName,
-                                           @Param("from") int from,
-                                           @Param("size") int size);
+                                           @Param("from") Integer from,
+                                           @Param("size") Integer size);
 
     /**
-     * 排除某用户得到的网页数据（分页）
+     * 排除某用户获取的网页数据（分页）
      *
      * @param userName 用户名
      * @param from     从
@@ -119,13 +119,6 @@ public interface WebsiteMapper {
      */
     List<WebsiteDO> showAllWebsiteDataDesc(@Param("from") int from,
                                            @Param("size") int size);
-
-    /**
-     * 显示所有网页数据（desc 排序）
-     *
-     * @return {@code List<WebsiteDO>}
-     */
-    List<WebsiteDO> showAllWebsiteDataDesc();
 
     /**
      * 通过 id 删除网页

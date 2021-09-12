@@ -42,7 +42,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserWithWebCountDTO> getNamesAndCountMarkedWebsDesc() {
-        return userMapper.getNamesAndCountMarkedWebsDesc();
+        // 传入的参数为 null，表示获取所有用户
+        return userMapper.getNamesAndCountMarkedWebsDesc(null);
     }
 
     @Override

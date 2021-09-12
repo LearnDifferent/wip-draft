@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -25,6 +26,7 @@ import java.lang.reflect.Field;
 @Slf4j
 @Aspect
 @Component
+@Order(4)
 public class UserAlreadyMarkedCheckAspect {
 
     private final WebsiteService websiteService;
@@ -84,6 +86,7 @@ public class UserAlreadyMarkedCheckAspect {
             urlField.setAccessible(true);
             return (String) urlField.get(arg);
         } catch (NoSuchFieldException | IllegalAccessException | ClassCastException e) {
+            e.printStackTrace();
             log.warn("无法获取 URL，已转换为空字符串");
             return "";
         }

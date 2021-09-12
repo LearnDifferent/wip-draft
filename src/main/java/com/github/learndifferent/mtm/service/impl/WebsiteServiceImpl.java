@@ -2,6 +2,7 @@ package com.github.learndifferent.mtm.service.impl;
 
 import com.github.learndifferent.mtm.annotation.modify.marked.IfMarkedThenReturn;
 import com.github.learndifferent.mtm.annotation.modify.url.UrlClean;
+import com.github.learndifferent.mtm.annotation.modify.webdata.WebsiteDataClean;
 import com.github.learndifferent.mtm.annotation.validation.marked.UserAlreadyMarkedCheck;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.WebForSearchDTO;
@@ -73,12 +74,6 @@ public class WebsiteServiceImpl implements WebsiteService {
     }
 
     @Override
-    public List<WebsiteDTO> showAllWebsiteDataDesc() {
-        List<WebsiteDO> webs = websiteMapper.showAllWebsiteDataDesc();
-        return DozerUtils.convertList(webs, WebsiteDTO.class);
-    }
-
-    @Override
     public int countUserPost(String userName) {
         return websiteMapper.countUserPost(userName);
     }
@@ -95,8 +90,15 @@ public class WebsiteServiceImpl implements WebsiteService {
     }
 
     @Override
-    public List<WebsiteDTO> findWebsitesDataByUser(String userName, int from, int size) {
+    public List<WebsiteDTO> findWebsitesDataByUser(String userName, Integer from, Integer size) {
         List<WebsiteDO> webs = websiteMapper.findWebsitesDataByUser(userName, from, size);
+        return DozerUtils.convertList(webs, WebsiteDTO.class);
+    }
+
+    @Override
+    public List<WebsiteDTO> findWebsitesDataByUser(String userName) {
+        // from 和 size 为 null 的时候，表示不分页，直接获取全部
+        List<WebsiteDO> webs = websiteMapper.findWebsitesDataByUser(userName, null, null);
         return DozerUtils.convertList(webs, WebsiteDTO.class);
     }
 
@@ -107,12 +109,14 @@ public class WebsiteServiceImpl implements WebsiteService {
     }
 
     @Override
+    @WebsiteDataClean
     @UserAlreadyMarkedCheck(
             usernameParamName = "userName",
             paramNameContainsUrl = "rawWebsite",
             paramClassContainsUrl = WebWithNoIdentityDTO.class,
             urlFieldName = "url")
     public boolean saveWebsiteData(WebWithNoIdentityDTO rawWebsite, String userName) {
+        // 检查
         // 添加信息后，放入数据库
         WebsiteDO websiteDO = DozerUtils.convert(rawWebsite, WebsiteDO.class);
         return websiteMapper.addWebsiteData(websiteDO
@@ -153,8 +157,13 @@ public class WebsiteServiceImpl implements WebsiteService {
                 desc = ShortenUtils.shorten(url, 30);
             }
 
-            return WebWithNoIdentityDTO.builder()
-                    .title(title).url(url).img(img).desc(desc).build();
+            return WebWithNoIdentityDTO
+                    .builder()
+                    .title(title)
+                    .url(url)
+                    .img(img)
+                    .desc(desc)
+                    .build();
         } catch (MalformedURLException e) {
             throw new ServiceException(ResultCode.URL_MALFORMED);
         } catch (SocketTimeoutException e) {
@@ -172,7 +181,7 @@ public class WebsiteServiceImpl implements WebsiteService {
     private String getFirstImg(Document document) {
         Elements images = document.select("img[src]");
 
-        if (images.size() >= 1) {
+        if (images.size() > 0) {
             return images.get(0).attr("abs:src");
         }
         // 如果没有图片，就返回一个默认图片地址

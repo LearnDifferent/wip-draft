@@ -4,6 +4,7 @@ import com.github.learndifferent.mtm.dto.WebForSearchDTO;
 import com.github.learndifferent.mtm.dto.WebWithNoIdentityDTO;
 import com.github.learndifferent.mtm.dto.WebsiteDTO;
 import com.github.learndifferent.mtm.dto.WebsiteWithCountDTO;
+import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.query.WebFilter;
 import org.apache.ibatis.annotations.Param;
 
@@ -62,13 +63,6 @@ public interface WebsiteService {
     List<WebsiteDTO> showAllWebsiteDataDesc(int from, int size);
 
     /**
-     * 倒序查询所有网页
-     *
-     * @return 查询到的网页
-     */
-    List<WebsiteDTO> showAllWebsiteDataDesc();
-
-    /**
      * 计算某个用户收藏的网页的总数
      *
      * @param userName 某个用户
@@ -105,8 +99,16 @@ public interface WebsiteService {
      * @return 某个用户的所有收藏
      */
     List<WebsiteDTO> findWebsitesDataByUser(@Param("userName") String userName,
-                                            @Param("from") int from,
-                                            @Param("size") int size);
+                                            @Param("from") Integer from,
+                                            @Param("size") Integer size);
+
+    /**
+     * 根据用户获取该用户的所有网页数据
+     *
+     * @param userName 用户名
+     * @return {@code List<WebsiteDO>}
+     */
+    List<WebsiteDTO> findWebsitesDataByUser(String userName);
 
     /**
      * 通过id找到网页数据
@@ -123,6 +125,8 @@ public interface WebsiteService {
      * @param rawWebsite 没有 ID、用户名和创建时间的网页数据
      * @param userName   保存该网页的用户
      * @return 是否成功
+     * @throws ServiceException 如果已经收藏了，会抛出 ServiceException，
+     *                          代码为：ResultCode.ALREADY_MARKED
      */
     boolean saveWebsiteData(WebWithNoIdentityDTO rawWebsite, String userName);
 
