@@ -92,7 +92,10 @@
         select *
         from website
         where userName = #{userName}
-        order by webId desc limit #{from}, #{size};
+        order by webId desc
+        <if test="from!=null and size!=null">
+            limit #{from},#{size}
+        </if>
 
     </select>
     <select id="countUserPost" resultType="java.lang.Integer">
