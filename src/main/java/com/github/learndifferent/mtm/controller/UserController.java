@@ -57,6 +57,7 @@ public class UserController {
             invitationCodeParamName = CodeConstant.INVITATION_CODE)
     @PostMapping("/create")
     public ResultVO<?> createUser(@RequestBody UserBasicInfoVO basicInfo) {
+
         boolean success = userService.addUserByBasicInfo(basicInfo);
 
         return success ? ResultCreator.okResult()

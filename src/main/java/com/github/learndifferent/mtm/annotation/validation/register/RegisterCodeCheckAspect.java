@@ -38,8 +38,8 @@ public class RegisterCodeCheckAspect {
     @Before("@annotation(annotation)")
     public void check(RegisterCodeCheck annotation) {
 
-        ServletRequestAttributes attributes = (ServletRequestAttributes)
-                RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes attributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
         if (attributes == null) {
             throw new ServiceException("No attributes available.");

@@ -68,11 +68,19 @@ public interface UserService {
     boolean addUser(UserDTO user);
 
     /**
-     * 传入用户名、未加密的密码和角色，生成用户
-     * ，并调用添加用户的方法将用户添加到数据库
+     * 传入用户名、未加密的密码和角色，生成用户，并调用添加用户的方法将用户添加到数据库。
+     * <p>如果该用户名除了数字和英文字母外，还包含其他字符，就抛出异常。</p>
+     * <p>如果该用户已经存在，也会抛出用户已存在的异常。</p>
+     * <p>如果用户名大于 30 个字符，也会抛出异常。</p>
+     * <p>如果密码大于 50 个字符，也会抛出异常</p>
+     * <p>如果用户名或密码为空，抛出异常</p>
      *
      * @param userBasicInfo 用户名、未加密的密码和角色信息
      * @return 成功与否
+     * @throws ServiceException 错误代码为：ResultCode.USER_ALREADY_EXIST、
+     *                          ResultCode.USERNAME_ONLY_LETTERS_NUMBERS、
+     *                          ResultCode.USERNAME_TOO_LONG 和 ResultCode.USERNAME_EMPTY、
+     *                          ResultCode.PASSWORD_TOO_LONG 和 ResultCode.PASSWORD_EMPTY
      */
     boolean addUserByBasicInfo(UserBasicInfoVO userBasicInfo);
 
