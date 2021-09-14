@@ -1,7 +1,7 @@
 package com.github.learndifferent.mtm.constant.enums;
 
 /**
- * 传入的值 num，表示 Current Page 或者 from
+ * 选择传入的值表示的是 Current Page 还是 from
  *
  * @author zhou
  * @date 2021/09/05
@@ -9,21 +9,21 @@ package com.github.learndifferent.mtm.constant.enums;
 public enum PageInfoMode {
 
     /**
-     * 传入的值 num，表示 Current Page
+     * 传入的值表示 Current Page，以 CurrentPage 的形式获取分页信息
      */
-    CURRENT_PAGE_MODE(1),
+    CURRENT_PAGE("currentPage"),
     /**
-     * 传入的值 num，表示 from
+     * 传入的值表示 from，以 from 的形式获取分页信息
      */
-    FROM_MODE(2);
+    FROM("from");
 
-    private final int value;
+    private final String paramName;
 
-    private PageInfoMode(final int value) {
-        this.value = value;
+    private PageInfoMode(final String paramName) {
+        this.paramName = paramName;
     }
 
-    public int value() {
-        return this.value;
+    public String paramName() {
+        return this.paramName;
     }
 }

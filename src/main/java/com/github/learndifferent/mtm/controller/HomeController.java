@@ -69,8 +69,8 @@ public class HomeController {
             @PageInfo(size = 20) PageInfoDTO pageInfo,
             @RequestParam(value = "userName", required = false) String userName) {
 
-        WebsitePatternDTO info = websiteManager.getWebsiteByPattern(
-                pattern, pageInfo, userName);
+        WebsitePatternDTO info = websiteManager.getWebsiteByPattern(pattern,
+                pageInfo, userName);
 
         String currentUser = getCurrentUser();
 

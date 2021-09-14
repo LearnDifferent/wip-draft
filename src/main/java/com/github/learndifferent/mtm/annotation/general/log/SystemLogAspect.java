@@ -37,7 +37,6 @@ public class SystemLogAspect {
     @Around("@annotation(annotation)")
     public Object around(ProceedingJoinPoint pjp, SystemLog annotation) {
 
-
         SysLog.SysLogBuilder sysLog = SysLog.builder();
         OptsType optsType = annotation.optsType();
         sysLog.optType(optsType.value()).optTime(new Date());

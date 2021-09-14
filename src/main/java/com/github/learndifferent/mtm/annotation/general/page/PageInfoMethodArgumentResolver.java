@@ -14,7 +14,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 /**
- * 页面信息方法参数解析器
+ * 页面信息方法参数解析器。根据不同模式传入的信息，生成 PageInfoDTO。
  *
  * @author zhou
  * @date 2021/09/05
@@ -24,11 +24,15 @@ public class PageInfoMethodArgumentResolver implements HandlerMethodArgumentReso
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
+        // 在有 @PageInfo 注解的位置生效，也就是返回 true
         return parameter.hasParameterAnnotation(PageInfo.class);
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, @NotNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
+    public Object resolveArgument(MethodParameter parameter,
+                                  ModelAndViewContainer mavContainer,
+                                  @NotNull NativeWebRequest webRequest,
+                                  WebDataBinderFactory binderFactory) {
 
         PageInfo annotation = parameter.getParameterAnnotation(PageInfo.class);
 
@@ -36,40 +40,40 @@ public class PageInfoMethodArgumentResolver implements HandlerMethodArgumentReso
             throw new ServiceException("No available annotation of Page Info.");
         }
 
-        // 获取传入的参数名
-        String paramName = annotation.paramName();
-        // 获取传入的参数值（有可能为 null）
-        String paramValue = webRequest.getParameter(paramName);
-
-        // 需要的参数
+        // 需要以 from 还是 current page 模式来获取页面信息
         PageInfoMode mode = annotation.pageInfoMode();
+        // 页面的 size
         int size = annotation.size();
 
-        // 参数的字符串值，转化为数字后的值
-        int num = 0;
+        // 获取传入的参数名
+        String paramName = mode.paramName();
+        // 获取传入的参数值（有可能为 null，也就是不存在）
+        String paramValue = webRequest.getParameter(paramName);
 
-        // 如果有值，就转化为 int（为空或 null 或无法转化为数字的时候，默认为 0）
-        num = getNumIfNotEmpty(paramValue, num);
+        // 如果有值，就转化为数值（为空或 null 或无法转化为数字的时候，返回 0）
+        int num = getNumberFromParamValue(paramValue);
 
-        PageInfoDTO.PageInfoDTOBuilder infoBuilder = PageInfoDTO.builder();
-
+        int from;
         switch (mode) {
-            case FROM_MODE:
+            case FROM:
                 // 此时，num 表示 from
-                infoBuilder.from(num).size(size);
+                from = num;
                 break;
-            case CURRENT_PAGE_MODE:
+            case CURRENT_PAGE:
             default:
                 // 此时，num 表示 current page
+                // 让 num 必须大于 0，然后将其设为变量 currentPage
                 int currentPage = PageUtil.constrainGreaterThanZero(num);
-                int from = PageUtil.getFromIndex(currentPage, size);
-                infoBuilder.from(from).size(size);
+                // 根据 currentPage 变量获取 from
+                from = PageUtil.getFromIndex(currentPage, size);
         }
 
-        return infoBuilder.build();
+        return PageInfoDTO.builder().from(from).size(size).build();
     }
 
-    private int getNumIfNotEmpty(String paramValue, int num) {
+    private int getNumberFromParamValue(String paramValue) {
+
+        int num = 0;
 
         if (StringUtils.isNotEmpty(paramValue)) {
             try {
@@ -77,7 +81,7 @@ public class PageInfoMethodArgumentResolver implements HandlerMethodArgumentReso
             } catch (NumberFormatException e) {
                 // 如果输入的字符串无法转化为数字，就打印日志，然后使用默认值
                 e.printStackTrace();
-                log.warn("输入的不是数字");
+                log.warn("Can't cast to number. Return 0 instead.");
             }
         }
         return num;

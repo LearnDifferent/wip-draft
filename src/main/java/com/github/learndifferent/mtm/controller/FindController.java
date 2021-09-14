@@ -94,8 +94,8 @@ public class FindController {
      */
     @SystemLog(optsType = OptsType.READ)
     @GetMapping("/search")
-    public ResultVO<SearchResultsVO> search(@PageInfo PageInfoDTO pageInfo
-            , @RequestParam("keyword") String keyword) {
+    public ResultVO<SearchResultsVO> search(@PageInfo PageInfoDTO pageInfo,
+                                            @RequestParam("keyword") String keyword) {
 
         SearchResultsDTO searchResultsDTO = elasticsearchManager.getSearchResult(keyword, pageInfo);
         SearchResultsVO results = DozerUtils.convert(searchResultsDTO, SearchResultsVO.class);
