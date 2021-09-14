@@ -53,8 +53,7 @@ public class FindController {
         // 是否有新的更新
         boolean hasNewUpdate = elasticsearchManager.differentFromDatabase(exist);
 
-        FindPageInitVO data = FindPageInitVO
-                .builder()
+        FindPageInitVO data = FindPageInitVO.builder()
                 .trendingList(trendingList)
                 .dataStatus(exist)
                 .hasNewUpdate(hasNewUpdate)

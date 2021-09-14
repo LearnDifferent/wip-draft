@@ -144,12 +144,8 @@ public class WebsiteServiceImpl implements WebsiteService {
             String desc = document.body().text();
             String img = getFirstImg(document);
 
-            return WebWithNoIdentityDTO
-                    .builder()
-                    .title(title)
-                    .url(url)
-                    .img(img)
-                    .desc(desc)
+            return WebWithNoIdentityDTO.builder()
+                    .title(title).url(url).img(img).desc(desc)
                     .build();
         } catch (MalformedURLException e) {
             throw new ServiceException(ResultCode.URL_MALFORMED);

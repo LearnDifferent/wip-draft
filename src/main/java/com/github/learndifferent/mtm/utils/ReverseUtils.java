@@ -19,8 +19,7 @@ public class ReverseUtils {
         return !CollectionUtils.isEmpty(collection);
     }
 
-    public static boolean compareStringNotEquals(String baseString,
-                                                 String anotherString) {
+    public static boolean compareStringNotEquals(String baseString, String anotherString) {
         return !baseString.equals(anotherString);
     }
 
@@ -28,10 +27,9 @@ public class ReverseUtils {
         return !StpUtil.hasRole(RoleType.ADMIN.role());
     }
 
-    public static boolean hasNoPermissionToDelete(String userName,
-                                                  WebsiteDTO web) {
-        boolean hasPermissionToDelete =
-                web != null && web.getUserName().equals(userName);
+    public static boolean hasNoPermissionToDelete(String userName, WebsiteDTO web) {
+        boolean hasPermissionToDelete = web != null
+                && web.getUserName().equals(userName);
 
         return !hasPermissionToDelete;
     }

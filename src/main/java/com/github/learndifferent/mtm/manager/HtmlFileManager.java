@@ -81,12 +81,13 @@ public class HtmlFileManager {
             throw new ServiceException(ResultCode.CONNECTION_ERROR);
         }
 
-        boolean hasData = result[0] + result[1] + result[2] != 0;
+        boolean hasData =
+                result[0] + result[1] + result[2] != 0;
 
         if (hasData) {
-            String responseMsg = "Success: " + result[0] +
-                    ", Failure: " + result[1] +
-                    ", Already Exists: " + result[2];
+            String responseMsg = "Success: " + result[0]
+                    + ", Failure: " + result[1]
+                    + ", Already Exists: " + result[2];
             return ResultCreator.okResult(responseMsg);
         }
 

@@ -53,8 +53,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean changePassword(UserChangePwdVO info) {
-        return changePassword(info.getUserName()
-                , info.getOldPassword(), info.getNewPassword());
+        return changePassword(info.getUserName(),
+                info.getOldPassword(), info.getNewPassword());
     }
 
     @Override
@@ -85,12 +85,16 @@ public class UserServiceImpl implements UserService {
         }
 
         // 添加 ID 和创建时间，将密码进行加密处理
-        user.setUserId(UUIDUtils.getUuid())
-                .setCreateTime(new Date())
-                .setPassword(Md5Util.getMd5(user.getPassword()));
+        String uuid = UUIDUtils.getUuid();
+        Date createTime = new Date();
+        String password = Md5Util.getMd5(user.getPassword());
+        user.setUserId(uuid)
+                .setCreateTime(createTime)
+                .setPassword(password);
 
         try {
-            return userMapper.addUser(DozerUtils.convert(user, UserDO.class));
+            UserDO userDO = DozerUtils.convert(user, UserDO.class);
+            return userMapper.addUser(userDO);
         } catch (DuplicateKeyException e) {
             // 因为主键设置为了 userName，所以这里的 DuplicateKeyException 就是重复用户名的意思
             // 相当于捕获：com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException
@@ -105,8 +109,7 @@ public class UserServiceImpl implements UserService {
         UserDTO userDTO = DozerUtils.convert(userBasicInfo, UserDTO.class);
 
         // 启用事务的时候，调用内部类的方法需要通过代理类
-        UserService userService = ApplicationContextUtils.
-                getBean(UserService.class);
+        UserService userService = ApplicationContextUtils.getBean(UserService.class);
 
         return userService.addUser(userDTO);
     }

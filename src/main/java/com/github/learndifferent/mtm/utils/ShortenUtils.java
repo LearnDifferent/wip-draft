@@ -21,8 +21,7 @@ public class ShortenUtils {
     public static String shorten(String content, int length) {
         if (content.length() <= length) {
             return content;
-        } else {
-            return content.substring(0, length - 1) + "...";
         }
+        return content.substring(0, length - 1) + "...";
     }
 }

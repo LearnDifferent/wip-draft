@@ -3,19 +3,18 @@ package com.github.learndifferent.mtm.utils;
 import org.springframework.util.DigestUtils;
 
 /**
- * md5 工具
+ * MD5 工具
  *
- * @author zhou
+ * @author 来自网络，进行了简单修改
  * @date 2021/09/05
  */
 public class Md5Util {
 
-    private static String salt = "acDn156";
+    private static final String salt = "acDn156";
 
     public static String getMd5(String str) {
         String base = str + "/" + salt;
-        String md5 = DigestUtils.md5DigestAsHex(base.getBytes());
-        return md5;
+        return DigestUtils.md5DigestAsHex(base.getBytes());
     }
 
 }

@@ -27,7 +27,8 @@ public class PageUtil {
      * @return 总页数
      */
     public static int getAllPages(int totalCount, int pageSize) {
-        return totalCount % pageSize == 0 ? totalCount / pageSize : totalCount / pageSize + 1;
+        return totalCount % pageSize == 0
+                ? totalCount / pageSize : totalCount / pageSize + 1;
     }
 
     /**

@@ -92,8 +92,7 @@ public class ElasticsearchManager {
     private boolean createIndex() {
         CreateIndexRequest request = new CreateIndexRequest(EsConstant.INDEX);
         try {
-            CreateIndexResponse response = client
-                    .indices()
+            CreateIndexResponse response = client.indices()
                     .create(request, RequestOptions.DEFAULT);
             return response.isAcknowledged();
         } catch (IOException e) {
@@ -151,7 +150,7 @@ public class ElasticsearchManager {
         // Elasticsearch 中的文档的数量
         long elasticsearchDocCount = countDocs();
         // 两者数量是否相同
-        return databaseUrlCount - elasticsearchDocCount != 0;
+        return 0 != databaseUrlCount - elasticsearchDocCount;
     }
 
     /**
@@ -181,8 +180,8 @@ public class ElasticsearchManager {
     public Future<Boolean> saveDocAsync(WebWithNoIdentityDTO websiteData,
                                         Boolean ifFalseThenReturnTrueAsResult) {
         // 如果 dontSave 为 true，表示无需异步存放此 Doc，直接返回 true 作为结果
-        boolean dontSave = ifFalseThenReturnTrueAsResult == null ||
-                !ifFalseThenReturnTrueAsResult;
+        boolean dontSave = ifFalseThenReturnTrueAsResult == null
+                || !ifFalseThenReturnTrueAsResult;
 
         if (dontSave) {
             return AsyncResult.forValue(true);
@@ -242,8 +241,7 @@ public class ElasticsearchManager {
     private boolean deleteIndex() {
         DeleteIndexRequest request = new DeleteIndexRequest(EsConstant.INDEX);
         try {
-            AcknowledgedResponse response = client
-                    .indices()
+            AcknowledgedResponse response = client.indices()
                     .delete(request, RequestOptions.DEFAULT);
             return response.isAcknowledged();
         } catch (IOException e) {
@@ -319,8 +317,7 @@ public class ElasticsearchManager {
         AnalyzeRequest request = AnalyzeRequest
                 .withIndexAnalyzer(EsConstant.INDEX, analyzer, keyword);
         try {
-            AnalyzeResponse analyze = client
-                    .indices()
+            AnalyzeResponse analyze = client.indices()
                     .analyze(request, RequestOptions.DEFAULT);
             List<AnalyzeResponse.AnalyzeToken> tokens = analyze.getTokens();
             for (AnalyzeResponse.AnalyzeToken token : tokens) {
@@ -384,8 +381,8 @@ public class ElasticsearchManager {
 
 
         // 因为要调用内部类的代理方法，所以先获取代理类
-        ElasticsearchManager elasticsearchManager = ApplicationContextUtils
-                .getBean(ElasticsearchManager.class);
+        ElasticsearchManager elasticsearchManager =
+                ApplicationContextUtils.getBean(ElasticsearchManager.class);
         // 将搜索词分词后放入热搜统计
         elasticsearchManager.analyzeKeywordAndPutToTrendsListAsync(keyword);
 
@@ -400,8 +397,8 @@ public class ElasticsearchManager {
                         .field(EsConstant.TITLE)
                         .preTags(EsConstant.PRE_TAGS)
                         .postTags(EsConstant.POST_TAGS)
-                        .numOfFragments(0)
-                ).from(from).size(size);
+                        .numOfFragments(0))
+                .from(from).size(size);
 
         SearchRequest request = new SearchRequest(EsConstant.INDEX).source(sourceBuilder);
 
@@ -427,8 +424,7 @@ public class ElasticsearchManager {
         // 获取需要的网页数据
         List<WebForSearchDTO> webs = getWebsitesDataForSearchByHits(hits);
 
-        return SearchResultsDTO
-                .builder()
+        return SearchResultsDTO.builder()
                 .totalCount(totalCount)
                 .totalPage(totalPage)
                 .webs(webs)
@@ -496,12 +492,8 @@ public class ElasticsearchManager {
         String img = (String) source.get(EsConstant.IMG);
         String desc = (String) source.get(EsConstant.DESC);
 
-        return WebForSearchDTO
-                .builder()
-                .title(title)
-                .url(url)
-                .img(img)
-                .desc(desc)
+        return WebForSearchDTO.builder()
+                .title(title).url(url).img(img).desc(desc)
                 .build();
     }
 
