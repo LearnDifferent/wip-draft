@@ -2,6 +2,7 @@ package com.github.learndifferent.mtm.service.impl;
 
 import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck;
 import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck.ExceptionIfEmpty;
+import com.github.learndifferent.mtm.annotation.validation.user.NewUserCheck;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.UserDTO;
 import com.github.learndifferent.mtm.dto.UserWithWebCountDTO;
@@ -75,14 +76,11 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @NewUserCheck(userClass = UserDTO.class,
+            usernameFieldName = "userName",
+            passwordFieldName = "password")
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public boolean addUser(UserDTO user) {
-
-        String usernameInDb = user.getUserName();
-        if (getUserByName(usernameInDb) != null) {
-            // 如果用户名已经在 Database 中存在，就抛出异常
-            throw new ServiceException(ResultCode.USER_ALREADY_EXIST);
-        }
 
         // 添加 ID 和创建时间，将密码进行加密处理
         String uuid = UUIDUtils.getUuid();

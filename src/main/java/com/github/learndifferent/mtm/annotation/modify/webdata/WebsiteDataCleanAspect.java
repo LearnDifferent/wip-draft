@@ -32,8 +32,8 @@ public class WebsiteDataCleanAspect {
         Object[] args = pjp.getArgs();
 
         for (int i = 0; i < args.length; i++) {
-            if (args[i] != null &&
-                    WebWithNoIdentityDTO.class.isAssignableFrom(args[i].getClass())) {
+            if (args[i] != null
+                    && WebWithNoIdentityDTO.class.isAssignableFrom(args[i].getClass())) {
 
                 WebWithNoIdentityDTO web = (WebWithNoIdentityDTO) args[i];
                 String title = web.getTitle();

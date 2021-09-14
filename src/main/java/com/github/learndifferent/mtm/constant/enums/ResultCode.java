@@ -81,6 +81,26 @@ public enum ResultCode {
      */
     PASSWORD_INCORRECT(3002, "Incorrect Password"),
     /**
+     * 用户名只能为英文字母和数字
+     */
+    USERNAME_ONLY_LETTERS_NUMBERS(3003, "Username must contain ONLY letters and numbers"),
+    /**
+     * 用户名太长
+     */
+    USERNAME_TOO_LONG(3004, "Username must be less than 30 characters"),
+    /**
+     * 用户名太长
+     */
+    PASSWORD_TOO_LONG(3005, "Password must be less than 50 characters"),
+    /**
+     * 用户名为空
+     */
+    USERNAME_EMPTY(3006, "Please Enter Username"),
+    /**
+     * 密码为空
+     */
+    PASSWORD_EMPTY(3007, "Please Enter Password"),
+    /**
      * Unable to connect to the server
      */
     CONNECTION_ERROR(5001, "Unable to connect to the server. Please try again later."),

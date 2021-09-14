@@ -3,6 +3,7 @@ package com.github.learndifferent.mtm.service;
 import com.github.learndifferent.mtm.dto.UserDTO;
 import com.github.learndifferent.mtm.dto.UserWithWebCountDTO;
 import com.github.learndifferent.mtm.entity.UserDO;
+import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.vo.UserBasicInfoVO;
 import com.github.learndifferent.mtm.vo.UserChangePwdVO;
 
@@ -50,11 +51,19 @@ public interface UserService {
     boolean changePassword(String userName, String oldPassword, String newPassword);
 
     /**
-     * 添加用户，并给用户增加 ID 和 CreateTime，将密码加密
-     * ，如果已经存在，会抛出用户已存在的运行时异常
+     * 添加用户，并给用户增加 ID 和 CreateTime，将密码加密。
+     * <p>@UsernameCheck 注解会检查该用户名除了数字和英文字母外，是否还包含其他字符，如果有就抛出异常。</p>
+     * <p>如果该用户已经存在，也会抛出用户已存在的异常。</p>
+     * <p>如果用户名大于 30 个字符，也会抛出异常。</p>
+     * <p>如果密码大于 50 个字符，也会抛出异常</p>
+     * <p>如果用户名或密码为空，抛出异常</p>
      *
      * @param user 被添加的用户
      * @return 成功与否
+     * @throws ServiceException 错误代码为：ResultCode.USER_ALREADY_EXIST、
+     *                          ResultCode.USERNAME_ONLY_LETTERS_NUMBERS、
+     *                          ResultCode.USERNAME_TOO_LONG 和 ResultCode.USERNAME_EMPTY、
+     *                          ResultCode.PASSWORD_TOO_LONG 和 ResultCode.PASSWORD_EMPTY
      */
     boolean addUser(UserDTO user);
 
