@@ -27,26 +27,24 @@ public class UrlCleanAspect {
 
         MethodSignature signature = (MethodSignature) pjp.getSignature();
 
-        Class<?>[] parameterTypes = signature.getParameterTypes();
         String[] parameterNames = signature.getParameterNames();
         Object[] args = pjp.getArgs();
         String urlParamName = annotation.urlParamName();
 
-        // 是否找到 url 参数
-        boolean findUrl = false;
+        // 没有找到 URL
+        boolean cantFindUrl = true;
 
         for (int i = 0; i < parameterNames.length; i++) {
-            if (urlParamName.equalsIgnoreCase(parameterNames[i]) &&
-                    String.class.isAssignableFrom(parameterTypes[i]) &&
-                    ObjectUtils.isNotEmpty(args[i])) {
+            if (urlParamName.equalsIgnoreCase(parameterNames[i])
+                    && ObjectUtils.isNotEmpty(args[i])
+                    && String.class.isAssignableFrom(args[i].getClass())) {
 
                 args[i] = CleanUrlUtil.cleanup((String) args[i]);
-                findUrl = true;
+                cantFindUrl = false;
                 break;
             }
         }
 
-        boolean cantFindUrl = !findUrl;
         if (cantFindUrl) {
             log.info("没有找到 URL，请检查参数名称是否正确");
         }

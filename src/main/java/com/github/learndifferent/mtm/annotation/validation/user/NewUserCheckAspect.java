@@ -15,7 +15,11 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 
 /**
- * 用户名和密码检查
+ * 用户名和密码检查。会抛出 ServiceException 相应的异常。
+ * 错误代码有：ResultCode.USER_ALREADY_EXIST、
+ * ResultCode.USERNAME_ONLY_LETTERS_NUMBERS、
+ * ResultCode.USERNAME_TOO_LONG 和 ResultCode.USERNAME_EMPTY、
+ * ResultCode.PASSWORD_TOO_LONG 和 ResultCode.PASSWORD_EMPTY
  *
  * @author zhou
  * @date 2021/09/13
@@ -43,8 +47,7 @@ public class NewUserCheckAspect {
         String username = "";
         String password = "";
         for (Object arg : args) {
-            if (arg != null
-                    && cls.isAssignableFrom(arg.getClass())) {
+            if (arg != null && cls.isAssignableFrom(arg.getClass())) {
                 username = getFieldValue(cls, usernameFieldName, arg);
                 password = getFieldValue(cls, passwordFieldName, arg);
                 break;

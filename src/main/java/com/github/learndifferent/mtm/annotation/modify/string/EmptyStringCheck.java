@@ -18,6 +18,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EmptyStringCheck {
 
+    /**
+     * 如果为空，转化为一个默认值
+     *
+     * @author zhou
+     * @date 2021/09/05
+     */
     @Target(ElementType.PARAMETER)
     @Retention(RetentionPolicy.RUNTIME)
     @interface DefaultValueIfEmpty {
@@ -31,6 +37,9 @@ public @interface EmptyStringCheck {
 
     /**
      * 如果为空或 null 时，抛出 ServiceException 异常
+     *
+     * @author zhou
+     * @date 2021/09/05
      */
     @Target({ElementType.PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)

@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 根据用户名和 URL 查看网页数据是否已经被收藏。
  * 如果已经收藏了，就抛出异常。
  * 如果还没收藏，且数据库中有，就返回数据库中的数据。
  * 如果还没收藏，而数据库中也没有，再继续运行。
@@ -22,12 +23,12 @@ public @interface MarkCheckReturn {
      *
      * @return {@code String}
      */
-    String urlParamName();
+    String urlParamName() default "url";
 
     /**
      * 存放用户名的参数的名称
      *
      * @return {@code String}
      */
-    String usernameParamName();
+    String usernameParamName() default "userName";
 }

@@ -79,9 +79,10 @@ public class WebsiteManager {
      * @return 该 pattern 下，分页后需要的网页数据和总页数
      */
     @EmptyStringCheck
-    public WebsitePatternDTO getWebsiteByPattern(@EmptyStringCheck.DefaultValueIfEmpty String pattern,
-                                                 PageInfoDTO pageInfo,
-                                                 @EmptyStringCheck.DefaultValueIfEmpty String username) {
+    public WebsitePatternDTO getWebsiteByPattern(
+            @EmptyStringCheck.DefaultValueIfEmpty String pattern,
+            PageInfoDTO pageInfo,
+            @EmptyStringCheck.DefaultValueIfEmpty String username) {
 
         int from = pageInfo.getFrom();
         int size = pageInfo.getSize();

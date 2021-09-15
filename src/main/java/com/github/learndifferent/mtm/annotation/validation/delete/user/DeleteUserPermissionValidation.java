@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 验证删除用户权限
+ * 是否有删除用户的权限
  *
  * @author zhou
  * @date 2021/09/05

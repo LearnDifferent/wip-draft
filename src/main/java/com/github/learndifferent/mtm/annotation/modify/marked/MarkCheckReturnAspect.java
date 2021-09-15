@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
+ * 根据用户名和 URL 查看网页数据是否已经被收藏。
  * 如果已经收藏了，就抛出异常。
  * 如果还没收藏，且数据库中有，就返回数据库中的数据。
  * 如果还没收藏，而数据库中也没有，再继续运行。
@@ -48,8 +49,8 @@ public class MarkCheckReturnAspect {
     public Object around(ProceedingJoinPoint pjp, MarkCheckReturn annotation) throws Throwable {
 
         MethodSignature signature = (MethodSignature) pjp.getSignature();
-        Class<?>[] parameterTypes = signature.getParameterTypes();
         String[] parameterNames = signature.getParameterNames();
+
         Object[] args = pjp.getArgs();
 
         String urlParamName = annotation.urlParamName();
@@ -61,16 +62,16 @@ public class MarkCheckReturnAspect {
 
         for (int i = 0; i < parameterNames.length; i++) {
 
-            if (urlParamName.equals(parameterNames[i]) &&
-                    String.class.isAssignableFrom(parameterTypes[i]) &&
-                    args[i] != null) {
+            if (urlParamName.equals(parameterNames[i])
+                    && args[i] != null
+                    && String.class.isAssignableFrom(args[i].getClass())) {
                 url = (String) args[i];
                 count++;
             }
 
-            if (usernameParamName.equals(parameterNames[i]) &&
-                    String.class.isAssignableFrom(parameterTypes[i]) &&
-                    args[i] != null) {
+            if (usernameParamName.equals(parameterNames[i])
+                    && args[i] != null
+                    && String.class.isAssignableFrom(args[i].getClass())) {
                 username = (String) args[i];
                 count++;
             }

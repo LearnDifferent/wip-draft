@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 利用 SaToken，规定需要登录验证的路径。
- * <p>这里为了方便测试，所以按照黑名单的模式拦截需要被拦截的路径。
+ * <p>这里为了方便，所以按照黑名单的模式拦截需要被拦截的路径。
  * 实际使用的时候，应该使用拦截所有路径，然后放行个别路径的白名单模式。</p>
  *
  * @author zhou

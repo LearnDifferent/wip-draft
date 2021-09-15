@@ -15,5 +15,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UrlClean {
 
-    String urlParamName();
+    /**
+     * 含有 url 的参数的名称
+     *
+     * @return {@code String}
+     */
+    String urlParamName() default "url";
 }

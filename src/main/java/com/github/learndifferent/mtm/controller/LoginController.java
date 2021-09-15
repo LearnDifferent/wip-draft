@@ -3,8 +3,9 @@ package com.github.learndifferent.mtm.controller;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.github.learndifferent.mtm.annotation.general.log.SystemLog;
-import com.github.learndifferent.mtm.annotation.validation.login.LoginCheck;
+import com.github.learndifferent.mtm.annotation.validation.login.LoginInfoCheck;
 import com.github.learndifferent.mtm.constant.consist.CodeConstant;
+import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.response.ResultCreator;
 import com.github.learndifferent.mtm.response.ResultVO;
 import com.github.learndifferent.mtm.vo.UserNameAndPwdVO;
@@ -25,8 +26,10 @@ public class LoginController {
      *
      * @param nameAndPwd 用户名和密码
      * @return token 信息
+     * @throws ServiceException 用户不存在：ResultCode.USER_LOGIN_FAIL
+     *                          和验证码错误：ResultCode.VERIFICATION_CODE_FAILED
      */
-    @LoginCheck(codeParamName = CodeConstant.CODE,
+    @LoginInfoCheck(codeParamName = CodeConstant.CODE,
             verifyTokenParamName = CodeConstant.VERIFY_TOKEN,
             usernameParamName = "userName",
             passwordParamName = "password")

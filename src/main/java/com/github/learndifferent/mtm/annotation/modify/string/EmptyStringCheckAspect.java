@@ -36,29 +36,29 @@ public class EmptyStringCheckAspect {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
 
-        Object[] args = joinPoint.getArgs();
-
         Class<?>[] parameterTypes = method.getParameterTypes();
         Annotation[][] annotations = method.getParameterAnnotations();
 
+        Object[] args = joinPoint.getArgs();
+
         for (int i = 0; i < annotations.length; i++) {
+            // 遍历 i 位置的所有注解
             for (Annotation annotation : annotations[i]) {
 
-                if (annotation instanceof DefaultValueIfEmpty &&
-                        String.class.isAssignableFrom(parameterTypes[i])) {
+                if (annotation instanceof DefaultValueIfEmpty
+                        && String.class.isAssignableFrom(parameterTypes[i])) {
 
                     // 检查是否为空字符串或 null，并返回处理过的值
-                    args[i] = replaceIfEmpty(
-                            (String) args[i],
+                    args[i] = replaceIfEmpty((String) args[i],
                             (DefaultValueIfEmpty) annotation);
+                    // 如果使用了 @DefaultValueIfEmpty 注解，就不能使用 @ExceptionIfEmpty
                     break;
                 }
 
-                if (annotation instanceof ExceptionIfEmpty &&
-                        String.class.isAssignableFrom(parameterTypes[i])) {
+                if (annotation instanceof ExceptionIfEmpty
+                        && String.class.isAssignableFrom(parameterTypes[i])) {
 
-                    throwExceptionIfEmpty(
-                            (String) args[i],
+                    throwExceptionIfEmpty((String) args[i],
                             (ExceptionIfEmpty) annotation);
                     break;
                 }
@@ -71,6 +71,7 @@ public class EmptyStringCheckAspect {
     private Object replaceIfEmpty(String str, DefaultValueIfEmpty defaultValue) {
 
         if (StringUtils.isEmpty(str)) {
+            // 为空的时候，返回传入的默认值
             return defaultValue.value();
         }
 
@@ -88,8 +89,7 @@ public class EmptyStringCheckAspect {
         }
     }
 
-    private void throwExceptionWithInfo(ResultCode resultCode,
-                                        String errorMessage) {
+    private void throwExceptionWithInfo(ResultCode resultCode, String errorMessage) {
 
         if (StringUtils.isEmpty(errorMessage)) {
             throw new ServiceException(resultCode);

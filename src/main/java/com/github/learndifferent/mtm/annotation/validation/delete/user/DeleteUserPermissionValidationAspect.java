@@ -32,22 +32,20 @@ public class DeleteUserPermissionValidationAspect {
     public void check(JoinPoint joinPoint) {
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        Class<?>[] parameterTypes = signature.getParameterTypes();
         String[] parameterNames = signature.getParameterNames();
         Object[] args = joinPoint.getArgs();
         Method method = signature.getMethod();
 
-        DeleteUserPermissionValidation annotation = method
-                .getAnnotation(DeleteUserPermissionValidation.class);
+        DeleteUserPermissionValidation annotation =
+                method.getAnnotation(DeleteUserPermissionValidation.class);
 
         String usernameParamName = annotation.usernameParamName();
         String userNameValue = "";
 
-        for (int i = 0; i < parameterTypes.length; i++) {
+        for (int i = 0; i < parameterNames.length; i++) {
             if (usernameParamName.equalsIgnoreCase(parameterNames[i])
-                    && String.class.isAssignableFrom(parameterTypes[i]) &&
-                    ObjectUtils.isNotEmpty(args[i])) {
-
+                    && ObjectUtils.isNotEmpty(args[i])
+                    && String.class.isAssignableFrom(args[i].getClass())) {
                 userNameValue = (String) args[i];
                 break;
             }

@@ -30,15 +30,15 @@ import java.util.Map;
 @Aspect
 @Component
 @Order(1)
-public class LoginCheckAspect {
+public class LoginInfoCheckAspect {
 
     private final VerificationCodeManager codeManager;
 
     private final UserService userService;
 
     @Autowired
-    public LoginCheckAspect(VerificationCodeManager codeManager,
-                            UserService userService) {
+    public LoginInfoCheckAspect(VerificationCodeManager codeManager,
+                                UserService userService) {
         this.codeManager = codeManager;
         this.userService = userService;
     }
@@ -46,38 +46,42 @@ public class LoginCheckAspect {
     /**
      * 验证登陆相关数据，如果出错，就抛出异常
      *
-     * @param loginCheck 注解
+     * @param loginInfoCheck 注解
      * @throws ServiceException 验证出错，就抛出异常
      */
-    @Before("@annotation(loginCheck)")
-    public void check(LoginCheck loginCheck) {
+    @Before("@annotation(loginInfoCheck)")
+    public void check(LoginInfoCheck loginInfoCheck) {
 
+        // 获取 Request Attributes
         ServletRequestAttributes attributes =
                 (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
         if (attributes == null) {
-            throw new ServiceException("No attributes available.");
+            throw new ServiceException("No Request Attributes Available.");
         }
 
-        ContentCachingRequestWrapper request = (ContentCachingRequestWrapper) attributes.getRequest();
+        // 获取 request。
+        // 要在程序中定义 RequestBodyCacheFilter 将 request 转化为 ContentCachingRequestWrapper，
+        // 只要这样，才能重复使用 request 的数据，防止 request 像 stream 一样流失
+        ContentCachingRequestWrapper request =
+                (ContentCachingRequestWrapper) attributes.getRequest();
 
-        String codeParamName = loginCheck.codeParamName();
-        String verifyTokenParamName = loginCheck.verifyTokenParamName();
-        String usernameParamName = loginCheck.usernameParamName();
-        String passwordParamName = loginCheck.passwordParamName();
+        // 从注解中，获取需要的变量的名称
+        String codeParamName = loginInfoCheck.codeParamName();
+        String verifyTokenParamName = loginInfoCheck.verifyTokenParamName();
+        String usernameParamName = loginInfoCheck.usernameParamName();
+        String passwordParamName = loginInfoCheck.passwordParamName();
 
-        // <param's name, param's value>
-        Map<String, String> contents = getContents(
-                request,
-                codeParamName,
-                verifyTokenParamName,
-                usernameParamName,
-                passwordParamName);
+        // map's key: param's name; map's value: param's value
+        Map<String, String> contents = getContentsFromRequest(request, codeParamName,
+                verifyTokenParamName, usernameParamName, passwordParamName);
 
         // 如果参数的值中，有 null 的话，就从 Request 的 Body 中获取值
-        boolean shouldRenewValueFromBody = contents.containsValue(null);
-        if (shouldRenewValueFromBody) {
-            // 从 Request Body 中获取值，如果还是为 null，就转化为空字符串
+        boolean shouldGetValueFromBody = contents.containsValue(null);
+
+        if (shouldGetValueFromBody) {
+            // 从 Request Body 中获取 value
+            // 如果 value 还是为 null，就转化为空字符串
             renewContentsFromBody(request, contents);
         }
 
@@ -85,7 +89,8 @@ public class LoginCheckAspect {
                 usernameParamName, passwordParamName);
     }
 
-    private Map<String, String> getContents(ContentCachingRequestWrapper request, String... paramNames) {
+    private Map<String, String> getContentsFromRequest(ContentCachingRequestWrapper request,
+                                                       String... paramNames) {
 
         Map<String, String> contents = new HashMap<>(16);
 
@@ -100,7 +105,8 @@ public class LoginCheckAspect {
     private void renewContentsFromBody(ContentCachingRequestWrapper request,
                                        Map<String, String> contents) {
 
-        Map<String, String> requestBody = getRequestBody(request);
+        // 获取请求体，并转换为 Map<String, String>
+        Map<String, String> requestBody = getRequestBodyFromRequest(request);
 
         // 将 request body 的内容直接覆盖进来
         contents.putAll(requestBody);
@@ -109,15 +115,25 @@ public class LoginCheckAspect {
         contents.replaceAll((k, v) -> v == null ? "" : v);
     }
 
-    private Map<String, String> getRequestBody(ContentCachingRequestWrapper request) {
+    /**
+     * 获取请求体
+     *
+     * @param request 请求
+     * @return {@code Map<String, String>} key 为参数名，value 为参数值
+     */
+    private Map<String, String> getRequestBodyFromRequest(ContentCachingRequestWrapper request) {
 
+        // 将 request 中的参数转化为 byte 数组
         byte[] contentAsByteArray = request.getContentAsByteArray();
 
+        // 将该数组转化为字符串
         String json = new String(contentAsByteArray);
 
+        // 获取 Map<String, String> 的 TypeReference，用于下一步的转换操作
         TypeReference<Map<String, String>> typeRef = new TypeReference<Map<String, String>>() {
         };
 
+        // 将 json 字符串转换为 Map<String, String> 并返回
         return JsonUtils.toObject(json, typeRef);
     }
 
@@ -133,6 +149,16 @@ public class LoginCheckAspect {
                 contents.get(passwordParamName));
     }
 
+    /**
+     * 登录前检查
+     *
+     * @param code        验证码
+     * @param verifyToken token
+     * @param username    用户名
+     * @param password    密码
+     * @throws ServiceException 用户不存在：ResultCode.USER_LOGIN_FAIL
+     *                          和验证码错误：ResultCode.VERIFICATION_CODE_FAILED
+     */
     private void checkBeforeLogin(String code,
                                   String verifyToken,
                                   String username,

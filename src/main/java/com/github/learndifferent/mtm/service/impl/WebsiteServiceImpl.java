@@ -108,8 +108,7 @@ public class WebsiteServiceImpl implements WebsiteService {
 
     @Override
     @WebsiteDataClean
-    @MarkCheck(
-            usernameParamName = "userName",
+    @MarkCheck(usernameParamName = "userName",
             paramClassContainsUrl = WebWithNoIdentityDTO.class,
             urlFieldNameInParamClass = "url")
     public boolean saveWebsiteData(WebWithNoIdentityDTO rawWebsite, String userName) {
@@ -129,10 +128,10 @@ public class WebsiteServiceImpl implements WebsiteService {
      * @param url      网页链接
      * @param userName 收藏该网页的用户
      * @return 剔除了唯一信息的网页数据
-     * @throws ServiceException 会判断并抛出相应的异常
+     * @throws ServiceException 如果已经收藏过，会抛出异常，状态码为 ResultCode.ALREADY_MARKED
      */
-    @UrlClean(urlParamName = "url")
-    @MarkCheckReturn(urlParamName = "url", usernameParamName = "userName")
+    @UrlClean
+    @MarkCheckReturn
     @Override
     public WebWithNoIdentityDTO scrapeWebsiteDataFromUrl(String url, String userName) {
 

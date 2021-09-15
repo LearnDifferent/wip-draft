@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 注册用户之前，对验证码进行判断。如果是 admin，还需要判断邀请码。
+ * 如果验证码或邀请码出错，会抛出自定义的 ServiceException，代码分别为：
+ * ResultCode.VERIFICATION_CODE_FAILED 和 ResultCode.INVITATION_CODE_FAILED
  *
  * @author zhou
  * @date 2021/09/05
@@ -56,8 +58,8 @@ public class RegisterCodeCheckAspect {
         // 获取参数值
         String code = getParamStringValue(request, codeParamName);
         String verifyToken = getParamStringValue(request, verifyTokenParamName);
-        RoleType role = getParamRoleValue(request, roleParamName);
         String invitationCode = getParamStringValue(request, invitationCodeParamName);
+        RoleType role = getParamRoleValue(request, roleParamName);
 
         checkCodes(code, verifyToken, role, invitationCode);
     }
@@ -86,13 +88,25 @@ public class RegisterCodeCheckAspect {
     private RoleType castRoleStringToRoleType(String role) {
 
         try {
+            // 通过 valueOf 方法直接从大写的字符串中获取相应的 Enum
             return RoleType.valueOf(role.toUpperCase());
         } catch (IllegalArgumentException | NullPointerException e) {
+            e.printStackTrace();
             // 找不到的时候，默认返回角色 user
             return RoleType.USER;
         }
     }
 
+    /**
+     * 检查验证码和邀请码。出错的话抛出相应的异常
+     *
+     * @param code           验证码
+     * @param verifyToken    token
+     * @param role           角色
+     * @param invitationCode 邀请码
+     * @throws ServiceException ResultCode.VERIFICATION_CODE_FAILED
+     *                          和 ResultCode.INVITATION_CODE_FAILED
+     */
     private void checkCodes(String code,
                             String verifyToken,
                             RoleType role,
@@ -108,9 +122,10 @@ public class RegisterCodeCheckAspect {
     }
 
     /**
-     * 检查邀请码是否正确，如果不正确，抛出异常
+     * 检查邀请码是否正确，如果不正确，抛出异常。
      *
      * @param invitationCode 邀请码
+     * @throws ServiceException ResultCode.INVITATION_CODE_FAILED
      */
     private void checkInvitationCode(String invitationCode) {
 

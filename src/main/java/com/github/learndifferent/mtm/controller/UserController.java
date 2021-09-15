@@ -8,6 +8,7 @@ import com.github.learndifferent.mtm.constant.consist.CodeConstant;
 import com.github.learndifferent.mtm.constant.enums.OptsType;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.UserDTO;
+import com.github.learndifferent.mtm.exception.ServiceException;
 import com.github.learndifferent.mtm.response.ResultCreator;
 import com.github.learndifferent.mtm.response.ResultVO;
 import com.github.learndifferent.mtm.service.UserService;
@@ -51,6 +52,23 @@ public class UserController {
                 : ResultCreator.result(ResultCode.UPDATE_FAILED);
     }
 
+    /**
+     * 创建用户。
+     * <p>@RegisterCodeCheck 注解会判断验证码和邀请码是否正确，并抛出相应异常。</p>
+     * <p>UserService 接口的 addUserByBasicInfo 也判断用户信息是否合适并抛出相应异常</p>
+     *
+     * @param basicInfo 基本信息
+     * @return {@code ResultVO<?>} 相应的状态码及信息
+     * @throws ServiceException 验证码错误时的状态码为：ResultCode.VERIFICATION_CODE_FAILED，
+     *                          邀请码错误的状态码为：ResultCode.INVITATION_CODE_FAILED。
+     *                          用户信息出错时，错误代码分别为：
+     *                          ResultCode.USER_ALREADY_EXIST、
+     *                          ResultCode.USERNAME_ONLY_LETTERS_NUMBERS、
+     *                          ResultCode.USERNAME_TOO_LONG、
+     *                          ResultCode.USERNAME_EMPTY、
+     *                          ResultCode.PASSWORD_TOO_LONG 和
+     *                          ResultCode.PASSWORD_EMPTY
+     */
     @RegisterCodeCheck(codeParamName = CodeConstant.CODE,
             verifyTokenParamName = CodeConstant.VERIFY_TOKEN,
             roleParamName = "role",
