@@ -1,4 +1,4 @@
-package com.github.learndifferent.mtm.annotation.validation.role.admin;
+package com.github.learndifferent.mtm.annotation.validation.user.role.admin;
 
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.exception.ServiceException;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AdminValidationAspect {
 
-    @Pointcut("@annotation(com.github.learndifferent.mtm.annotation.validation.role.admin.AdminValidation)")
+    @Pointcut("@annotation(com.github.learndifferent.mtm.annotation.validation.user.role.admin.AdminValidation)")
     public void pointcuts() {
     }
 

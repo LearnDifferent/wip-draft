@@ -15,6 +15,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 /**
  * 页面信息方法参数解析器。根据不同模式传入的信息，生成 PageInfoDTO。
+ * <p>要通过自定义的 Web MVC 配置类的 addArgumentResolvers 方法加入进去才能生效。
+ * 当前的配置类为 CustomWebConfig</p>
  *
  * @author zhou
  * @date 2021/09/05

@@ -156,7 +156,7 @@ public class LoginInfoCheckAspect {
      * @param verifyToken token
      * @param username    用户名
      * @param password    密码
-     * @throws ServiceException 用户不存在：ResultCode.USER_LOGIN_FAIL
+     * @throws ServiceException 用户不存在：ResultCode.USER_NOT_EXIST
      *                          和验证码错误：ResultCode.VERIFICATION_CODE_FAILED
      */
     private void checkBeforeLogin(String code,
@@ -172,7 +172,7 @@ public class LoginInfoCheckAspect {
 
         if (ObjectUtils.isEmpty(user)) {
             // 如果用户不存在，抛出不存在的异常（也就是用户名或密码不正确）
-            throw new ServiceException(ResultCode.USER_LOGIN_FAIL);
+            throw new ServiceException(ResultCode.USER_NOT_EXIST);
         }
     }
 

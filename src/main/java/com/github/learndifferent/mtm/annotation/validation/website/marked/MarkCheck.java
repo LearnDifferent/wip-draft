@@ -1,4 +1,4 @@
-package com.github.learndifferent.mtm.annotation.validation.marked;
+package com.github.learndifferent.mtm.annotation.validation.website.marked;
 
 import java.io.Serializable;
 import java.lang.annotation.ElementType;

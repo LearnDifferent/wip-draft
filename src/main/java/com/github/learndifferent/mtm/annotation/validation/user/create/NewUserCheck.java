@@ -1,4 +1,4 @@
-package com.github.learndifferent.mtm.annotation.validation.user;
+package com.github.learndifferent.mtm.annotation.validation.user.create;
 
 import java.io.Serializable;
 import java.lang.annotation.ElementType;

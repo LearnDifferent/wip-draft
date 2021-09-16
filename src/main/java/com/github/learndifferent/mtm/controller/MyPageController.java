@@ -11,6 +11,7 @@ import com.github.learndifferent.mtm.response.ResultVO;
 import com.github.learndifferent.mtm.service.UserService;
 import com.github.learndifferent.mtm.service.WebsiteService;
 import com.github.learndifferent.mtm.utils.DozerUtils;
+import com.github.learndifferent.mtm.utils.IpUtils;
 import com.github.learndifferent.mtm.utils.PageUtil;
 import com.github.learndifferent.mtm.vo.MyPageVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -42,7 +44,8 @@ public class MyPageController {
     }
 
     @GetMapping
-    public ResultVO<MyPageVO> load(@PageInfo PageInfoDTO pageInfo) {
+    public ResultVO<MyPageVO> load(@PageInfo PageInfoDTO pageInfo,
+                                   HttpServletRequest request) {
 
         String userName = (String) StpUtil.getLoginId();
         UserDTO user = getUser(userName);
@@ -54,14 +57,16 @@ public class MyPageController {
         List<WebsiteDTO> myWebs = websiteService.findWebsitesDataByUser(
                 userName, from, size);
 
-        int totalPage = PageUtil.getAllPages(
-                totalCount, size);
+        int totalPage = PageUtil.getAllPages(totalCount, size);
+
+        String ip = IpUtils.getIp(request);
 
         MyPageVO myPageVO = MyPageVO.builder()
                 .firstCharOfName(userName.trim().charAt(0))
                 .user(user)
                 .myWebs(myWebs)
                 .totalPage(totalPage)
+                .ip(ip)
                 .build();
 
         return ResultCreator.okResult(myPageVO);

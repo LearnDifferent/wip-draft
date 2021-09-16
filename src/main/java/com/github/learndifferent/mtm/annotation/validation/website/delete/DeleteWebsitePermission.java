@@ -1,4 +1,4 @@
-package com.github.learndifferent.mtm.annotation.validation.delete.website;
+package com.github.learndifferent.mtm.annotation.validation.website.delete;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

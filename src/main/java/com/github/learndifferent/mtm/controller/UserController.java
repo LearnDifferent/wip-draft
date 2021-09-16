@@ -1,9 +1,9 @@
 package com.github.learndifferent.mtm.controller;
 
 import com.github.learndifferent.mtm.annotation.general.log.SystemLog;
-import com.github.learndifferent.mtm.annotation.validation.delete.user.DeleteUserPermissionValidation;
+import com.github.learndifferent.mtm.annotation.validation.user.delete.DeleteUserCheck;
 import com.github.learndifferent.mtm.annotation.validation.register.RegisterCodeCheck;
-import com.github.learndifferent.mtm.annotation.validation.role.guest.NotGuest;
+import com.github.learndifferent.mtm.annotation.validation.user.role.guest.NotGuest;
 import com.github.learndifferent.mtm.constant.consist.CodeConstant;
 import com.github.learndifferent.mtm.constant.enums.OptsType;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
@@ -82,11 +82,22 @@ public class UserController {
                 : ResultCreator.defaultFailResult();
     }
 
-    @DeleteUserPermissionValidation(usernameParamName = "userName")
+    /**
+     * 删除用户。其中 @DeleteUserCheck 注解会检查用户是否存在，
+     * 及是否是当前用户在删除当前用户，然后视情况抛出相应异常。
+     *
+     * @param userName 用户名
+     * @param password 密码
+     * @return {@code ResultVO<?>} 响应状态码
+     * @throws ServiceException ResultCode.USER_NOT_EXIST 和 ResultCode.PERMISSION_DENIED
+     */
+    @DeleteUserCheck(usernameParamName = "userName", passwordParamName = "password")
     @DeleteMapping("/delete")
-    public ResultVO<?> deleteUser(@RequestParam("userName") String userName) {
+    public ResultVO<?> deleteUser(@RequestParam("userName") String userName,
+                                  @RequestParam("password") String password) {
 
-        return userService.deleteUserByName(userName) ? ResultCreator.okResult()
-                : ResultCreator.result(ResultCode.DELETE_FAILED);
+        boolean success = userService.deleteUserByName(userName);
+        return success ? ResultCreator.okResult() :
+                ResultCreator.result(ResultCode.DELETE_FAILED);
     }
 }

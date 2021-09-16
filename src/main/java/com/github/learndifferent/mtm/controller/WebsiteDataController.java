@@ -1,7 +1,7 @@
 package com.github.learndifferent.mtm.controller;
 
 import com.github.learndifferent.mtm.annotation.general.log.SystemLog;
-import com.github.learndifferent.mtm.annotation.validation.delete.website.DeleteWebsitePermission;
+import com.github.learndifferent.mtm.annotation.validation.website.delete.DeleteWebsitePermission;
 import com.github.learndifferent.mtm.constant.enums.OptsType;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.WebWithNoIdentityDTO;

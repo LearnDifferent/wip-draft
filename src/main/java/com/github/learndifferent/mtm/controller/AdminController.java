@@ -1,6 +1,6 @@
 package com.github.learndifferent.mtm.controller;
 
-import com.github.learndifferent.mtm.annotation.validation.role.admin.AdminValidation;
+import com.github.learndifferent.mtm.annotation.validation.user.role.admin.AdminValidation;
 import com.github.learndifferent.mtm.dto.UserDTO;
 import com.github.learndifferent.mtm.manager.AsyncLogManager;
 import com.github.learndifferent.mtm.response.ResultCreator;

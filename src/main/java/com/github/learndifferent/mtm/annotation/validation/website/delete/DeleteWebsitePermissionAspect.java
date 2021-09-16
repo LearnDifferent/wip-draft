@@ -1,4 +1,4 @@
-package com.github.learndifferent.mtm.annotation.validation.delete.website;
+package com.github.learndifferent.mtm.annotation.validation.website.delete;
 
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.WebsiteDTO;
@@ -26,12 +26,12 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Aspect
 @Component
-public class DeleteWebsitePermissionValidation {
+public class DeleteWebsitePermissionAspect {
 
     private final WebsiteService websiteService;
 
     @Autowired
-    public DeleteWebsitePermissionValidation(WebsiteService websiteService) {
+    public DeleteWebsitePermissionAspect(WebsiteService websiteService) {
         this.websiteService = websiteService;
     }
 

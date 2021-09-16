@@ -1,4 +1,4 @@
-package com.github.learndifferent.mtm.annotation.validation.user;
+package com.github.learndifferent.mtm.annotation.validation.user.create;
 
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.entity.UserDO;

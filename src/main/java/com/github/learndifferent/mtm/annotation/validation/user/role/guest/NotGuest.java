@@ -1,4 +1,4 @@
-package com.github.learndifferent.mtm.annotation.validation.role.guest;
+package com.github.learndifferent.mtm.annotation.validation.user.role.guest;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

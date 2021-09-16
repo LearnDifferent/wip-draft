@@ -41,5 +41,10 @@ public class MyPageVO implements Serializable {
      */
     private Integer totalPage;
 
+    /**
+     * IP 地址
+     */
+    private String ip;
+
     private static final long serialVersionUID = 1L;
 }

@@ -2,7 +2,7 @@ package com.github.learndifferent.mtm.service.impl;
 
 import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck;
 import com.github.learndifferent.mtm.annotation.modify.string.EmptyStringCheck.ExceptionIfEmpty;
-import com.github.learndifferent.mtm.annotation.validation.user.NewUserCheck;
+import com.github.learndifferent.mtm.annotation.validation.user.create.NewUserCheck;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.UserDTO;
 import com.github.learndifferent.mtm.dto.UserWithWebCountDTO;

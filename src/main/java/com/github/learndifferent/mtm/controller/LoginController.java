@@ -26,7 +26,7 @@ public class LoginController {
      *
      * @param nameAndPwd 用户名和密码
      * @return token 信息
-     * @throws ServiceException 用户不存在：ResultCode.USER_LOGIN_FAIL
+     * @throws ServiceException 用户不存在：ResultCode.USER_NOT_EXIST
      *                          和验证码错误：ResultCode.VERIFICATION_CODE_FAILED
      */
     @LoginInfoCheck(codeParamName = CodeConstant.CODE,

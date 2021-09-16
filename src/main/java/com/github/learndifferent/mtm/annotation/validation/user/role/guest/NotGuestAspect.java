@@ -1,4 +1,4 @@
-package com.github.learndifferent.mtm.annotation.validation.role.guest;
+package com.github.learndifferent.mtm.annotation.validation.user.role.guest;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class NotGuestAspect {
 
-    @Pointcut("@annotation(com.github.learndifferent.mtm.annotation.validation.role.guest.NotGuest)")
+    @Pointcut("@annotation(com.github.learndifferent.mtm.annotation.validation.user.role.guest.NotGuest)")
     public void pointcuts() {
     }
 

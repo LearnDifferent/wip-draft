@@ -1,4 +1,4 @@
-package com.github.learndifferent.mtm.annotation.validation.marked;
+package com.github.learndifferent.mtm.annotation.validation.website.marked;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;

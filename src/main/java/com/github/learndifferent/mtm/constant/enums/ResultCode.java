@@ -39,7 +39,7 @@ public enum ResultCode {
     /**
      * The username or password is incorrect
      */
-    USER_LOGIN_FAIL(2006, "The username or password is incorrect"),
+    USER_NOT_EXIST(2006, "The username or password is incorrect"),
     /**
      * The verification code you entered is incorrect.
      */

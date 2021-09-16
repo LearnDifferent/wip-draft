@@ -3,7 +3,7 @@ package com.github.learndifferent.mtm.service.impl;
 import com.github.learndifferent.mtm.annotation.modify.marked.MarkCheckReturn;
 import com.github.learndifferent.mtm.annotation.modify.url.UrlClean;
 import com.github.learndifferent.mtm.annotation.modify.webdata.WebsiteDataClean;
-import com.github.learndifferent.mtm.annotation.validation.marked.MarkCheck;
+import com.github.learndifferent.mtm.annotation.validation.website.marked.MarkCheck;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.WebForSearchDTO;
 import com.github.learndifferent.mtm.dto.WebWithNoIdentityDTO;
