@@ -62,7 +62,7 @@ public class LoginInfoCheckAspect {
 
         // 获取 request。
         // 要在程序中定义 RequestBodyCacheFilter 将 request 转化为 ContentCachingRequestWrapper，
-        // 只要这样，才能重复使用 request 的数据，防止 request 像 stream 一样流失
+        // 然后通过 FilterConfig 进行配置后，才能重复使用 request body 的数据，防止其像 stream 一样流失
         ContentCachingRequestWrapper request =
                 (ContentCachingRequestWrapper) attributes.getRequest();
 

@@ -184,6 +184,11 @@ public class WebsiteServiceImpl implements WebsiteService {
 
     @Override
     public boolean delWebsiteDataById(int webId) {
-        return websiteMapper.delWebsiteDataById(webId);
+        return websiteMapper.deleteWebsiteDataById(webId);
+    }
+
+    @Override
+    public void deleteWebsiteDataByUsername(String userName) {
+        websiteMapper.deleteWebsiteDataByUsername(userName);
     }
 }

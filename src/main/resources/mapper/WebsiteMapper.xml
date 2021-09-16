@@ -120,11 +120,17 @@
         where userName != #{userName};
     </select>
 
-    <delete id="delWebsiteDataById" parameterType="java.lang.Integer">
+    <delete id="deleteWebsiteDataById" parameterType="java.lang.Integer">
         delete
         from website
         where webId = #{webId,jdbcType=INTEGER}
     </delete>
+
+    <delete id="deleteWebsiteDataByUsername">
+        delete
+        from website where userName = #{userName}
+    </delete>
+
     <insert id="addWebsiteData" keyColumn="webId" keyProperty="webId"
             parameterType="com.github.learndifferent.mtm.entity.WebsiteDO"
             useGeneratedKeys="true">

@@ -103,7 +103,7 @@ public class MarkCheckAspect {
      */
     private void testUserPermission(String username) {
         String currentUsername = (String) StpUtil.getLoginIdDefaultNull();
-        if (ReverseUtils.compareStringNotEquals(username, currentUsername)) {
+        if (ReverseUtils.stringNotEqualsIgnoreCase(username, currentUsername)) {
             throw new ServiceException(ResultCode.PERMISSION_DENIED);
         }
     }

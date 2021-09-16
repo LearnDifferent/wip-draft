@@ -131,7 +131,7 @@ public class RegisterCodeCheckAspect {
 
         // 邀请码这里设置为固定的 1234，如果邀请码不为 1234（包括 null）说明出错了
         String code = "1234";
-        if (ReverseUtils.compareStringNotEquals(code, invitationCode)) {
+        if (ReverseUtils.stringNotEqualsIgnoreCase(code, invitationCode)) {
             // 如果邀请码错误，抛出自定义的异常
             throw new ServiceException(ResultCode.INVITATION_CODE_FAILED);
         }

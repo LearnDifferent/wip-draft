@@ -29,12 +29,12 @@ public class HtmlFileController {
     }
 
     /**
-     * 以 HTML 格式，导出该 username 的用户收藏的所有的网页的数据
-     * <p>如果根据用户名找不到网页数据，就抛出异常</p>
+     * 以 HTML 格式，导出该 username 的用户收藏的所有的网页的数据。
+     * 如果该用户没有数据，直接输出无数据的提示。
      *
      * @param username 用户名
      * @param response response
-     * @throws ServiceException 服务异常 ResultCode.NO_RESULTS_FOUND
+     * @throws ServiceException 可能会有 IO 异常，状态码为 ResultCode.CONNECTION_ERROR
      */
     @GetMapping
     public void export(@RequestParam(value = "username", required = false) String username,

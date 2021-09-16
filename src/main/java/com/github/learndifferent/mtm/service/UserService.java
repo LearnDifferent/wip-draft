@@ -118,7 +118,7 @@ public interface UserService {
     UserDO getUserById(String userId);
 
     /**
-     * 根据用户名获取用户
+     * 根据用户名获取用户（不区分大小写，也就是查询 abc 和 Abc 都能查到该用户）
      *
      * @param userName 用户名
      * @return 用户

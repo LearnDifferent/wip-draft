@@ -19,8 +19,8 @@ public class ReverseUtils {
         return !CollectionUtils.isEmpty(collection);
     }
 
-    public static boolean compareStringNotEquals(String baseString, String anotherString) {
-        return !baseString.equals(anotherString);
+    public static boolean stringNotEqualsIgnoreCase(String baseString, String anotherString) {
+        return !baseString.equalsIgnoreCase(anotherString);
     }
 
     public static boolean notAdmin() {

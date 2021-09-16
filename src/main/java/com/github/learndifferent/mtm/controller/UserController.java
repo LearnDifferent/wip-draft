@@ -1,14 +1,16 @@
 package com.github.learndifferent.mtm.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.github.learndifferent.mtm.annotation.general.log.SystemLog;
-import com.github.learndifferent.mtm.annotation.validation.user.delete.DeleteUserCheck;
 import com.github.learndifferent.mtm.annotation.validation.register.RegisterCodeCheck;
+import com.github.learndifferent.mtm.annotation.validation.user.delete.DeleteUserCheck;
 import com.github.learndifferent.mtm.annotation.validation.user.role.guest.NotGuest;
 import com.github.learndifferent.mtm.constant.consist.CodeConstant;
 import com.github.learndifferent.mtm.constant.enums.OptsType;
 import com.github.learndifferent.mtm.constant.enums.ResultCode;
 import com.github.learndifferent.mtm.dto.UserDTO;
 import com.github.learndifferent.mtm.exception.ServiceException;
+import com.github.learndifferent.mtm.manager.DeleteUserManager;
 import com.github.learndifferent.mtm.response.ResultCreator;
 import com.github.learndifferent.mtm.response.ResultVO;
 import com.github.learndifferent.mtm.service.UserService;
@@ -30,10 +32,13 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final DeleteUserManager deleteUserManager;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService,
+                          DeleteUserManager deleteUserManager) {
         this.userService = userService;
+        this.deleteUserManager = deleteUserManager;
     }
 
     @SystemLog(optsType = OptsType.READ)
@@ -83,21 +88,24 @@ public class UserController {
     }
 
     /**
-     * 删除用户。其中 @DeleteUserCheck 注解会检查用户是否存在，
+     * 删除用户及其收藏的网页数据。其中 @DeleteUserCheck 注解会检查用户是否存在，
      * 及是否是当前用户在删除当前用户，然后视情况抛出相应异常。
      *
      * @param userName 用户名
-     * @param password 密码
      * @return {@code ResultVO<?>} 响应状态码
      * @throws ServiceException ResultCode.USER_NOT_EXIST 和 ResultCode.PERMISSION_DENIED
      */
+    @DeleteMapping
     @DeleteUserCheck(usernameParamName = "userName", passwordParamName = "password")
-    @DeleteMapping("/delete")
-    public ResultVO<?> deleteUser(@RequestParam("userName") String userName,
-                                  @RequestParam("password") String password) {
+    public ResultVO<?> deleteUser(@RequestParam("userName") String userName) {
 
-        boolean success = userService.deleteUserByName(userName);
+        // 删除用户及其收藏的网页
+        boolean success = deleteUserManager.deleteUserAndHisWebsiteData(userName);
+
+        // 退出登陆
+        StpUtil.logout();
+
         return success ? ResultCreator.okResult() :
-                ResultCreator.result(ResultCode.DELETE_FAILED);
+                ResultCreator.failResult("User does not exist.");
     }
 }

@@ -116,12 +116,11 @@ public class HtmlFileManager {
     }
 
     /**
-     * 以 HTML 格式，导出该用户的所有网页数据
-     * <p>如果根据用户名找不到网页数据，就抛出异常</p>
+     * 以 HTML 格式，导出该用户的所有网页数据。如果该用户没有数据，直接输出无数据的提示。
      *
      * @param username 用户名
      * @param response response
-     * @throws ServiceException ResultCode.NO_RESULTS_FOUND
+     * @throws ServiceException ResultCode.CONNECTION_ERROR
      */
     public void exportWebsDataByUserToHtmlFile(String username,
                                                HttpServletResponse response) {
@@ -143,23 +142,24 @@ public class HtmlFileManager {
 
     /**
      * 根据用户名，生成该用户保存的所有网页数据，并返回 html 格式的字符串。
-     * <p>如果根据用户名找不到网页数据，就抛出异常</p>
      *
      * @param username 用户名
      * @return {@code String}
-     * @throws ServiceException ResultCode.NO_RESULTS_FOUND
      */
     private String getWebsDataByUserInHtml(String username) {
 
         List<WebsiteDTO> webs = websiteService.findWebsitesDataByUser(username);
 
-        if (CollectionUtils.isEmpty(webs)) {
-            throw new ServiceException(ResultCode.NO_RESULTS_FOUND);
-        }
-
         StringBuilder sb = new StringBuilder();
 
         sb.append(HtmlFileConstant.FILE_START);
+
+        // 如果没有内容的情况
+        if (CollectionUtils.isEmpty(webs)) {
+            sb.append(username).append(" doesn't have any data.")
+                    .append(HtmlFileConstant.FILE_END);
+            return sb.toString();
+        }
 
         webs.forEach(w -> {
             sb.append(HtmlFileConstant.BEFORE_IMG);

@@ -178,4 +178,11 @@ public interface WebsiteService {
      * @return boolean
      */
     boolean delWebsiteDataById(int webId);
+
+    /**
+     * 删除该用户名的用户所收藏的所有网站数据
+     *
+     * @param userName 用户名
+     */
+    void deleteWebsiteDataByUsername(String userName);
 }
