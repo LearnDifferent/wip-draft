@@ -87,7 +87,7 @@ public class DeleteUserCheckAspect {
         String currentUsername = (String) StpUtil.getLoginId();
 
         if (StpUtil.hasRole(RoleType.GUEST.role())
-               || ReverseUtils.stringNotEqualsIgnoreCase(currentUsername, userName)) {
+                || ReverseUtils.stringNotEqualsIgnoreCase(currentUsername, userName)) {
             // 如果不是当前用户删除自己的帐号，就抛出异常；如果删除的是 Guest 用户，也抛出异常
             throw new ServiceException(ResultCode.PERMISSION_DENIED);
         }

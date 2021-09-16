@@ -10,10 +10,10 @@ import org.springframework.util.DigestUtils;
  */
 public class Md5Util {
 
-    private static final String salt = "acDn156";
+    private static final String SALT = "acDn156";
 
     public static String getMd5(String str) {
-        String base = str + "/" + salt;
+        String base = str + "/" + SALT;
         return DigestUtils.md5DigestAsHex(base.getBytes());
     }
 
