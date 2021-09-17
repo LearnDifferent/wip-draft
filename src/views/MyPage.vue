@@ -388,10 +388,11 @@ export default {
           let msg = res.data.data;
           if (200 == res.data.code) {
             this.importingMsg = "<span style='color: #fff5a5; font-size: 18px'>" + msg + "</span>";
+            this.loadMyPage(this.currentPage);
           } else if (500 == res.data.code) {
             this.importingMsg = "<span style='color: red; font-size: 15px'>" + msg + "</span>";
           } else {
-            this.importingFile = msg;
+            this.importingMsg = msg;
           }
         }).catch((error) => {
           this.importingFile = "<span style='color: red; font-size: 15px'>" +

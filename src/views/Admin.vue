@@ -207,7 +207,6 @@
                             <v-col>
                               <v-text-field
                                   label="Email"
-                                  :rules="emailRules"
                                   v-model="email"
                               ></v-text-field>
                             </v-col>
@@ -366,10 +365,10 @@ export default {
     adminCode: '',
     // 邮箱
     email: '',
-    emailRules: [
-      v => !!v || 'E-mail is required',
-      v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-    ],
+    // emailRules: [
+    //   v => !!v || 'E-mail is required',
+    //   v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+    // ],
     // 注册提示条
     isLoading: false,
     // 验证
