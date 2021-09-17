@@ -229,7 +229,7 @@
                           <br><br>
                           <span style="color: grey">
                             *If you want to know how this application send invitation code via email, checkout the
-                            <a href="https://github.com/LearnDifferent/mtm" target="_blank">source code on GitHub</a>.
+                            <a href="https://github.com/LearnDifferent/mtm/blob/master/src/main/java/com/github/learndifferent/mtm/manager/InvitationCodeManager.java" target="_blank">source code on GitHub</a>.
                           </span>
                           <br>
                           <span style="color: grey">
