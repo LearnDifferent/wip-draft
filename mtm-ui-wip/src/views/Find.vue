@@ -75,7 +75,7 @@
         @click="showTrending =! showTrending"
     >
       <v-icon dark>
-       {{showTrending ? 'mdi-fire' : 'mdi-close'}}
+        {{ showTrending ? 'mdi-fire' : 'mdi-close' }}
       </v-icon>
     </v-btn>
 
@@ -509,7 +509,14 @@ export default {
           } else {
             alert("Can't delete it...");
           }
-        })
+        }).catch(error => {
+          if (error.response.data.code === 2009) {
+            alert("You are now Login as Guest and Guest can't delete this tag.\n\n" +
+                "Please Login as Normal User or Admin to delete.");
+          } else {
+            alert("Something went wrong. Please try again later.")
+          }
+        });
       }
     },
     // 删除所有热搜标签
@@ -523,6 +530,14 @@ export default {
         } else {
           alert("Already Deleted");
         }
+      }).catch(error => {
+        if (error.response.data.code === 2009) {
+          alert("You are now Login as Guest and Guest can't delete tags.\n\n" +
+              "Please Login as Normal User or Admin to delete.");
+        } else {
+          alert("Something went wrong. Please try again later.");
+        }
+      }).finally(() => {
         this.processing = '';
       });
     },
@@ -679,6 +694,10 @@ export default {
       }).catch((error) => {
         if (error.response.data.code === 2005) {
           this.$router.push("/login")
+        } else if (error.response.data.code === 5001) {
+          alert("Unable to connect to Search Engine.");
+        } else {
+          alert("Something went wrong. Can't load this page.")
         }
       });
     }
