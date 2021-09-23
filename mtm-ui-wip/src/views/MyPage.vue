@@ -285,7 +285,7 @@
                       @click="jump(item.url)"
                   >
                     <v-icon>
-                      mdi-eye-outline
+                      mdi-link-variant
                     </v-icon>
                   </v-btn>
                 </v-card-actions>
