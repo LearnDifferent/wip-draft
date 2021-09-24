@@ -265,6 +265,15 @@
 
                 <v-card-actions>
 
+                  <v-chip
+                      :color="item.isPublic ? 'green' : 'pink'"
+                      :text-color="item.isPublic ? 'green' : 'pink'"
+                      outlined
+                  >
+                    <v-icon left>{{ item.isPublic ? "mdi-eye" : "mdi-eye-off" }}</v-icon>
+                    {{ item.isPublic ? "Public" : "Private" }}
+                  </v-chip>
+
                   <v-btn
                       class="ma-2"
                       outlined
