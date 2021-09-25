@@ -17,11 +17,20 @@
       ></v-text-field>
       <div>
         <v-switch
+            v-model="publicPrivacy"
+            color="green"
+            :label="publicPrivacy ? 'Public: Anyone on this website': 'Private: Only Me'"
+            :prepend-icon="publicPrivacy ? 'mdi-earth' : 'mdi-lock'"
+        ></v-switch>
+      </div>
+      <div v-show="publicPrivacy">
+        <v-switch
             v-model="addToSearch"
             color="green"
+            :prepend-icon="addToSearch ? 'mdi-sync' : 'mdi-sync-off'"
             :label="addToSearch ?
-            '⬇ Mark Mode: Mark the website and synchronize it into the search-engine database':
-            '⬇ Mark Mode: Mark the website'"
+            'Mark and Synchronize Website to Search Engine':
+            'Mark Only'"
         ></v-switch>
       </div>
       <div>
@@ -339,7 +348,20 @@
             :key="i"
             cols="12"
         >
-          <v-card :id="item.webId">
+          <!-- 不显示的情况，需要满足：
+          1. 在 clickRecent 下
+          2. isOut 是 all 或者 mine
+          3. isPublic 为 false，也就是私有
+          4. 该 website 的所有者不是当前用户
+          只有者四个情况同时满足，才不会显示，否则，就显示出来
+          -->
+          <v-card
+              :id="item.webId"
+              v-show="!(clickRecent
+              && (isOut == 'all' || isOut == 'mine')
+              && !item.isPublic
+              && currentUser!=item.userName)"
+          >
             <div class="d-flex flex-no-wrap justify-space-between">
               <div>
                 <v-card-title
@@ -389,6 +411,16 @@
                     </v-icon>
                   </v-btn>
 
+                  <v-chip
+                      v-show="currentUser==item.userName"
+                      :color="item.isPublic ? 'green' : 'pink'"
+                      :text-color="item.isPublic ? 'green' : 'pink'"
+                      outlined
+                      @click="changePrivacy(item.webId, item.userName, item.isPublic)"
+                  >
+                    <v-icon left>{{ item.isPublic ? "mdi-eye" : "mdi-eye-off" }}</v-icon>
+                    {{ item.isPublic ? "Public" : "Private" }}
+                  </v-chip>
                   <v-btn
                       v-if="currentUser==item.userName"
                       class="ma-2"
@@ -550,8 +582,11 @@ export default {
     saveWebMsg: '',
     // 返回信息的颜色
     saveWebMsgColor: 'color: orange',
-    // myWebs 存放遍历的 website 的数据：webId,userName,url,img,title,desc（还可能有 count 数据）
+    // myWebs 存放遍历的 website 的数据：webId,userName,url,img,title,desc
+    // （还可能有 count 数据和是否公开 isPublic）
     items: '',
+    // 是否将网页公开
+    publicPrivacy: true,
     // 是否在收藏的同时，加入到搜索引擎中
     addToSearch: true,
     // 是否现实刷新信息
@@ -593,7 +628,7 @@ export default {
         sortable: false,
         value: 'userName',
       },
-      {text: 'Marked Websites', value: 'webCount'},
+      {text: 'Public Websites', value: 'webCount'},
     ],
     userToSelect: [], // 有 userName 和 webCount 的列表
     // 用于搜索：
@@ -628,7 +663,7 @@ export default {
     // 不查看某人的收藏网页
     dontShowUser(userName) {
       if (userName === this.currentUser) {
-        if (confirm("Don't show my websites?")) {
+        if (confirm("Don't show your websites?")) {
           this.findOthers();
         }
       } else {
@@ -774,6 +809,34 @@ export default {
       this.recent();
       this.refreshShow = false;
     },
+    // 更新网页数据的隐私设置
+    changePrivacy(webId, userName, isPublic) {
+      let publicOrPrivate = isPublic ? "private" : "public";
+      if (confirm("Are you sure you want to make it "
+          + publicOrPrivate + " ?")) {
+        this.axios.get("/web", {
+          params: {
+            "webId": webId,
+            "userName": userName
+          }
+        }).then(res => {
+          if (res.data.code === 200 || res.data.code === 500) {
+            alert(res.data.msg);
+            this.loadHome(this.currentPage);
+          } else {
+            alert("Something went wrong... Please try again later.")
+          }
+        }).catch(error => {
+          if (error.response.data.code === 2009
+              || error.response.data.code === 2001) {
+            // 2009 表示没有权限，2001 表示网页不存在
+            alert(error.response.data.msg);
+          } else {
+            alert("Something went wrong... Please try again later.")
+          }
+        });
+      }
+    },
     // 删除收藏的网页
     delWeb(webId) {
       if (confirm("Are you sure you want to delete this one?")) {
@@ -794,6 +857,8 @@ export default {
           if (error.response.data.code === 2009) {
             // 2009 表示没有权限
             alert(error.response.data.msg);
+          } else {
+            alert("Something went wrong... Please try again later.")
           }
         });
       }
@@ -855,10 +920,11 @@ export default {
       let data = {
         url: this.newWebUrl,
         username: this.currentUser,
-        syncToElasticsearch: this.addToSearch
+        syncToElasticsearch: this.addToSearch,
+        isPublic: this.publicPrivacy
       };
 
-      this.axios.post("/web/add", data).then(res => {
+      this.axios.post("/web/new", data).then(res => {
             console.log(res.data);
             let toDatabase = res.data[0];
             let toElasticsearch = res.data[1];
@@ -915,7 +981,7 @@ export default {
           img: item.img,
           desc: item.desc
         };
-        this.axios.post("/web", website, {
+        this.axios.post("/web/existing", website, {
           params: {userName: this.currentUser}
         }).then(res => {
           alert(res.data.msg);

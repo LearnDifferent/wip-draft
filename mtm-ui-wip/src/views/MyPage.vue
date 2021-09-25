@@ -269,6 +269,7 @@
                       :color="item.isPublic ? 'green' : 'pink'"
                       :text-color="item.isPublic ? 'green' : 'pink'"
                       outlined
+                      @click="changePrivacy(item.webId, item.userName, item.isPublic)"
                   >
                     <v-icon left>{{ item.isPublic ? "mdi-eye" : "mdi-eye-off" }}</v-icon>
                     {{ item.isPublic ? "Public" : "Private" }}
@@ -458,6 +459,34 @@ export default {
         }
       });
     },
+    // 更新网页数据的隐私设置
+    changePrivacy(webId, userName, isPublic) {
+      let publicOrPrivate = isPublic ? "private" : "public";
+      if (confirm("Are you sure you want to make it "
+          + publicOrPrivate + " ?")) {
+        this.axios.get("/web", {
+          params: {
+            "webId": webId,
+            "userName": userName
+          }
+        }).then(res => {
+          if (res.data.code === 200 || res.data.code === 500) {
+            alert(res.data.msg);
+            this.loadMyPage(this.currentPage);
+          } else {
+            alert("Something went wrong... Please try again later.")
+          }
+        }).catch(error => {
+          if (error.response.data.code === 2009
+              || error.response.data.code === 2001) {
+            // 2009 表示没有权限，2001 表示网页不存在
+            alert(error.response.data.msg);
+          } else {
+            alert("Something went wrong... Please try again later.")
+          }
+        });
+      }
+    },
     // 删除收藏的网页
     delWeb(webId) {
       if (confirm("Are you sure you want to delete this one?")) {
@@ -478,6 +507,8 @@ export default {
           if (error.response.data.code === 2009) {
             // 2009 表示没有权限
             alert(error.response.data.msg);
+          } else {
+            alert("Something went wrong... Please try again later.")
           }
         });
       }
