@@ -356,6 +356,8 @@
           只有者四个情况同时满足，才不会显示，否则，就显示出来
           -->
           <v-card
+              @mouseover="onThisWebData = item.webId"
+              @mouseleave="onThisWebData = -1"
               :id="item.webId"
               v-show="!(clickRecent
               && (isOut == 'all' || isOut == 'mine')
@@ -398,18 +400,18 @@
                 </v-card-actions>
 
                 <v-card-actions v-show="!clickFilter">
-                  <v-btn
-                      v-if="currentUser!=item.userName"
-                      class="ma-2"
+                  <v-chip
+                      v-show="currentUser!=item.userName"
                       color="green"
-                      icon
-                      small
+                      outlined
                       @click="mark(item)"
+                      style="margin-right: 3px"
                   >
-                    <v-icon>
-                      mdi-heart-plus-outline
+                    <v-icon left>
+                      mdi-heart-plus
                     </v-icon>
-                  </v-btn>
+                    Mark
+                  </v-chip>
 
                   <v-chip
                       v-show="currentUser==item.userName"
@@ -417,36 +419,36 @@
                       :text-color="item.isPublic ? 'green' : 'pink'"
                       outlined
                       @click="changePrivacy(item.webId, item.userName, item.isPublic)"
+                      style="margin-right: 3px"
                   >
                     <v-icon left>{{ item.isPublic ? "mdi-eye" : "mdi-eye-off" }}</v-icon>
                     {{ item.isPublic ? "Public" : "Private" }}
                   </v-chip>
-                  <v-btn
-                      v-if="currentUser==item.userName"
-                      class="ma-2"
-                      icon
+
+                  <v-chip
+                      v-show="currentUser==item.userName"
                       color="red"
-                      small
+                      outlined
                       @click="delWeb(item.webId)"
+                      style="margin-right: 3px"
                   >
-                    <v-icon>
+                    <v-icon left>
                       mdi-trash-can-outline
                     </v-icon>
-                  </v-btn>
+                    Delete
+                  </v-chip>
 
-                  <v-btn
-                      class="ma-2"
-                      color="black"
-                      small
-                      icon
+                  <v-chip
+                      color="#bf783a"
                       @click="jump(item.url)"
+                      outlined
+                      style="margin-right: 3px"
                   >
-                    <v-icon>
+                    <v-icon left>
                       mdi-link-variant
                     </v-icon>
-                  </v-btn>
-
-                  <span style="color: grey" v-show="!item.count">{{ item.createTime }}</span>
+                    View
+                  </v-chip>
 
                   <v-divider
                       class="mx-2"
@@ -455,8 +457,8 @@
 
                   <div
                       v-show="item.userName"
-                      @mouseover="mouseoverAction"
-                      @mouseleave="mouseleaveAction"
+                      @mouseover="showExcludeUserBtn = item.webId"
+                      @mouseleave="showExcludeUserBtn = -1"
                   >
                     <v-chip
                         class="ma-2"
@@ -464,18 +466,21 @@
                         label
                         outlined
                     >
-                    <span
-                        @click="toUser(item.userName)"
-                        :style="mouseoverActive"
-                    >
-                      @{{ item.userName }}
+                      <v-icon left>
+                        mdi-account
+                      </v-icon>
+                      <span
+                          @click="toUser(item.userName)"
+                          :style="onThisWebData == item.webId ? 'color: black' : 'color: grey' "
+                      >
+                      {{ item.userName }}
                     </span>
-
                       <span v-show="showCloseIcon">
                       <v-btn
                           icon
                           small
-                          :color="mouseoverActiveIcon"
+                          v-show="showExcludeUserBtn == item.webId"
+                          color="pink"
                           @click="dontShowUser(item.userName)"
                       >
                         <v-icon>mdi-eye-off-outline</v-icon>
@@ -484,9 +489,16 @@
                     </v-chip>
                   </div>
 
+                  <div v-show="onThisWebData == item.webId">
+                    <v-icon>mdi-clock-outline</v-icon>
+                    <span style="color: grey;" v-show="!item.count">
+                      {{ item.createTime }}
+                    </span>
+                  </div>
 
                   <div style="color: grey" v-show="item.count">Marked by {{ item.count }} user<span
                       v-show="item.count > 1">s</span></div>
+
                 </v-card-actions>
               </div>
 
@@ -593,10 +605,10 @@ export default {
     refreshShow: false,
     // 是否正在解析网页
     isLoading: false,
-    // 鼠标悬停后的样式
-    mouseoverActive: 'color: grey',
-    // 鼠标悬停后，关闭按钮的颜色
-    mouseoverActiveIcon: 'pink',
+    //显示该 web id 帖子的排除用户的按钮
+    showExcludeUserBtn: -1,
+    // 显示该 web id 帖子的创建时间
+    onThisWebData: -1,
     // recent 的一些模式，被选中的有 outline 属性
     isOut: "all",
     // 是否点击了 recent
@@ -862,16 +874,6 @@ export default {
           }
         });
       }
-    },
-    // 鼠标悬停后
-    mouseoverAction() {
-      this.mouseoverActive = 'color: black';
-      this.mouseoverActiveIcon = 'red';
-    },
-    // 鼠标移出后
-    mouseleaveAction() {
-      this.mouseoverActive = 'color: grey';
-      this.mouseoverActiveIcon = 'pink';
     },
     // 进入主页后，获取信息
     loadHome(currentPage) {
