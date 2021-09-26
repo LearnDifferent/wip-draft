@@ -436,6 +436,7 @@
                   </div>
 
                   <v-divider
+                      v-show="clickRecent"
                       class="mx-2"
                       vertical
                   ></v-divider>
@@ -490,15 +491,22 @@
                     Delete
                   </v-chip>
 
-                  <div v-show="onThisWebData == item.webId">
+                  <div v-show="onThisWebData == item.webId && clickRecent">
                     <v-icon>mdi-clock-outline</v-icon>
                     <span style="color: grey;" v-show="!item.count">
                       {{ item.createTime }}
                     </span>
                   </div>
 
+                  <v-divider
+                      v-show="clickMost"
+                      class="mx-2"
+                      vertical
+                  ></v-divider>
+
                   <div style="color: grey" v-show="item.count">Marked by {{ item.count }} user<span
-                      v-show="item.count > 1">s</span></div>
+                      v-show="item.count > 1">s</span>
+                  </div>
 
                 </v-card-actions>
               </div>
