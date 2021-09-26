@@ -400,60 +400,6 @@
                 </v-card-actions>
 
                 <v-card-actions v-show="!clickFilter">
-                  <v-chip
-                      v-show="currentUser!=item.userName"
-                      color="green"
-                      outlined
-                      @click="mark(item)"
-                      style="margin-right: 3px"
-                  >
-                    <v-icon left>
-                      mdi-heart-plus
-                    </v-icon>
-                    Mark
-                  </v-chip>
-
-                  <v-chip
-                      v-show="currentUser==item.userName"
-                      :color="item.isPublic ? 'green' : 'pink'"
-                      :text-color="item.isPublic ? 'green' : 'pink'"
-                      outlined
-                      @click="changePrivacy(item.webId, item.userName, item.isPublic)"
-                      style="margin-right: 3px"
-                  >
-                    <v-icon left>{{ item.isPublic ? "mdi-eye" : "mdi-eye-off" }}</v-icon>
-                    {{ item.isPublic ? "Public" : "Private" }}
-                  </v-chip>
-
-                  <v-chip
-                      v-show="currentUser==item.userName"
-                      color="red"
-                      outlined
-                      @click="delWeb(item.webId)"
-                      style="margin-right: 3px"
-                  >
-                    <v-icon left>
-                      mdi-trash-can-outline
-                    </v-icon>
-                    Delete
-                  </v-chip>
-
-                  <v-chip
-                      color="#bf783a"
-                      @click="jump(item.url)"
-                      outlined
-                      style="margin-right: 3px"
-                  >
-                    <v-icon left>
-                      mdi-link-variant
-                    </v-icon>
-                    View
-                  </v-chip>
-
-                  <v-divider
-                      class="mx-2"
-                      vertical
-                  ></v-divider>
 
                   <div
                       v-show="item.userName"
@@ -489,6 +435,61 @@
                     </v-chip>
                   </div>
 
+                  <v-divider
+                      class="mx-2"
+                      vertical
+                  ></v-divider>
+
+                  <v-chip
+                      v-show="currentUser!=item.userName"
+                      color="green"
+                      outlined
+                      @click="mark(item)"
+                      style="margin-right: 3px"
+                  >
+                    <v-icon left>
+                      mdi-heart-plus
+                    </v-icon>
+                    Mark
+                  </v-chip>
+
+                  <v-chip
+                      v-show="currentUser==item.userName"
+                      :color="item.isPublic ? 'green' : 'pink'"
+                      :text-color="item.isPublic ? 'green' : 'pink'"
+                      outlined
+                      @click="changePrivacy(item.webId, item.userName, item.isPublic)"
+                      style="margin-right: 3px"
+                  >
+                    <v-icon left>{{ item.isPublic ? "mdi-eye" : "mdi-eye-off" }}</v-icon>
+                    {{ item.isPublic ? "Public" : "Private" }}
+                  </v-chip>
+
+                  <v-chip
+                      color="#bf783a"
+                      @click="jump(item.url)"
+                      outlined
+                      style="margin-right: 3px"
+                  >
+                    <v-icon left>
+                      mdi-link-variant
+                    </v-icon>
+                    View
+                  </v-chip>
+
+                  <v-chip
+                      v-show="currentUser == item.userName && onThisWebData == item.webId"
+                      color="red"
+                      outlined
+                      @click="delWeb(item.webId)"
+                      style="margin-right: 3px"
+                  >
+                    <v-icon left>
+                      mdi-trash-can-outline
+                    </v-icon>
+                    Delete
+                  </v-chip>
+
                   <div v-show="onThisWebData == item.webId">
                     <v-icon>mdi-clock-outline</v-icon>
                     <span style="color: grey;" v-show="!item.count">
@@ -511,6 +512,7 @@
                 <v-img :src="item.img"></v-img>
               </v-avatar>
             </div>
+
           </v-card>
         </v-col>
       </v-row>
