@@ -410,7 +410,7 @@
                         outlined
                     >
                       <v-icon left @click="toUser(item.userName)">
-                        mdi-account
+                        {{ currentUser == item.userName ? 'mdi-account-check' : 'mdi-account'}}
                       </v-icon>
                       <span
                           @click="toUser(item.userName)"
