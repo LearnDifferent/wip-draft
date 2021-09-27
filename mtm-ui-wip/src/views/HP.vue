@@ -1,5 +1,6 @@
 <template>
   <v-container fill-height>
+
     <!--  <v-card-->
     <!--      max-width="80%"-->
     <!--      class="mx-auto"-->
@@ -187,14 +188,9 @@
       <div v-show="clickFilter">
 
         <!-- 展示筛选的数据 -->
-        <div
-            style="border-radius: 25px;border: 2px solid #8AC007;padding: 20px;"
-        >
+        <div style="border-radius: 25px;border: 2px solid #8AC007;padding: 20px;">
           <!-- 数据筛选 -> 筛选出来的用户-->
-          <span
-              v-for="(sel, i) in selected"
-              :key="i"
-          >
+          <span v-for="(sel, i) in selected" :key="i">
             <v-chip
                 class="ma-2search"
                 color="green"
@@ -341,6 +337,7 @@
           </v-chip>
         </span>
       </div>
+
       <!-- 网页数据 -->
       <v-row dense>
         <v-col
@@ -412,7 +409,7 @@
                         label
                         outlined
                     >
-                      <v-icon left>
+                      <v-icon left @click="toUser(item.userName)">
                         mdi-account
                       </v-icon>
                       <span
@@ -476,6 +473,18 @@
                       mdi-link-variant
                     </v-icon>
                     View
+                  </v-chip>
+
+                  <v-chip
+                      color="#84a2d4"
+                      @click="openComment(item.webId)"
+                      outlined
+                      style="margin-right: 3px"
+                  >
+                    <v-icon left>
+                      mdi-comment-outline
+                    </v-icon>
+                    Comment
                   </v-chip>
 
                   <v-chip
@@ -973,11 +982,17 @@ export default {
       // 打开 3000 端口的 /file 路径，而 3000 号端口映射了后端服务器的端口
       window.open("/file?username=" + username, "_blank");
     },
+    openComment(webId) {
+      if (confirm("Are you sure you want to check out the comment(s)?")) {
+        this.$router.push({
+          path: `/comment/${webId}`,
+        });
+      }
+    },
     // 跳转页面
     jump(url) {
       window.open(url, '_blank')
-    }
-    ,
+    },
     // 页面回到顶部
     toTop() {
       document.body.scrollTop = 0;
@@ -1008,8 +1023,7 @@ export default {
           }
         });
       }
-    }
-    ,
+    },
 
   },
   computed: {
