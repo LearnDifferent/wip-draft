@@ -410,7 +410,7 @@
                         outlined
                     >
                       <v-icon left @click="toUser(item.userName)">
-                        {{ currentUser == item.userName ? 'mdi-account-check' : 'mdi-account'}}
+                        {{ currentUser == item.userName ? 'mdi-account-check' : 'mdi-account' }}
                       </v-icon>
                       <span
                           @click="toUser(item.userName)"
@@ -531,6 +531,12 @@
             </div>
 
           </v-card>
+
+          <!-- 评论区 -->
+          <div v-show="showComment == item.webId">
+            <Comment :webId="showComment"></Comment>
+          </div>
+
         </v-col>
       </v-row>
 
@@ -595,7 +601,11 @@
 </template>
 
 <script>
+import Comment from "./Comment";
 export default {
+  components:{
+    Comment: Comment
+  },
   name: "HP",
   data: () => ({
     // 展示模式
@@ -616,6 +626,8 @@ export default {
     // myWebs 存放遍历的 website 的数据：webId,userName,url,img,title,desc
     // （还可能有 count 数据和是否公开 isPublic）
     items: '',
+    // 显示该 webId 的评论
+    showComment: -1,
     // 是否将网页公开
     publicPrivacy: true,
     // 是否在收藏的同时，加入到搜索引擎中
@@ -982,12 +994,12 @@ export default {
       // 打开 3000 端口的 /file 路径，而 3000 号端口映射了后端服务器的端口
       window.open("/file?username=" + username, "_blank");
     },
+    // 打开评论
     openComment(webId) {
-      if (confirm("Are you sure you want to check out the comment(s)?")) {
-        this.$router.push({
-          path: `/comment/${webId}`,
-        });
+      if (this.showComment == webId) {
+        webId = -1;
       }
+      this.showComment = webId;
     },
     // 跳转页面
     jump(url) {
