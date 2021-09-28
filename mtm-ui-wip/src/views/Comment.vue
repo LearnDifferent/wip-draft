@@ -41,7 +41,7 @@
               @click="showCommentsFunc"
           >
             <v-icon left>
-              {{showCommentArea ? 'mdi-comment-remove-outline' : 'mdi-comment-processing-outline'}}
+              {{ showCommentArea ? 'mdi-comment-remove-outline' : 'mdi-comment-processing-outline' }}
             </v-icon>
             {{ showCommentArea ? 'Close' : 'Show Comments' }}
           </v-btn>
