@@ -534,7 +534,7 @@
 
           <!-- 评论区 -->
           <div v-show="showComment == item.webId">
-            <Comment :webId="showComment"></Comment>
+            <Comment :webId="showComment" :currentUsername="currentUser"></Comment>
           </div>
 
         </v-col>

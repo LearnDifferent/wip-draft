@@ -19,6 +19,8 @@
 
     <v-textarea
         label="Write a comment..."
+        counter
+        :rules="commentRule"
         auto-grow
         prepend-inner-icon="mdi-send"
         v-model="commentValue"
@@ -82,6 +84,11 @@
 export default {
   name: "Comment",
   data: () => ({
+    // 当前用户
+    currentUsername: '',
+    // 评论的限制
+    commentRule: [v => v.length <= 140 || '140-character limit'],
+    // 网页 id
     webId: -1,
     // 是否打开评论区
     showCommentArea: false,
@@ -96,6 +103,10 @@ export default {
       type: Number,
       required: true
     },
+    currentUsername: {
+      type: String,
+      required: true
+    }
   },
 
   methods: {
@@ -125,8 +136,22 @@ export default {
     // 发送评论
     sendComment() {
       if (confirm("Send this comment?")) {
-        alert(this.commentValue);
-        this.commentValue = '';
+
+        let data = {
+          comment: this.commentValue,
+          webId: this.webId,
+          username: this.currentUsername
+        }
+
+        this.axios.post("/comment/create", data).then(res => {
+          if (res.data.code == 200) {
+            // 200 表示成功，500 表示失败
+            alert(res.data.msg);
+            this.commentValue = '';
+          } else if (res.data.code == 500) {
+            alert(res.data.msg);
+          }
+        });
       }
     },
   },
