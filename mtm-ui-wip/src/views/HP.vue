@@ -602,8 +602,10 @@
 
 <script>
 import Comment from "./Comment";
+
 export default {
-  components:{
+  components: {
+    // 评论区
     Comment: Comment
   },
   name: "HP",
