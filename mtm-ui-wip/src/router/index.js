@@ -7,7 +7,7 @@ import HP from "@/views/HP";
 import MyPage from "@/views/MyPage";
 import Find from "@/views/Find";
 import DeletingPage from "@/views/DeletingPage";
-import Comment from "../views/Comment";
+import Comment from "../component/Comment";
 
 Vue.use(VueRouter)
 

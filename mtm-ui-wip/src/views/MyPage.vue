@@ -298,6 +298,19 @@
                       mdi-link-variant
                     </v-icon>
                   </v-btn>
+
+                  <v-btn
+                      class="ma-2"
+                      outlined
+                      color="#84a2d4"
+                      small
+                      @click="openComment(item.webId)"
+                  >
+                    <v-icon>
+                      {{ showComment == item.webId ? 'mdi-comment-remove-outline' : 'mdi-comment-outline' }}
+                    </v-icon>
+                    {{ item.commentCount > 0 ? item.commentCount : '' }}
+                  </v-btn>
                 </v-card-actions>
               </div>
 
@@ -311,6 +324,11 @@
               </v-avatar>
             </div>
           </v-card>
+
+          <!-- 评论区 -->
+          <div v-show="showComment == item.webId">
+            <Comment :webId="showComment" :currentUsername="user.userName"></Comment>
+          </div>
         </v-col>
       </v-row>
 
@@ -340,9 +358,14 @@
   </v-container>
 </template>
 
-
 <script>
+import Comment from "../component/Comment";
+
 export default {
+  components: {
+    // 评论区
+    Comment: Comment
+  },
   name: "MyPage",
   data: () => ({
     // 是否正在处理上传的文件
@@ -378,9 +401,18 @@ export default {
     ],
     // 信息
     status: '',
+    // 显示该 webId 的评论
+    showComment: -1,
   }),
 
   methods: {
+    // 打开评论
+    openComment(webId) {
+      if (this.showComment == webId) {
+        webId = -1;
+      }
+      this.showComment = webId;
+    },
     // 导入数据
     importHtmlFile() {
       if (!this.chosenFile) {

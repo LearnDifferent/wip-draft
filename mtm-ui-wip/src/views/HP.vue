@@ -476,15 +476,16 @@
                   </v-chip>
 
                   <v-chip
+                      v-show="clickRecent"
                       color="#84a2d4"
                       @click="openComment(item.webId)"
                       outlined
                       style="margin-right: 3px"
                   >
                     <v-icon left>
-                      mdi-comment-outline
+                      {{ showComment >= 0 ? 'mdi-comment-remove-outline' : 'mdi-comment-outline'}}
                     </v-icon>
-                    Comment
+                    Comment {{ item.commentCount > 0 ? '(' + item.commentCount + ')' : ''}}
                   </v-chip>
 
                   <v-chip
@@ -533,7 +534,7 @@
           </v-card>
 
           <!-- 评论区 -->
-          <div v-show="showComment == item.webId">
+          <div v-show="showComment == item.webId && clickRecent">
             <Comment :webId="showComment" :currentUsername="currentUser"></Comment>
           </div>
 
@@ -603,7 +604,7 @@
 </template>
 
 <script>
-import Comment from "./Comment";
+import Comment from "../component/Comment";
 
 export default {
   components: {

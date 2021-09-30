@@ -85,117 +85,131 @@
             :style="editCommentId == c.commentId ?
             'border-radius: 25px;margin-top: 2%;border: 2px solid #82ae46;padding: 20px;' : ''"
         >
-        <!-- 展示评论 -->
-        <v-card
-            color="#e7e7eb"
-            :id="c.commentId"
-            @mouseover="onThisComment = c.commentId"
-        >
-          <v-card-text>
-            <p>
-              <!-- 用户名 -->
-              <v-icon left>
-                {{ currentUsername == c.username ? 'mdi-account-check' : 'mdi-account-outline' }}
-              </v-icon>
-              {{ c.username }}
-
-              <v-divider
-                  class="mx-2"
-                  vertical
-              ></v-divider>
-
-              <!-- 创建时间 -->
-              <v-icon left>
-                mdi-clock-outline
-              </v-icon>
-              {{ c.creationTime }}
-
-              <!-- 打开重新编辑评论的按钮 -->
-              <v-divider
-                  v-show="currentUsername == c.username && onThisComment == c.commentId"
-                  class="mx-2"
-                  vertical
-              ></v-divider>
-              <v-btn
-                  x-small
-                  class="text-none"
-                  color="#82ae46"
-                  v-show="currentUsername == c.username && onThisComment == c.commentId"
-                  @click="openEditComment(c.comment, c.commentId)"
-                  rounded
-              >
-                <v-icon left>mdi-tooltip-edit-outline</v-icon>
-                Edit
-              </v-btn>
-
-              <!-- 删除按钮（只能删除自己的评论） -->
-              <v-divider
-                  v-show="currentUsername == c.username && onThisComment == c.commentId"
-                  class="mx-2"
-                  vertical
-              ></v-divider>
-              <v-btn
-                  x-small
-                  class="text-none"
-                  color="#e83929"
-                  v-show="currentUsername == c.username && onThisComment == c.commentId"
-                  @click="deleteComment(c.commentId)"
-                  rounded
-              >
-                <v-icon left>mdi-delete-outline</v-icon>
-                Delete
-              </v-btn>
-            </p>
-            <!-- 评论内容 -->
-            <p>{{ c.comment }}</p>
-          </v-card-text>
-        </v-card>
-
-        <!-- 编辑已有的评论 -->
-        <div style="margin-top: 2%" v-show="editCommentId == c.commentId">
-          <v-textarea
-              label="Edit Comment"
-              counter
-              :rules="commentRule"
-              auto-grow
-              prepend-inner-icon="mdi-send"
-              v-model="editCommentValue"
-              @click:prepend-inner="sendEditComment(c)"
-              color="#84a2d4"
-              outlined
-              rows="1"
-              row-height="15"
-          ></v-textarea>
-          <!-- 发送编辑的评论 -->
-          <v-btn
-              class="text-none"
-              color="#6c848d"
-              outlined
-              :disabled="!editCommentValue || editCommentValue.length > 140"
-              @click="sendEditComment(c)"
+          <!-- 展示评论 -->
+          <v-card
+              color="#e7e7eb"
+              :id="c.commentId"
+              @mouseover="onThisComment = c.commentId"
           >
-            <v-icon left>mdi-send</v-icon>
-            Save
-          </v-btn>
-        </div>
-  </div>
-  </v-col>
+            <v-card-text>
+              <p>
+                <!-- 用户名 -->
+                <v-icon left>
+                  {{ currentUsername == c.username ? 'mdi-account-check' : 'mdi-account-outline' }}
+                </v-icon>
+                {{ c.username }}
 
-  <!-- 加载新数据 -->
-  <v-col>
-    <v-btn
-        block
-        color="#84a2d4"
-        v-show="showMore"
-        @click="getComment"
-    >
-      <v-icon left>
-        mdi-refresh
-      </v-icon>
-      More
-    </v-btn>
-  </v-col>
-  </v-row>
+                <v-divider
+                    class="mx-2"
+                    vertical
+                ></v-divider>
+
+                <!-- 创建时间 -->
+                <v-icon left>
+                  mdi-clock-outline
+                </v-icon>
+                {{ c.creationTime }}
+
+                <!-- 打开重新编辑评论的按钮 -->
+                <v-divider
+                    v-show="currentUsername == c.username && onThisComment == c.commentId"
+                    class="mx-2"
+                    vertical
+                ></v-divider>
+                <v-btn
+                    x-small
+                    class="text-none"
+                    color="#82ae46"
+                    v-show="currentUsername == c.username && onThisComment == c.commentId"
+                    @click="openEditComment(c.comment, c.commentId)"
+                    rounded
+                >
+                  <v-icon left>mdi-tooltip-edit-outline</v-icon>
+                  Edit
+                </v-btn>
+
+                <!-- 删除按钮（只能删除自己的评论） -->
+                <v-divider
+                    v-show="currentUsername == c.username && onThisComment == c.commentId"
+                    class="mx-2"
+                    vertical
+                ></v-divider>
+                <v-btn
+                    x-small
+                    class="text-none"
+                    color="#e83929"
+                    v-show="currentUsername == c.username && onThisComment == c.commentId"
+                    @click="deleteComment(c.commentId)"
+                    rounded
+                >
+                  <v-icon left>mdi-delete-outline</v-icon>
+                  Delete
+                </v-btn>
+              </p>
+              <!-- 评论内容 -->
+              <p>{{ c.comment }}</p>
+            </v-card-text>
+          </v-card>
+
+          <div style="margin-top: 2%" v-show="editCommentId == c.commentId">
+            <!-- 编辑已有的评论 -->
+            <v-textarea
+                label="Edit Comment"
+                counter
+                :rules="commentRule"
+                auto-grow
+                prepend-inner-icon="mdi-send"
+                v-model="editCommentValue"
+                @click:prepend-inner="sendEditComment(c)"
+                color="#84a2d4"
+                outlined
+                rows="1"
+                row-height="15"
+            ></v-textarea>
+            <!-- 发送编辑的评论 -->
+            <v-btn
+                class="text-none"
+                color="#6c848d"
+                outlined
+                :disabled="!editCommentValue || editCommentValue.length > 140"
+                @click="sendEditComment(c)"
+            >
+              <v-icon left>mdi-send</v-icon>
+              Save
+            </v-btn>
+            <v-divider
+                class="mx-2"
+                vertical
+            ></v-divider>
+            <!-- 取消发送编辑的评论 -->
+            <v-btn
+                class="text-none"
+                color="#f2c9ac"
+                outlined
+                @click="openEditComment"
+            >
+              <v-icon left>mdi-close-circle-outline</v-icon>
+              Cancel
+            </v-btn>
+          </div>
+        </div>
+      </v-col>
+
+      <!-- 加载新数据 -->
+      <v-col>
+        <v-btn
+            block
+            color="#84a2d4"
+            v-show="showMore"
+            @click="getComment"
+        >
+          <v-icon left>
+            mdi-refresh
+          </v-icon>
+          More
+        </v-btn>
+      </v-col>
+    </v-row>
 
   </div>
 </template>
@@ -250,6 +264,14 @@ export default {
   },
 
   methods: {
+    // 重置数据
+    resetDataAndGetComments() {
+      this.editCommentId = -1;
+      this.editCommentValue = '';
+      this.load = 10;
+      this.count = 0;
+      this.getComment(true);
+    },
     // 打开编辑评论的选项
     openEditComment(newCommentValue, editCommentId) {
       if (this.editCommentId < 0) {
@@ -288,11 +310,7 @@ export default {
         }
       }).finally(() => {
         // 重置数据
-        this.editCommentId = -1;
-        this.editCommentValue = '';
-        this.load = 10;
-        this.count = 0;
-        this.getComment();
+        this.resetDataAndGetComments();
       });
     },
     // 删除评论
@@ -319,6 +337,9 @@ export default {
           } else {
             alert("Something went wrong... Please try again later.")
           }
+        }).finally(() => {
+          // 重置数据
+          this.resetDataAndGetComments();
         });
       }
     },
@@ -335,7 +356,7 @@ export default {
       }
     },
     // 获取评论
-    getComment() {
+    getComment(dontShowNoMoreAlert) {
       this.axios.get("/comment", {
         params: {
           webId: this.webId,
@@ -352,12 +373,15 @@ export default {
           let count = this.comments.length;
 
           if (count == 0) {
-            alert("No comments yet");
+            if (dontShowNoMoreAlert !== true) {
+              alert("No comments yet");
+            }
             // 重置数据
             this.load = 10;
             this.count = 0;
             this.showCommentArea = false;
-          } else if (count === this.count) {
+          } else if (count === this.count && dontShowNoMoreAlert !== true) {
+            // dontShowNoMoreAlert 表示不要提醒
             alert("No More Comments");
           } else {
             // 统计加载的数量
@@ -367,7 +391,9 @@ export default {
           }
         } else {
           // 如果返回其他，表示没有数据
-          alert("No comments yet");
+          if (dontShowNoMoreAlert !== true) {
+            alert("No comments yet");
+          }
           // 重置数据
           this.load = 10;
           this.count = 0;
@@ -379,7 +405,7 @@ export default {
         this.load = 10;
         this.count = 0;
         this.showCommentArea = false;
-      })
+      });
     },
     // 发送评论
     sendComment() {
@@ -394,6 +420,7 @@ export default {
           if (res.data.code == 200) {
             // 200 表示成功，500 表示失败
             alert(res.data.msg);
+            // 重置编辑区
             this.commentValue = '';
           } else if (res.data.code == 500) {
             alert(res.data.msg);
@@ -411,8 +438,8 @@ export default {
           }
         }).finally(() => {
           if (this.showCommentArea) {
-            // 发送过后，如果评论区是打开的，就重新获取评论
-            this.getComment();
+            // 发送过后，如果评论区是打开的，就重置数据
+            this.resetDataAndGetComments();
           }
         });
       }
