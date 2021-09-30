@@ -60,7 +60,7 @@
             <v-btn
                 rounded
                 outlined
-                color="#5b7e91"
+                :color="!showCommentArea ? '#5b7e91' : '#d0576b'"
                 dark
                 @click="showCommentsFunc"
                 class="text-none"
@@ -69,6 +69,28 @@
                 {{ showCommentArea ? 'mdi-comment-remove-outline' : 'mdi-comment-processing-outline' }}
               </v-icon>
               {{ showCommentArea ? 'Close' : 'Show Comments' }}
+            </v-btn>
+          </div>
+
+          <!-- 选择是否 descending 排序  -->
+          <v-divider
+              v-show="showCommentArea"
+              class="mx-2"
+              vertical
+          ></v-divider>
+          <div v-show="showCommentArea">
+            <v-btn
+                rounded
+                outlined
+                color="#b88884"
+                dark
+                @click="changeOrder"
+                class="text-none"
+            >
+              <v-icon left>
+                {{ isDesc ? 'mdi-sort-descending' : 'mdi-sort-ascending' }}
+              </v-icon>
+              {{ isDesc ? 'Descending' : 'Ascending' }}
             </v-btn>
           </div>
         </v-row>
@@ -218,6 +240,8 @@
 export default {
   name: "Comment",
   data: () => ({
+    // 是否 descending 排序
+    isDesc: true,
     // 加载的条数：默认为每次加载 10 条
     load: 10,
     // 已经加载的数据的条数，用于对比
@@ -355,13 +379,19 @@ export default {
         this.count = 0;
       }
     },
+    // 改变排序顺序
+    changeOrder() {
+      this.isDesc = !this.isDesc;
+      this.resetDataAndGetComments();
+    },
     // 获取评论
     getComment(dontShowNoMoreAlert) {
       this.axios.get("/comment", {
         params: {
           webId: this.webId,
           load: this.load,
-          username: this.currentUsername
+          username: this.currentUsername,
+          isDesc: this.isDesc
         }
       }).then(res => {
         // 200 表示获取到了数据

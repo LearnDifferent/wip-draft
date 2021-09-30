@@ -41,7 +41,6 @@
       </p>
     </v-progress-circular>
   </div>
-
 </template>
 
 <script>

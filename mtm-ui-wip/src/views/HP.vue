@@ -315,7 +315,7 @@
       <div style="text-align: center">
         <span
             v-for="(order, i) in orderBy"
-            v-show="clickFilter && webByFilterCount > 0"
+            v-show="clickFilter && count > 0"
         >
          <v-chip
              class="ma-2"
@@ -483,9 +483,9 @@
                       style="margin-right: 3px"
                   >
                     <v-icon left>
-                      {{ showComment >= 0 ? 'mdi-comment-remove-outline' : 'mdi-comment-outline'}}
+                      {{ showComment == item.webId ? 'mdi-comment-remove-outline' : 'mdi-comment-outline' }}
                     </v-icon>
-                    Comment {{ item.commentCount > 0 ? '(' + item.commentCount + ')' : ''}}
+                    Comment {{ item.commentCount > 0 ? '(' + item.commentCount + ')' : '' }}
                   </v-chip>
 
                   <v-chip
@@ -659,7 +659,7 @@ export default {
     // 默认展示 10 条，每次加 10
     filterLoad: 10,
     // 筛选出来的结果的条数，如果新加载的条数和原来保存的条数相同，说明没有新的数据
-    webByFilterCount: 0,
+    count: 0,
     // 对筛选出来对结果进行排序
     orderBy: ["Username - Ascend", "Time - Ascend", "Username - Descend", "Time - Descend"],
     ifOrderByTime: false,
@@ -751,7 +751,7 @@ export default {
       this.refreshShow = false;
       // 再重置已有的筛选数据
       this.filterLoad = 10;
-      this.webByFilterCount = 0;
+      this.count = 0;
       this.showFilter = true;
       this.selected = [];
       this.dates = [];
@@ -786,7 +786,7 @@ export default {
     filterSend() {
       this.filterLoad = 10;
       this.showFilter = false;
-      this.webByFilterCount = 0;
+      this.count = 0;
       this.filterSendRequest();
     },
     // 发送筛选请求
@@ -806,19 +806,21 @@ export default {
       }
 
       this.axios.post("/home/filter", data).then(res => {
-        this.items = res.data.data.webs;
-
-        let webByFilterCount = res.data.data.count;
-        if (webByFilterCount === 0) {
+        // 网页数据
+        let webs = res.data.data;
+        this.items = webs;
+        // 网页数据的数量
+        let count = webs.length;
+        if (count === 0) {
           alert("No Result Found...");
           // 重置数据
           this.filterLoad = 10;
-          this.webByFilterCount = 0;
-        } else if (webByFilterCount === this.webByFilterCount) {
+          this.count = 0;
+        } else if (count === this.count) {
           alert("No More Results");
         } else {
           // 统计加载的数量
-          this.webByFilterCount = webByFilterCount;
+          this.count = count;
           // 每次都新增 10
           this.filterLoad += 10;
         }
@@ -1049,9 +1051,9 @@ export default {
     }
     ,
     showMoreBtn() {
-      return this.webByFilterCount !== 0
+      return this.count !== 0
           && this.clickFilter
-          && this.webByFilterCount % 10 === 0
+          && this.count % 10 === 0
       // 注意，因为每次 filterLoad 都会加 10
       // ，所以结果一定是 10 的倍数，所以才能这样判断
     }
