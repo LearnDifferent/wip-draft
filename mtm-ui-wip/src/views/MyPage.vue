@@ -280,7 +280,7 @@
                       outlined
                       color="red"
                       small
-                      @click="delWeb(item.webId);"
+                      @click="delWeb(item.webId, i);"
                   >
                     <v-icon>
                       mdi-trash-can-outline
@@ -327,7 +327,10 @@
 
           <!-- 评论区 -->
           <div v-show="showComment == item.webId">
-            <Comment :webId="showComment" :currentUsername="user.userName"></Comment>
+            <Comment :webId="showComment"
+                     :currentUsername="user.userName"
+                     :totalComments="item.commentCount"
+            ></Comment>
           </div>
         </v-col>
       </v-row>
@@ -520,7 +523,7 @@ export default {
       }
     },
     // 删除收藏的网页
-    delWeb(webId) {
+    delWeb(webId, arrayIndex) {
       if (confirm("Are you sure you want to delete this one?")) {
         this.axios.delete("/web", {
           params: {
@@ -531,7 +534,10 @@ export default {
           if (res.data.code === 3001) {
             // 3001 表示删除成功
             alert(res.data.msg);
-            this.loadMyPage(this.currentPage);
+            this.myWebs.splice(arrayIndex, 1);
+            if (this.myWebs.length === 0) {
+              this.loadMyPage(this.currentPage);
+            }
           } else {
             alert(res.data.msg);
           }

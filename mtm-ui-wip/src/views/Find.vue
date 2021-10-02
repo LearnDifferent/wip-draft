@@ -344,7 +344,7 @@
               @click="searchRequest(trend, currentPage)"
           >
             {{ trend }}
-            <v-icon right @click.stop="delTrend(trend)">
+            <v-icon right @click.stop="delTrend(trend, i)">
               mdi-close
             </v-icon>
           </v-chip>
@@ -500,12 +500,12 @@ export default {
   }),
   methods: {
     // 删除某个热搜词
-    delTrend(word) {
+    delTrend(word, arrayIndex) {
       if (confirm("Delete this Trending Tag?")) {
         this.axios.delete("/find/trends/" + word).then(res => {
           if (res.data === true) {
             alert("Deleted");
-            location.reload();
+            this.trending.splice(arrayIndex, 1);
           } else {
             alert("Can't delete it...");
           }

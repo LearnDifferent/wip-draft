@@ -492,7 +492,7 @@
                       v-show="currentUser == item.userName && onThisWebData == item.webId"
                       color="red"
                       outlined
-                      @click="delWeb(item.webId)"
+                      @click="delWeb(item.webId, i)"
                       style="margin-right: 3px"
                   >
                     <v-icon left>
@@ -535,7 +535,10 @@
 
           <!-- 评论区 -->
           <div v-show="showComment == item.webId && clickRecent">
-            <Comment :webId="showComment" :currentUsername="currentUser"></Comment>
+            <Comment :webId="showComment"
+                     :currentUsername="currentUser"
+                     :totalComments="item.commentCount"
+            ></Comment>
           </div>
 
         </v-col>
@@ -888,7 +891,7 @@ export default {
       }
     },
     // 删除收藏的网页
-    delWeb(webId) {
+    delWeb(webId, arrayIndex) {
       if (confirm("Are you sure you want to delete this one?")) {
         this.axios.delete("/web", {
           params: {
@@ -899,7 +902,10 @@ export default {
           if (res.data.code === 3001) {
             // 3001 表示删除成功
             alert(res.data.msg);
-            this.loadHome(this.currentPage);
+            this.items.splice(arrayIndex, 1);
+            if (this.items.length === 0) {
+              this.loadHome(this.currentPage);
+            }
           } else {
             alert(res.data.msg);
           }

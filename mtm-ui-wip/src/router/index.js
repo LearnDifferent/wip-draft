@@ -8,6 +8,7 @@ import MyPage from "@/views/MyPage";
 import Find from "@/views/Find";
 import DeletingPage from "@/views/DeletingPage";
 import Comment from "../component/Comment";
+import ReplyToThisComment from "../component/ReplyToThisComment";
 
 Vue.use(VueRouter)
 
@@ -20,7 +21,8 @@ const routes = [
     {path: "/mypage", component: MyPage},
     {path: "/find", component: Find},
     {path: "/delete/:username", component: DeletingPage},
-    {path: "/comment", component: Comment}
+    {path: "/comment", component: Comment},
+    {path: "/replyToThisComment",component: ReplyToThisComment}
 ]
 
 const router = new VueRouter({

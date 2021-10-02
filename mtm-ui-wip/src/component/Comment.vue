@@ -18,14 +18,16 @@
     </v-chip>
 
     <!-- 编辑新的评论 -->
+    <!-- 在不是 replyMode 的情况下展示 -->
     <v-textarea
+        v-show="!replyMode"
         label="Write a comment..."
         counter
         :rules="commentRule"
         auto-grow
         prepend-inner-icon="mdi-send"
         v-model="commentValue"
-        @click:prepend-inner="sendComment"
+        @click:prepend-inner="confirmSendComment"
         color="#84a2d4"
         outlined
         rows="1"
@@ -34,7 +36,8 @@
     ></v-textarea>
 
     <v-row>
-      <v-col>
+      <v-col v-show="!replyMode">
+        <!-- 在不是 replyMode 的情况下展示 -->
         <v-row>
           <!-- 发送评论 -->
           <div style="margin-left: 1%">
@@ -43,7 +46,7 @@
                 rounded
                 outlined
                 :disabled="!commentValue || commentValue.length > 140"
-                @click="sendComment"
+                @click="confirmSendComment"
             >
               <v-icon left>mdi-send</v-icon>
               Send
@@ -68,7 +71,7 @@
               <v-icon left>
                 {{ showCommentArea ? 'mdi-comment-remove-outline' : 'mdi-comment-processing-outline' }}
               </v-icon>
-              {{ showCommentArea ? 'Close' : 'Show Comments' }}
+              {{ showCommentArea ? 'Close' : 'Show Comment (' + totalComments + ')' }}
             </v-btn>
           </div>
 
@@ -96,25 +99,50 @@
         </v-row>
       </v-col>
 
+      <!-- 回复该条评论时 -->
+      <v-col cols="12" v-show="replyMode">
+        <ReplyToThisComment @goBackFromReplies="goBackFromReplies"
+                            @changeOrder="changeOrder"
+                            :c="replyToThisCommentContent"
+                            :currentUsername="currentUsername">
+        </ReplyToThisComment>
+      </v-col>
+
       <!-- 评论区 -->
       <v-col
           v-show="showCommentArea"
-          v-for="c in comments"
+          v-for="(c,index) in comments"
           cols="12"
       >
         <!-- 编辑评论时，围成圈 -->
         <div
-            :style="editCommentId == c.commentId ?
+            :style="editOrReplyCommentId == c.commentId ?
             'border-radius: 25px;margin-top: 2%;border: 2px solid #82ae46;padding: 20px;' : ''"
         >
           <!-- 展示评论 -->
           <v-card
               color="#e7e7eb"
-              :id="c.commentId"
+              :id="'comment-' + c.commentId"
               @mouseover="onThisComment = c.commentId"
           >
             <v-card-text>
               <p>
+                <!-- 回复按钮 -->
+                <v-btn
+                    x-small
+                    class="text-none"
+                    color="#6c848d"
+                    @click="openEditCommentOrReply(c.comment, c.commentId, false)"
+                    rounded
+                >
+                  <v-icon left>mdi-reply</v-icon>
+                  Reply
+                </v-btn>
+
+                <v-divider
+                    class="mx-2"
+                    vertical
+                ></v-divider>
                 <!-- 用户名 -->
                 <v-icon left>
                   {{ currentUsername == c.username ? 'mdi-account-check' : 'mdi-account-outline' }}
@@ -143,7 +171,7 @@
                     class="text-none"
                     color="#82ae46"
                     v-show="currentUsername == c.username && onThisComment == c.commentId"
-                    @click="openEditComment(c.comment, c.commentId)"
+                    @click="openEditCommentOrReply(c.comment, c.commentId, true)"
                     rounded
                 >
                   <v-icon left>mdi-tooltip-edit-outline</v-icon>
@@ -161,28 +189,36 @@
                     class="text-none"
                     color="#e83929"
                     v-show="currentUsername == c.username && onThisComment == c.commentId"
-                    @click="deleteComment(c.commentId)"
+                    @click="deleteComment(c.commentId, index)"
                     rounded
                 >
                   <v-icon left>mdi-delete-outline</v-icon>
                   Delete
                 </v-btn>
               </p>
+
               <!-- 评论内容 -->
               <p>{{ c.comment }}</p>
+
+              <!-- 回复条数（点击，查看该回复） -->
+              <p v-show="c.repliesCount > 0">
+                <v-chip label small color="#abced8" @click="showReplies(c)">
+                  {{ c.repliesCount }} more {{ c.repliesCount === 1 ? 'reply ...' : 'replies ...' }}
+                </v-chip>
+              </p>
             </v-card-text>
           </v-card>
 
-          <div style="margin-top: 2%" v-show="editCommentId == c.commentId">
-            <!-- 编辑已有的评论 -->
+          <div style="margin-top: 2%" v-show="editOrReplyCommentId == c.commentId">
+            <!-- 编辑已有的评论，或回复评论 -->
             <v-textarea
-                label="Edit Comment"
+                :label="trueEditFalseReply ? 'Edit Comment' : 'Reply to a Comment'"
                 counter
                 :rules="commentRule"
                 auto-grow
                 prepend-inner-icon="mdi-send"
-                v-model="editCommentValue"
-                @click:prepend-inner="sendEditComment(c)"
+                v-model="editOrReplyCommentValue"
+                @click:prepend-inner="sendEditCommentOrReply(c)"
                 color="#84a2d4"
                 outlined
                 rows="1"
@@ -193,22 +229,22 @@
                 class="text-none"
                 color="#6c848d"
                 outlined
-                :disabled="!editCommentValue || editCommentValue.length > 140"
-                @click="sendEditComment(c)"
+                :disabled="!editOrReplyCommentValue || editOrReplyCommentValue.length > 140"
+                @click="sendEditCommentOrReply(c)"
             >
               <v-icon left>mdi-send</v-icon>
-              Save
+              {{ trueEditFalseReply ? 'Save' : 'Reply' }}
             </v-btn>
             <v-divider
                 class="mx-2"
                 vertical
             ></v-divider>
-            <!-- 取消发送编辑的评论 -->
+            <!-- 取消发送回复或重新编辑的评论 -->
             <v-btn
                 class="text-none"
                 color="#f2c9ac"
                 outlined
-                @click="openEditComment"
+                @click="openEditCommentOrReply('',-1)"
             >
               <v-icon left>mdi-close-circle-outline</v-icon>
               Cancel
@@ -237,7 +273,12 @@
 </template>
 
 <script>
+import ReplyToThisComment from "./ReplyToThisComment";
+
 export default {
+  components: {
+    ReplyToThisComment: ReplyToThisComment
+  },
   name: "Comment",
   data: () => ({
     // 是否 descending 排序
@@ -261,12 +302,22 @@ export default {
     showCommentArea: false,
     // 发送的评论内容
     commentValue: '',
-    // 编辑已有的评论内容
-    editCommentValue: '',
+    // 编辑已有的评论内容，或回复评论的内容
+    editOrReplyCommentValue: '',
     // 被编辑的评论的 ID
-    editCommentId: -1,
+    editOrReplyCommentId: -1,
+    // true 表示重新编辑，false 表示回复
+    trueEditFalseReply: true,
     // 所有评论
-    comments: ''
+    comments: '',
+    // 是否没有新的评论
+    noMoreResults: false,
+    // 某条评论的回复：被回复的评论的内容
+    replyToThisCommentContent: null,
+    // 查看回复的模式
+    replyMode: false,
+    // 回复的数量
+    totalComments: 0,
   }),
 
   props: {
@@ -277,41 +328,123 @@ export default {
     currentUsername: {
       type: String,
       required: true
+    },
+    totalComments: {
+      type: Number,
+      required: true
     }
   },
 
   computed: {
     showMore() {
       // 注意，因为每次 load 都会加 10，所以结果的数量 count 一定是 10 的倍数，才有新的数据
-      return this.count !== 0 && this.count % 10 === 0 && this.showCommentArea
+      return this.count !== 0 && this.count % 10 === 0
+          && this.showCommentArea && !this.noMoreResults
     }
   },
 
   methods: {
     // 重置数据
-    resetDataAndGetComments() {
-      this.editCommentId = -1;
-      this.editCommentValue = '';
+    resetDataAndGetComments(isGoingBack) {
+      this.editOrReplyCommentId = -1;
+      this.editOrReplyCommentValue = '';
       this.load = 10;
       this.count = 0;
-      this.getComment(true);
+      // 参数 true 表示正在回退
+      this.getComment(isGoingBack);
     },
-    // 打开编辑评论的选项
-    openEditComment(newCommentValue, editCommentId) {
-      if (this.editCommentId < 0) {
-        this.editCommentValue = newCommentValue;
-        this.editCommentId = editCommentId;
+    // 查看回复
+    showReplies(data) {
+      // 开启回复模式
+      this.replyMode = true;
+      // 设置被回复的评论的信息
+      this.replyToThisCommentContent = data;
+      // 重新获取评论（此时为该评论的回复）
+      this.resetDataAndGetComments();
+    },
+    // 从回复中，返回上一级后，重新获取 comments 数据
+    goBackFromReplies() {
+      let commentId = this.replyToThisCommentContent.replyToCommentId;
+      // 更新被回复的评论
+      this.getCommentByIdForGoingBack(commentId);
+      // 更新展示的数据（参数 true 表示正在回退）
+      this.resetDataAndGetComments(true);
+    },
+    // 根据评论 ID，获取评论数据
+    getCommentByIdForGoingBack(commentId) {
+      this.axios.get("/comment/get", {
+        params: {commentId: commentId}
+      }).then(res => {
+        let code = res.data.code;
+        if (code === 200) {
+          // 200 表示查找成功
+          // 设置被回复的评论的信息
+          this.replyToThisCommentContent = res.data.data;
+        } else if (code === 500) {
+          // 500 表示没有上一条，取消 replyMode
+          this.replyMode = false;
+          // 重置数据
+          this.replyToThisCommentContent = null;
+          // 重新载入
+          this.resetDataAndGetComments();
+        } else {
+          alert("Something went wrong.");
+          // 重置数据
+          this.replyToThisCommentContent = null;
+          // 重新载入
+          this.resetDataAndGetComments();
+        }
+      }).catch(error => {
+        alert("Something went wrong.");
+        // 重置数据
+        this.replyToThisCommentContent = null;
+        // 重新载入
+        this.resetDataAndGetComments();
+      });
+    },
+    /**
+     * 打开编辑或回复评论的选项
+     *
+     * @param newCommentValue 新的评论内容
+     * @param editOrReplyCommentId 作用于哪条评论
+     * @param trueEditFalseReply true 表示重新编辑，false 表示回复
+     */
+    openEditCommentOrReply(newCommentValue, editOrReplyCommentId, trueEditFalseReply) {
+      if (trueEditFalseReply != null) {
+        // 赋值
+        this.trueEditFalseReply = trueEditFalseReply;
+      }
+      if (!this.trueEditFalseReply) {
+        // 如果是回复评论，记得清除评论内容
+        newCommentValue = '';
+      }
+      this.editOrReplyCommentValue = newCommentValue;
+      this.editOrReplyCommentId = editOrReplyCommentId;
+    },
+    // 重新编辑评论，或回复评论
+    sendEditCommentOrReply(data) {
+      if (this.trueEditFalseReply) {
+        // 给 data 加上 webId 属性
+        data.webId = this.webId;
+        // 替换为新的评论内容
+        data.comment = this.editOrReplyCommentValue;
+        // 重新编辑评论
+        this.sendEditComment(data);
       } else {
-        this.editCommentValue = '';
-        this.editCommentId = -1;
+        // 获取回复的内容
+        let comment = this.editOrReplyCommentValue;
+        // 获取 web id
+        let webId = this.webId;
+        // 获取发送评论的用户名
+        let username = this.currentUsername;
+        // 获取回复
+        let replyToCommentId = data.commentId;
+        // 发送回复
+        this.sendComment(comment, webId, username, replyToCommentId);
       }
     },
     // 对重新编辑过的已有评论进行发送
     sendEditComment(data) {
-      // 给 data 加上 webId 属性
-      data.webId = this.webId;
-      // 替换为新的评论内容
-      data.comment = this.editCommentValue;
       this.axios.post("comment", data).then(res => {
         if (res.data.code == 200 || res.data.code == 500) {
           // 200 表示成功，500 表示失败
@@ -338,7 +471,7 @@ export default {
       });
     },
     // 删除评论
-    deleteComment(commentId) {
+    deleteComment(commentId, arrayIndex) {
       if (confirm("Are you sure you want to delete this comment?")) {
         this.axios.delete("/comment", {
           params: {
@@ -349,7 +482,7 @@ export default {
           if (res.data.code == 200) {
             // 200 表示删除成功
             alert(res.data.msg);
-            this.getComment();
+            this.comments.splice(arrayIndex, 1);
           } else {
             alert("You can't delete this comment");
           }
@@ -361,9 +494,6 @@ export default {
           } else {
             alert("Something went wrong... Please try again later.")
           }
-        }).finally(() => {
-          // 重置数据
-          this.resetDataAndGetComments();
         });
       }
     },
@@ -378,20 +508,41 @@ export default {
         this.load = 10;
         this.count = 0;
       }
+
+      // 如果没有新的评论，需要提示
+      if (this.noMoreResults) {
+        alert("No More Comments");
+      }
     },
     // 改变排序顺序
     changeOrder() {
       this.isDesc = !this.isDesc;
       this.resetDataAndGetComments();
     },
-    // 获取评论
-    getComment(dontShowNoMoreAlert) {
+    /**
+     * 获取评论列表及回复数量
+     *
+     * @param isGoingBack 是否正在回退
+     */
+    getComment(isGoingBack) {
+      let replyToCommentId = null;
+      if (this.replyToThisCommentContent != null) {
+        // 获取回复这条评论的回复
+        replyToCommentId = this.replyToThisCommentContent.commentId;
+      }
+
+      if (this.replyToThisCommentContent != null && isGoingBack === true) {
+        // 如果是在回退，就获取上一条（也就是被回复的评论）
+        replyToCommentId = this.replyToThisCommentContent.replyToCommentId;
+      }
+
       this.axios.get("/comment", {
         params: {
           webId: this.webId,
           load: this.load,
           username: this.currentUsername,
-          isDesc: this.isDesc
+          isDesc: this.isDesc,
+          replyToCommentId: replyToCommentId
         }
       }).then(res => {
         // 200 表示获取到了数据
@@ -403,31 +554,27 @@ export default {
           let count = this.comments.length;
 
           if (count == 0) {
-            if (dontShowNoMoreAlert !== true) {
-              alert("No comments yet");
-            }
             // 重置数据
             this.load = 10;
             this.count = 0;
             this.showCommentArea = false;
-          } else if (count === this.count && dontShowNoMoreAlert !== true) {
-            // dontShowNoMoreAlert 表示不要提醒
-            alert("No More Comments");
+            this.noMoreResults = true;
+          } else if (count === this.count) {
+            this.noMoreResults = true;
           } else {
             // 统计加载的数量
             this.count = count;
             // 每次都新增 10
             this.load += 10;
+            this.noMoreResults = false;
           }
         } else {
-          // 如果返回其他，表示没有数据
-          if (dontShowNoMoreAlert !== true) {
-            alert("No comments yet");
-          }
+          // 如果状态码不为 200，表示没有新数据
           // 重置数据
           this.load = 10;
           this.count = 0;
           this.showCommentArea = false;
+          this.noMoreResults = false;
         }
       }).catch(error => {
         alert(error.response.data.msg);
@@ -435,49 +582,58 @@ export default {
         this.load = 10;
         this.count = 0;
         this.showCommentArea = false;
+        this.noMoreResults = false;
       });
     },
-    // 发送评论
-    sendComment() {
+    // 确认发送评论
+    confirmSendComment() {
       if (confirm("Send this comment?")) {
-        this.axios.get("/comment/create", {
-          params: {
-            comment: this.commentValue,
-            webId: this.webId,
-            username: this.currentUsername,
-          }
-        }).then(res => {
-          if (res.data.code == 200) {
-            // 200 表示成功，500 表示失败
-            alert(res.data.msg);
-            // 重置编辑区
-            this.commentValue = '';
-          } else if (res.data.code == 500) {
-            alert(res.data.msg);
-          } else {
-            alert("Something went wrong. Please try again later.");
-          }
-        }).catch(error => {
-          let code = error.response.data.code;
-          if (code == 2009 || code == 3009 || code == 2001 || code == 3010 || code == 3011) {
-            // 2009 表示没有权限，3009 表示评论已经存在，2001 网页不存在
-            // 3010 评论为空，3011 评论太长
-            alert(error.response.data.msg);
-          } else {
-            alert("Something went wrong. Please try again later.");
-          }
-        }).finally(() => {
-          if (this.showCommentArea) {
-            // 发送过后，如果评论区是打开的，就重置数据
-            this.resetDataAndGetComments();
-          }
-        });
+        let comment = this.commentValue;
+        let webId = this.webId;
+        let username = this.currentUsername;
+        this.sendComment(comment, webId, username);
       }
     },
+    // 发送评论
+    sendComment(comment, webId, username, replyToCommentId) {
+      this.axios.get("/comment/create", {
+        params: {
+          comment: comment,
+          webId: webId,
+          username: username,
+          replyToCommentId: replyToCommentId
+        }
+      }).then(res => {
+        if (res.data.code == 200) {
+          // 200 表示成功，500 表示失败
+          alert(res.data.msg);
+          // 重置编辑区
+          this.commentValue = '';
+        } else if (res.data.code == 500) {
+          alert(res.data.msg);
+        } else {
+          alert("Something went wrong. Please try again later.");
+        }
+      }).catch(error => {
+        let code = error.response.data.code;
+        if (code == 2009 || code == 3009 || code == 2001
+            || code == 3010 || code == 3011 || code == 3012) {
+          // 2009 表示没有权限，3009 表示评论已经存在，2001 网页不存在
+          // 3010 评论为空，3011 评论太长，3012 表示要回复的评论不存在
+          alert(error.response.data.msg);
+        } else {
+          alert("Something went wrong. Please try again later.");
+        }
+      }).finally(() => {
+        if (this.showCommentArea) {
+          // 发送过后，如果评论区是打开的，就重置数据
+          this.resetDataAndGetComments();
+        }
+      });
+    }
   },
 }
 </script>
 
 <style scoped>
-
 </style>
