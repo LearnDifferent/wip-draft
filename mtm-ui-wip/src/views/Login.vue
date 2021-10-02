@@ -161,15 +161,15 @@ export default {
     validate() {
       this.$refs.form.validate();
       this.isLoading = true;
-      let userVO = {
+      let data = {
         userName: this.name,
         password: this.password,
       }
 
-      this.axios.post("/log/in", userVO, {
+      this.axios.post("/log/in", data, {
         params: {
           code: this.code,
-          verifyToken: localStorage.getItem("verifyToken")
+          verifyToken: localStorage.getItem("verifyToken"),
         }
       }).then(res => {
         if (res.data.code === 200) {
@@ -191,7 +191,9 @@ export default {
           // 2007 表示验证码错误
           this.status = error.response.data.msg;
         }
-      }).finally(()=>{this.isLoading = false});
+      }).finally(() => {
+        this.isLoading = false
+      });
     },
     // 跳转到注册页面
     createAccount() {
