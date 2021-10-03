@@ -171,7 +171,6 @@ export default {
       let submitData = {
         userName: this.name,
         password: this.password,
-        role: "user"
       }
       this.axios.post("/user/create", submitData, {
         params: {
@@ -201,11 +200,12 @@ export default {
         // 2004 表示用户已存在
         // 2007 表示验证码错误
         // 2008 表示邀请码错误
+        // 3014 表示没有传入用户角色
         // 3003 表示用户名只能为英文和数字，出现其他的字符就报错
         // 3004 和 3005 表示用户名太长和密码太长
         // 3006 和 3007 表示用户名和密码为空
         let code = error.response.data.code;
-        if (code === 2004 || 2007 || 2008
+        if (code === 2004 || 2007 || 2008 || 3014
             || 3003 || 3004 || 3005 || 3006 || 3007) {
           this.status = error.response.data.msg;
         }
