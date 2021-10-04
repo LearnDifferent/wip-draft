@@ -9,6 +9,7 @@ import Find from "@/views/Find";
 import DeletingPage from "@/views/DeletingPage";
 import Comment from "../component/Comment";
 import ReplyToThisComment from "../component/ReplyToThisComment";
+import FilterWebsiteData from "../component/FilterWebsiteData";
 
 Vue.use(VueRouter)
 
@@ -22,7 +23,8 @@ const routes = [
     {path: "/find", component: Find},
     {path: "/delete/:username", component: DeletingPage},
     {path: "/comment", component: Comment},
-    {path: "/replyToThisComment",component: ReplyToThisComment}
+    {path: "/replyToThisComment",component: ReplyToThisComment},
+    {path: "/filterWebsiteData",component: FilterWebsiteData}
 ]
 
 const router = new VueRouter({
