@@ -10,6 +10,7 @@ import DeletingPage from "@/views/DeletingPage";
 import Comment from "../component/Comment";
 import ReplyToThisComment from "../component/ReplyToThisComment";
 import FilterWebsiteData from "../component/FilterWebsiteData";
+import MyPageTop from "../component/MyPageTop";
 
 Vue.use(VueRouter)
 
@@ -24,7 +25,8 @@ const routes = [
     {path: "/delete/:username", component: DeletingPage},
     {path: "/comment", component: Comment},
     {path: "/replyToThisComment",component: ReplyToThisComment},
-    {path: "/filterWebsiteData",component: FilterWebsiteData}
+    {path: "/filterWebsiteData",component: FilterWebsiteData},
+    {path: "/myPageTop",component: MyPageTop},
 ]
 
 const router = new VueRouter({
