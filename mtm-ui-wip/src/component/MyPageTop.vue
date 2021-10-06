@@ -369,7 +369,8 @@ export default {
           let msg = res.data.data;
           if (200 == res.data.code) {
             this.importingMsg = "<span style='color: #fff5a5; font-size: 18px'>" + msg + "</span>";
-            this.loadMyPage(this.currentPage);
+            // 刷新载入数据
+            this.$emit("getMyWebsDataByCurrentPage");
           } else if (500 == res.data.code) {
             this.importingMsg = "<span style='color: red; font-size: 15px'>" + msg + "</span>";
           } else {

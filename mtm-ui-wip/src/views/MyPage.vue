@@ -1,11 +1,47 @@
 <template>
   <v-container>
 
-    <MyPageTop :user="user" :ip="ip" :first-of-name="firstOfName"></MyPageTop>
+    <MyPageTop
+        :user="user"
+        :ip="ip"
+        :first-of-name="firstOfName"
+        @getMyWebsDataByCurrentPage="getMyWebsDataByCurrentPage"
+    ></MyPageTop>
 
     <v-divider></v-divider>
 
-    <v-container class="mx-auto">
+    <div style="text-align: center;margin-top: 1%">
+      <v-btn
+          class="text-none text-center"
+          color="green"
+          :outlined="trueMarkedWebsFalseMentions!==true"
+          @click="getMyWebsData(1)"
+      >
+        <v-icon left>
+          mdi-bookmark-check
+        </v-icon>
+        Bookmark
+      </v-btn>
+
+      <v-divider
+          class="mx-2"
+          vertical
+      ></v-divider>
+
+      <v-btn
+          class="text-none text-center"
+          color="#ee827c"
+          :outlined="trueMarkedWebsFalseMentions!==false"
+          @click="getMentions"
+      >
+        <v-icon left>
+          mdi-at
+        </v-icon>
+        Mentions
+      </v-btn>
+    </div>
+
+    <v-container class="mx-auto" v-show="trueMarkedWebsFalseMentions">
       <v-row dense>
         <v-col
             v-for="(item, i) in myWebs"
@@ -101,7 +137,7 @@
               v-model="currentPage"
               :length="totalPage"
               circle
-              @input="loadMyPage(currentPage)"
+              @input="getMyWebsData(currentPage)"
           ></v-pagination>
         </v-col>
       </v-row>
@@ -146,10 +182,13 @@ export default {
     // 头像字母
     firstOfName: '',
 
-    // 信息
+    // response 信息
     status: '',
     // 显示该 webId 的评论
     showComment: -1,
+
+    // true 显示网页数据，false 显示回复
+    trueMarkedWebsFalseMentions: ''
   }),
 
   methods: {
@@ -161,23 +200,44 @@ export default {
       this.showComment = webId;
     },
 
-    // 加载页面信息
-    loadMyPage(currentPage) {
-      this.axios.get("/mypage", {
+    // 加载用户信息
+    getPersonalInfo() {
+      this.axios.get("mypage").then(res=>{
+        this.user = res.data.data.user;
+        this.firstOfName = res.data.data.firstCharOfName;
+        this.ip = res.data.data.ip
+      }).catch((error) => {
+        if (error.response.data.code === 2005) {
+          this.$router.push("/login")
+        }
+      });
+    },
+
+    getMentions() {
+      this.trueMarkedWebsFalseMentions = false;
+    },
+
+    // 加载当前页面的网页
+    getMyWebsDataByCurrentPage() {
+      this.getMyWebsData(this.currentPage);
+    },
+    // 加载收藏的网页
+    getMyWebsData(currentPage) {
+      this.axios.get("/mypage/webs", {
         params: {
           "currentPage": currentPage,
         }
       }).then(res => {
-        this.totalPage = res.data.data.totalPage;
+        // total page
+        this.totalPage = res.data.data.totalPages;
+
         if (this.totalPage < this.currentPage && this.totalPage !== 0) {
           this.currentPage = this.totalPage;
-          this.loadMyPage(this.currentPage);
+          this.getMyWebsData(this.currentPage);
         }
 
-        this.user = res.data.data.user;
+        // 网页数据
         this.myWebs = res.data.data.myWebs;
-        this.firstOfName = res.data.data.firstCharOfName;
-        this.ip = res.data.data.ip
 
         // 让页面返回顶部
         document.body.scrollTop = 0;
@@ -186,6 +246,8 @@ export default {
         if (error.response.data.code === 2005) {
           this.$router.push("/login")
         }
+      }).finally(()=>{
+        this.trueMarkedWebsFalseMentions = true;
       });
     },
     // 更新网页数据的隐私设置
@@ -201,7 +263,7 @@ export default {
         }).then(res => {
           if (res.data.code === 200 || res.data.code === 500) {
             alert(res.data.msg);
-            this.loadMyPage(this.currentPage);
+            this.getMyWebsData(this.currentPage);
           } else {
             alert("Something went wrong... Please try again later.")
           }
@@ -230,7 +292,7 @@ export default {
             alert(res.data.msg);
             this.myWebs.splice(arrayIndex, 1);
             if (this.myWebs.length === 0) {
-              this.loadMyPage(this.currentPage);
+              this.getMyWebsData(this.currentPage);
             }
           } else {
             alert(res.data.msg);
@@ -262,7 +324,7 @@ export default {
     window.onload = function () {
       document.getElementById("myPageBtn").click();
     }
-    this.loadMyPage();
+    this.getPersonalInfo();
   }
 }
 </script>
