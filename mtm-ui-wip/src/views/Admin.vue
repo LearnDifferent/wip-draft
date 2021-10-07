@@ -484,7 +484,7 @@ export default {
       if (this.noticeCon.trim() == '') {
         alert("Please enter something..");
       } else {
-        this.axios.get("/notify/" + this.noticeCon).then(res => {
+        this.axios.get("/notify/send/" + this.noticeCon).then(res => {
           alert(res.data.msg);
         });
         this.noticeCon = '';

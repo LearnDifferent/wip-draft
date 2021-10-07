@@ -32,7 +32,7 @@
           class="text-none text-center"
           color="#ee827c"
           :outlined="trueMarkedWebsFalseNotifications!==false"
-          @click="getMyNotifications"
+          @click="getMyNotifications(10)"
       >
         <v-icon left>
           mdi-at
@@ -202,7 +202,7 @@ export default {
 
     // 加载用户信息
     getPersonalInfo() {
-      this.axios.get("mypage").then(res=>{
+      this.axios.get("mypage").then(res => {
         this.user = res.data.data.user;
         this.firstOfName = res.data.data.firstCharOfName;
         this.ip = res.data.data.ip
@@ -212,9 +212,32 @@ export default {
         }
       });
     },
-
-    getMyNotifications() {
-      this.trueMarkedWebsFalseNotifications = false;
+    // 获取回复我的通知
+    getMyNotifications(size) {
+      this.axios.get("/notify/reply", {
+        params: {
+          "username": this.user.userName,
+          "size": size
+        }
+      }).then(res => {
+        let code = res.data.code;
+        if (code === 200) {
+          console.log(res.data.data);
+        } else if (code === 2009) {
+          alert(res.data.msg);
+        } else {
+          alert("Something went wrong... Please try again later.")
+        }
+      }).catch(error=>{
+        if (error.response.data.code === 2013) {
+          // 2013 表示没有数据
+          alert("No Notifications Yet");
+        } else {
+          alert("Something went wrong... Please try again later.")
+        }
+      }).finally(() => {
+        this.trueMarkedWebsFalseNotifications = false;
+      })
     },
 
     // 加载当前页面的网页
@@ -250,7 +273,7 @@ export default {
         if (error.response.data.code === 2005) {
           this.$router.push("/login")
         }
-      }).finally(()=>{
+      }).finally(() => {
         this.trueMarkedWebsFalseNotifications = true;
       });
     },
