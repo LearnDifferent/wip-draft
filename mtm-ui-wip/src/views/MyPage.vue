@@ -14,7 +14,7 @@
       <v-btn
           class="text-none text-center"
           color="green"
-          :outlined="trueMarkedWebsFalseMentions!==true"
+          :outlined="trueMarkedWebsFalseNotifications!==true"
           @click="getMyWebsData(1)"
       >
         <v-icon left>
@@ -31,17 +31,17 @@
       <v-btn
           class="text-none text-center"
           color="#ee827c"
-          :outlined="trueMarkedWebsFalseMentions!==false"
-          @click="getMentions"
+          :outlined="trueMarkedWebsFalseNotifications!==false"
+          @click="getMyNotifications"
       >
         <v-icon left>
           mdi-at
         </v-icon>
-        Mentions
+        Notifications
       </v-btn>
     </div>
 
-    <v-container class="mx-auto" v-show="trueMarkedWebsFalseMentions">
+    <v-container class="mx-auto" v-show="trueMarkedWebsFalseNotifications">
       <v-row dense>
         <v-col
             v-for="(item, i) in myWebs"
@@ -188,7 +188,7 @@ export default {
     showComment: -1,
 
     // true 显示网页数据，false 显示回复
-    trueMarkedWebsFalseMentions: ''
+    trueMarkedWebsFalseNotifications: ''
   }),
 
   methods: {
@@ -213,8 +213,8 @@ export default {
       });
     },
 
-    getMentions() {
-      this.trueMarkedWebsFalseMentions = false;
+    getMyNotifications() {
+      this.trueMarkedWebsFalseNotifications = false;
     },
 
     // 加载当前页面的网页
@@ -239,6 +239,10 @@ export default {
         // 网页数据
         this.myWebs = res.data.data.myWebs;
 
+        if (this.myWebs.length === 0) {
+          alert("No Bookmarks");
+        }
+
         // 让页面返回顶部
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
@@ -247,7 +251,7 @@ export default {
           this.$router.push("/login")
         }
       }).finally(()=>{
-        this.trueMarkedWebsFalseMentions = true;
+        this.trueMarkedWebsFalseNotifications = true;
       });
     },
     // 更新网页数据的隐私设置

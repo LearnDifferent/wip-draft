@@ -28,7 +28,7 @@
 
       <v-expansion-panel>
         <v-expansion-panel-header>
-          <h3>Send Notifications</h3>
+          <h3>Send System Notifications</h3>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-textarea
@@ -57,7 +57,7 @@
             <v-icon left>
               mdi-email-open-outline
             </v-icon>
-            View Notifications
+            View System Notifications
           </v-btn>
           <v-btn
               color="error"
@@ -67,7 +67,7 @@
             <v-icon left>
               mdi-delete
             </v-icon>
-            Delete All Notifications
+            Delete All System Notifications
           </v-btn>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -441,12 +441,10 @@ export default {
     },
     // 删除所有通知
     delNotify() {
-      if (confirm("Remove All Notifications?")) {
+      if (confirm("Remove All System Notifications?")) {
         this.axios.delete("/notify").then(res => {
-          if (res.data.data === true) {
+          if (res.data.code == 200) {
             alert("Deleted");
-          } else if (res.data.data === false) {
-            alert("Already Deleted");
           } else {
             alert("Please wait a minute before you try again");
           }
