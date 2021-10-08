@@ -71,7 +71,11 @@
               <v-icon left>
                 {{ showCommentArea ? 'mdi-comment-remove-outline' : 'mdi-comment-processing-outline' }}
               </v-icon>
-              {{ showCommentArea ? 'Close' : 'Show Comment (' + totalComments + ')' }}
+              {{
+                showCommentArea ? 'Close'
+                    : totalComments >= 0 ? 'Show Comment (' + totalComments + ')'
+                        : 'Show Comment'
+              }}
             </v-btn>
           </div>
 
@@ -121,7 +125,7 @@
         >
           <!-- 展示评论 -->
           <v-card
-              color="#e7e7eb"
+              :color="prominentCommentId===c.commentId ? '#f4b3c2' : '#e7e7eb'"
               :id="'comment-' + c.commentId"
               @mouseover="onThisComment = c.commentId"
           >
@@ -318,6 +322,8 @@ export default {
     replyMode: false,
     // 回复的数量
     totalComments: 0,
+    // 突出该条评论
+    prominentCommentId: -1,
   }),
 
   props: {
@@ -331,7 +337,7 @@ export default {
     },
     totalComments: {
       type: Number,
-      required: true
+      required: false
     }
   },
 
@@ -523,8 +529,9 @@ export default {
      * 获取评论列表及回复数量
      *
      * @param isGoingBack 是否正在回退
+     * @param getAllComments 是否获取所有的评论
      */
-    getComment(isGoingBack) {
+    getComment(isGoingBack, getAllComments) {
       let replyToCommentId = null;
       if (this.replyToThisCommentContent != null) {
         // 获取回复这条评论的回复
@@ -536,10 +543,15 @@ export default {
         replyToCommentId = this.replyToThisCommentContent.replyToCommentId;
       }
 
+      let load = this.load;
+      if (getAllComments === true) {
+        // 获取所有
+        load = -1;
+      }
       this.axios.get("/comment", {
         params: {
           webId: this.webId,
-          load: this.load,
+          load: load,
           username: this.currentUsername,
           isDesc: this.isDesc,
           replyToCommentId: replyToCommentId
@@ -630,6 +642,27 @@ export default {
           this.resetDataAndGetComments();
         }
       });
+    },
+
+    // 从外部打开评论或回复
+    openCommentFromOutside(trueCommentFalseReply, id) {
+      if (trueCommentFalseReply) {
+        // 普通的评论
+        this.showCommentArea = true;
+        // 获取所有的评论
+        this.getComment(false, true);
+        // todo 评论是否存在或网页是否存在
+        // 移动到该位置
+        setTimeout(() => {
+          let selector = '#comment-' + id;
+          document.querySelector(selector).scrollIntoView(true)
+        }, 500);
+        // 突出该条评论
+        this.prominentCommentId = id;
+      } else {
+        // 回复
+        alert("reply");
+      }
     }
   },
 }

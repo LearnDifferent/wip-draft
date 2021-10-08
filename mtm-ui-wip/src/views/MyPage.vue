@@ -20,7 +20,7 @@
         <v-icon left>
           mdi-bookmark-check
         </v-icon>
-        Bookmark
+        Bookmarks
       </v-btn>
 
       <v-divider
@@ -41,7 +41,13 @@
       </v-btn>
     </div>
 
-    <v-container class="mx-auto" v-show="trueMarkedWebsFalseNotifications">
+    <MyPageNotification
+        ref="myPageNotification"
+        v-show="trueMarkedWebsFalseNotifications===false"
+        :current-username="user.userName"
+    ></MyPageNotification>
+
+    <v-container class="mx-auto" v-show="trueMarkedWebsFalseNotifications===true">
       <v-row dense>
         <v-col
             v-for="(item, i) in myWebs"
@@ -160,12 +166,14 @@
 <script>
 import Comment from "../component/Comment";
 import MyPageTop from "../component/MyPageTop";
+import MyPageNotification from "../component/MyPageNotification";
 
 export default {
   components: {
     MyPageTop,
+    MyPageNotification,
     // 评论区
-    Comment: Comment
+    Comment
   },
   name: "MyPage",
   data: () => ({
@@ -187,8 +195,10 @@ export default {
     // 显示该 webId 的评论
     showComment: -1,
 
-    // true 显示网页数据，false 显示回复
-    trueMarkedWebsFalseNotifications: ''
+    // true 显示网页数据，false 显示回复的通知
+    trueMarkedWebsFalseNotifications: '',
+    // 回复的通知的数据
+    notificationList: '',
   }),
 
   methods: {
@@ -212,32 +222,11 @@ export default {
         }
       });
     },
+
     // 获取回复我的通知
     getMyNotifications(size) {
-      this.axios.get("/notify/reply", {
-        params: {
-          "username": this.user.userName,
-          "size": size
-        }
-      }).then(res => {
-        let code = res.data.code;
-        if (code === 200) {
-          console.log(res.data.data);
-        } else if (code === 2009) {
-          alert(res.data.msg);
-        } else {
-          alert("Something went wrong... Please try again later.")
-        }
-      }).catch(error=>{
-        if (error.response.data.code === 2013) {
-          // 2013 表示没有数据
-          alert("No Notifications Yet");
-        } else {
-          alert("Something went wrong... Please try again later.")
-        }
-      }).finally(() => {
-        this.trueMarkedWebsFalseNotifications = false;
-      })
+      this.trueMarkedWebsFalseNotifications = false;
+      this.$refs.myPageNotification.getMyNotifications(size);
     },
 
     // 加载当前页面的网页
