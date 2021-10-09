@@ -40,6 +40,7 @@
         </v-row>
       </v-alert>
 
+      <!-- 显示通知 -->
       <div v-show="showNotification==='notify' + i">
 
         <v-card :id="websiteData.webId">
@@ -169,21 +170,13 @@ export default {
       window.open(url, '_blank')
     },
 
+    // 打开评论通知的内容
     openReplyNotification(index, notificationData) {
       this.showNotification = 'notify' + index;
-      this.getWebsiteData(notificationData.webId);
-      // if (this.websiteData.webId===null)
-
-      if (notificationData.replyToCommentId !== null) {
-        // 不为 null，说明是回复
-        this.$refs.commentArea[index].openCommentFromOutside(false);
-      } else {
-        // null 时，说明是普通的评论
-        this.$refs.commentArea[index].openCommentFromOutside(true, notificationData.commentId)
-      }
+      this.getWebsiteDataAndContinue(index, notificationData);
     },
-
-    getWebsiteData(webId) {
+    getWebsiteDataAndContinue(index, notificationData) {
+      let webId = notificationData.webId;
       this.axios.get("/web/get", {
         params: {
           userName: this.currentUsername,
@@ -195,8 +188,42 @@ export default {
           this.websiteData = res.data.data;
         } else if (code === 500) {
           alert("You don't have permission to view the post");
+          this.websiteData = '';
         } else {
           alert("Something went wrong..");
+          this.websiteData = '';
+        }
+      }).catch(error => {
+        alert("Something went wrong..");
+        this.websiteData = '';
+      }).finally(() => {
+        this.checkWebsiteDataAndContinue(index, notificationData);
+      })
+    },
+    checkWebsiteDataAndContinue(index, notificationData) {
+      if (this.websiteData === '') {
+        // 不存在该网页数据，所以重置数据
+        this.showNotification = '';
+      } else {
+        // 存在该网页数据，检查评论是否存在并继续
+        this.checkCommentDataAndContinue(index, notificationData);
+      }
+    },
+    checkCommentDataAndContinue(index, notificationData) {
+      this.axios.get("/comment/get?commentId=" + notificationData.commentId).then(res => {
+        if (res.data.code !== 200) {
+          // 不等于 200 说明该评论不存在
+          alert("The comment does not exist");
+          this.showNotification = '';
+        } else {
+          // 存在该评论的时候，判断并继续
+          if (notificationData.replyToCommentId !== null) {
+            // replyToCommentId 不为 null，说明是回复
+            this.$refs.commentArea[index].openCommentFromOutside(false);
+          } else {
+            // replyToCommentId 为 null 时，说明是普通的评论
+            this.$refs.commentArea[index].openCommentFromOutside(true, notificationData.commentId);
+          }
         }
       })
     }

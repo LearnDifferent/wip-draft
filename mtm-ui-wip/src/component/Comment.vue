@@ -125,7 +125,7 @@
         >
           <!-- 展示评论 -->
           <v-card
-              :color="prominentCommentId===c.commentId ? '#f4b3c2' : '#e7e7eb'"
+              :color="prominentCommentId===c.commentId ? '#ee827c' : '#e7e7eb'"
               :id="'comment-' + c.commentId"
               @mouseover="onThisComment = c.commentId"
           >
@@ -651,7 +651,6 @@ export default {
         this.showCommentArea = true;
         // 获取所有的评论
         this.getComment(false, true);
-        // todo 评论是否存在或网页是否存在
         // 移动到该位置
         setTimeout(() => {
           let selector = '#comment-' + id;
