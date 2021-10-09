@@ -351,22 +351,21 @@ export default {
 
   methods: {
     // 重置数据
-    resetDataAndGetComments(isGoingBack) {
+    resetDataAndGetComments(isGoingBack, getAll) {
       this.editOrReplyCommentId = -1;
       this.editOrReplyCommentValue = '';
       this.load = 10;
       this.count = 0;
-      // 参数 true 表示正在回退
-      this.getComment(isGoingBack);
+      this.getComment(isGoingBack, getAll);
     },
     // 查看回复
-    showReplies(data) {
+    showReplies(data, getAllReplies) {
       // 开启回复模式
       this.replyMode = true;
       // 设置被回复的评论的信息
       this.replyToThisCommentContent = data;
       // 重新获取评论（此时为该评论的回复）
-      this.resetDataAndGetComments();
+      this.resetDataAndGetComments(false, getAllReplies);
     },
     // 从回复中，返回上一级后，重新获取 comments 数据
     goBackFromReplies() {
@@ -562,6 +561,7 @@ export default {
           // 获取数据
           this.comments = res.data.data;
 
+          console.log(this.comments);
           // 获取数据条数
           let count = this.comments.length;
 
@@ -645,23 +645,27 @@ export default {
     },
 
     // 从外部打开评论或回复
-    openCommentFromOutside(trueCommentFalseReply, id) {
+    openCommentFromOutside(trueCommentFalseReply, id, data) {
+      // 打开评论区
+      this.showCommentArea = true;
+
       if (trueCommentFalseReply) {
         // 普通的评论
-        this.showCommentArea = true;
         // 获取所有的评论
         this.getComment(false, true);
-        // 移动到该位置
-        setTimeout(() => {
-          let selector = '#comment-' + id;
-          document.querySelector(selector).scrollIntoView(true)
-        }, 500);
-        // 突出该条评论
-        this.prominentCommentId = id;
       } else {
         // 回复
-        alert("reply");
+        this.showReplies(data, true);
       }
+
+      // 突出该条评论
+      this.prominentCommentId = id;
+
+      // 移动到该位置
+      setTimeout(() => {
+        let selector = '#comment-' + id;
+        document.querySelector(selector).scrollIntoView(true)
+      }, 500);
     }
   },
 }

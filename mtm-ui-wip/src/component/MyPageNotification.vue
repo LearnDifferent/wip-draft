@@ -110,11 +110,6 @@
             :web-id="notification.webId"
         ></comment>
 
-        <!--        <p>{{ notification.commentId }}</p>-->
-        <!--        <p>{{ notification.replyToCommentId }}</p>-->
-        <!--        <p>{{ notification.receiveUsername }}</p>-->
-        <!--        <p>{{ notification.sendUsername }}</p>-->
-        <!--        <p>{{ notification.webId }}</p>-->
       </div>
     </v-col>
 
@@ -219,13 +214,29 @@ export default {
           // 存在该评论的时候，判断并继续
           if (notificationData.replyToCommentId !== null) {
             // replyToCommentId 不为 null，说明是回复
-            this.$refs.commentArea[index].openCommentFromOutside(false);
+            this.checkReplyDataAndContinue(index, notificationData);
           } else {
             // replyToCommentId 为 null 时，说明是普通的评论
             this.$refs.commentArea[index].openCommentFromOutside(true, notificationData.commentId);
           }
         }
-      })
+      });
+    },
+    checkReplyDataAndContinue(index, notificationData) {
+      // 获取 replyToCommentId 的评论数据，也就是"被回复的评论"，用于传递值
+      this.axios.get("/comment/get?commentId=" + notificationData.replyToCommentId).then(res => {
+        if (res.data.code === 200) {
+          // 200，说明存在
+          // 赋值，并传递
+          let data = res.data.data;
+          this.$refs.commentArea[index].openCommentFromOutside(false,
+              notificationData.commentId, data);
+        } else {
+          // 不存在时，重置数据
+          alert("The reply does not exist");
+          this.showNotification = '';
+        }
+      });
     }
   },
 
@@ -234,10 +245,6 @@ export default {
       type: String,
       required: true
     }
-    // notificationList: {
-    //   type: Array,
-    //   required: true
-    // }
   },
 }
 </script>
