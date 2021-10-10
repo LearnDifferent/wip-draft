@@ -32,7 +32,7 @@
           class="text-none text-center"
           color="#ee827c"
           :outlined="trueMarkedWebsFalseNotifications!==false"
-          @click="getMyNotifications(10)"
+          @click="getMyNotifications"
       >
         <v-icon left>
           mdi-at
@@ -45,6 +45,7 @@
         ref="myPageNotification"
         v-show="trueMarkedWebsFalseNotifications===false"
         :current-username="user.userName"
+        :total-notifications="totalNotifications"
     ></MyPageNotification>
 
     <v-container class="mx-auto" v-show="trueMarkedWebsFalseNotifications===true">
@@ -199,6 +200,8 @@ export default {
     trueMarkedWebsFalseNotifications: '',
     // 回复的通知的数据
     notificationList: '',
+    // 消息提醒的总数
+    totalNotifications: 0,
   }),
 
   methods: {
@@ -215,7 +218,8 @@ export default {
       this.axios.get("mypage").then(res => {
         this.user = res.data.data.user;
         this.firstOfName = res.data.data.firstCharOfName;
-        this.ip = res.data.data.ip
+        this.ip = res.data.data.ip;
+        this.totalNotifications = res.data.data.totalReplyNotifications;
       }).catch((error) => {
         if (error.response.data.code === 2005) {
           this.$router.push("/login")
@@ -224,9 +228,9 @@ export default {
     },
 
     // 获取回复我的通知
-    getMyNotifications(size) {
+    getMyNotifications() {
       this.trueMarkedWebsFalseNotifications = false;
-      this.$refs.myPageNotification.getMyNotifications(size);
+      this.$refs.myPageNotification.getMyNotifications();
     },
 
     // 加载当前页面的网页
