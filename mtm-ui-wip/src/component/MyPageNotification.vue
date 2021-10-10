@@ -5,40 +5,93 @@
         :key="i"
         cols="12"
     >
-      <v-alert
-          prominent
-          color="#ee827c"
+
+      <v-card
+          class="mx-auto"
+          :color="notification.message === null ? 'grey' : '#ee827c'"
           dark
-          :icon="notification.replyToCommentId !== null ? 'mdi-message-reply-text' : 'mdi-comment-text-outline'"
-          @click="openReplyNotification(i, notification)"
       >
-        <v-row align="center">
-          <v-col class="grow">
-            <b>{{ notification.sendUsername === currentUsername ? 'You' : notification.sendUsername }} </b>
+        <v-card-title style="font-size: medium">
+          <v-icon left>
+            {{ notification.replyToCommentId !== null ? 'mdi-message-reply-text' : 'mdi-comment-text-outline' }}
+          </v-icon>
+
+          <!-- message 为 null，说明不存在 -->
+          <span v-show="notification.message === null">
+           <del>
+              <b>{{ notification.sendUsername === currentUsername ? 'You' : notification.sendUsername }} </b>
+              {{
+               notification.replyToCommentId !== null ?
+                   notification.sendUsername === currentUsername ? 'replied to yourself' : 'replied to you'
+                   : 'posted a comment on your activity'
+             }}
+            </del>
+          </span>
+
+          <!-- message 不为 null，说明存在 -->
+          <span v-show="notification.message !== null">
+           <b>{{ notification.sendUsername === currentUsername ? 'You' : notification.sendUsername }} </b>
             {{
               notification.replyToCommentId !== null ?
-                  notification.sendUsername === currentUsername ? 'replied to yourself' : 'replied to you'
-                  : 'posted a comment on your activity'
+                  notification.sendUsername === currentUsername ? 'replied to yourself :' : 'replied to you :'
+                  : 'posted a comment on your activity :'
             }}
+          </span>
+        </v-card-title>
 
-            <span style="font-size: small;color: #d3cbc6">
-                <v-icon small color="#d3cbc6">
-                  mdi-clock-outline
-                </v-icon>
-                {{ notification.creationTime }}
-              </span>
-          </v-col>
-          <v-col class="shrink">
-            <v-btn
-                color="#d0576b"
-                class="text-none"
+        <v-card-text class="font-weight-bold">
+          {{
+            notification.message === null ?
+                notification.replyToCommentId !== null ?
+                    'This reply has been deleted' : 'This comment has been deleted'
+                : notification.message
+          }}
+        </v-card-text>
+
+        <v-card-actions>
+          <v-list-item class="grow">
+            <v-list-item-content>
+              <v-list-item-title style="font-size: small">
+                <span style="color: #d3cbc6">
+                  <v-icon color="#d3cbc6" small>
+                    mdi-clock-outline
+                  </v-icon>
+                  {{ notification.creationTime }}
+                </span>
+              </v-list-item-title>
+            </v-list-item-content>
+
+            <v-row
+                align="center"
+                justify="end"
             >
-              <v-icon left>mdi-eye</v-icon>
-              View
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-alert>
+              <v-col class="shrink">
+                <v-btn
+                    small
+                    v-show="notification.message !== null"
+                    color="#d0576b"
+                    class="text-none"
+                    @click="openReplyNotification(i, notification)"
+                >
+                  <v-icon left small>mdi-eye</v-icon>
+                  View
+                </v-btn>
+              </v-col>
+              <v-col class="shrink">
+                <v-btn
+                    small
+                    color="#bf242a"
+                    class="text-none"
+                    @click="deleteReplyNotification(i, notification)"
+                >
+                  <v-icon left small>mdi-delete</v-icon>
+                  Delete
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-list-item>
+        </v-card-actions>
+      </v-card>
 
       <!-- 显示通知 -->
       <div v-show="showNotification==='notify' + i">
@@ -114,7 +167,7 @@
     </v-col>
 
     <!-- 加载新通知 -->
-    <v-col v-show="totalNotifications !== countNotifications">
+    <v-col v-show="totalNotifications > 0 && totalNotifications > countNotifications">
       <v-btn
           block
           color="#ee827c"
@@ -188,6 +241,21 @@ export default {
     // 跳转页面
     jump(url) {
       window.open(url, '_blank')
+    },
+
+    // 删除该通知
+    deleteReplyNotification(index, notificationData) {
+      if (confirm("Are you sure you want to delete this one?")) {
+        this.axios.post("/notify/reply/delete", notificationData).then(res => {
+          // 删除数组中的元素
+          this.notificationList.splice(index, 1);
+          // 重置数据
+          this.showNotification = '';
+          alert("Deleted");
+        }).catch(error => {
+          alert(error.response.data.msg);
+        })
+      }
     },
 
     // 打开评论通知的内容
