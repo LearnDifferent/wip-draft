@@ -406,7 +406,7 @@ export default {
     sysSearch: '',
     sysHeaders: [
       {
-        text: 'Date',
+        text: 'Time',
         align: 'start',
         value: 'optTime',
       },
