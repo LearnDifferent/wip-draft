@@ -81,6 +81,24 @@
           <v-card>
             <v-card-title>
               Users
+              <v-divider
+                  class="mx-2"
+                  vertical
+              ></v-divider>
+              <div>
+                <p>
+                  <v-btn class="text-none" color="#93ca76" @click="refreshAllUsers" small>
+                    <v-icon left small>
+                      mdi-refresh
+                    </v-icon>
+                    Refresh Cache Now
+                  </v-btn>
+                </p>
+                <p style="font-size: small">
+                  Cache will be refreshed every hour on the hour automatically
+                </p>
+              </div>
+              <v-spacer></v-spacer>
               <v-spacer></v-spacer>
               <v-text-field
                   v-model="search"
@@ -229,7 +247,8 @@
                           <br><br>
                           <span style="color: grey">
                             *If you want to know how this application send invitation code via email, checkout the
-                            <a href="https://github.com/LearnDifferent/mtm/blob/master/src/main/java/com/github/learndifferent/mtm/manager/InvitationCodeManager.java" target="_blank">source code on GitHub</a>.
+                            <a href="https://github.com/LearnDifferent/mtm/blob/master/src/main/java/com/github/learndifferent/mtm/manager/InvitationCodeManager.java"
+                               target="_blank">source code on GitHub</a>.
                           </span>
                           <br>
                           <span style="color: grey">
@@ -451,6 +470,19 @@ export default {
         });
       }
     },
+    // 更新所有用户信息
+    refreshAllUsers() {
+      this.axios.get("/user").then(res => {
+        if (res.data.code === 200) {
+          this.users = res.data.data;
+          alert("Success");
+        } else {
+          alert("Something went wrong...");
+        }
+      }).catch(error => {
+        alert("Something went wrong...");
+      })
+    },
     // 获取日志信息、所有用户、"是否为管理员"以及注册管理员的验证码
     getInfo() {
       let verifyToken = this.getRandomStr();
@@ -577,7 +609,7 @@ export default {
           this.status = error.response.data.msg;
         }
       }).finally(() => {
-        this.isLoading = false
+        this.isLoading = false;
       });
     },
     // 点击此处退出登陆
