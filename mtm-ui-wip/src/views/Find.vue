@@ -606,7 +606,7 @@ export default {
       this.hasNewUpdate = false;
       // this.dialog = false;
       this.processing = 'Generating The Search-Engine Database... Please wait a minute.';
-      this.axios.get("/find/build").then(res => {
+      this.axios.get("/find/build?mode=web").then(res => {
         if (res.data == true) {
           alert("Success!");
           this.hasDb = true;
