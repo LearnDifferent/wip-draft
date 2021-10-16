@@ -30,6 +30,9 @@
         <v-expansion-panel-header>
           <h3>Send System Notifications</h3>
         </v-expansion-panel-header>
+        <v-expansion-panel-content style="font-size: small">
+          Note: The limit for system notifications is 20
+        </v-expansion-panel-content>
         <v-expansion-panel-content>
           <v-textarea
               name="input-7-1"
@@ -77,27 +80,19 @@
         <v-expansion-panel-header>
           <h3>List All User {{ isAdmin ? "" : " (Please Login as Admin)" }}</h3>
         </v-expansion-panel-header>
+        <v-expansion-panel-content style="font-size: small" v-if="isAdmin===true">
+          Cache will be refreshed every hour on the hour automatically, or you can
+          <v-btn class="text-none" color="#93ca76" @click="refreshAllUsers" x-small>
+            <v-icon left x-small>
+              mdi-refresh
+            </v-icon>
+            Refresh Cache Now
+          </v-btn>
+        </v-expansion-panel-content>
         <v-expansion-panel-content v-if="isAdmin===true">
           <v-card>
             <v-card-title>
               Users
-              <v-divider
-                  class="mx-2"
-                  vertical
-              ></v-divider>
-              <div>
-                <p>
-                  <v-btn class="text-none" color="#93ca76" @click="refreshAllUsers" small>
-                    <v-icon left small>
-                      mdi-refresh
-                    </v-icon>
-                    Refresh Cache Now
-                  </v-btn>
-                </p>
-                <p style="font-size: small">
-                  Cache will be refreshed every hour on the hour automatically
-                </p>
-              </div>
               <v-spacer></v-spacer>
               <v-spacer></v-spacer>
               <v-text-field
