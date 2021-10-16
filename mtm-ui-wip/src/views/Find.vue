@@ -687,7 +687,7 @@ export default {
       this.inputMsg = ''
     },
     load() {
-      this.axios.get("/find").then(res => {
+      this.axios.get("/find/load").then(res => {
         this.trending = res.data.data.trendingList;
         this.hasDb = res.data.data.dataStatus;
         this.hasNewUpdate = res.data.data.hasNewUpdate;
