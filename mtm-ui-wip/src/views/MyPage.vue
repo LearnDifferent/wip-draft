@@ -230,7 +230,7 @@ export default {
     // 获取回复我的通知
     getMyNotifications() {
       this.trueMarkedWebsFalseNotifications = false;
-      this.$refs.myPageNotification.getMyNotifications();
+      this.$refs.myPageNotification.resetDataAndGetNotifications();
     },
 
     // 加载当前页面的网页

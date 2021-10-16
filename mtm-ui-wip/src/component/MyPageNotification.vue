@@ -207,6 +207,12 @@ export default {
   }),
 
   methods: {
+    // 清除数据并打开通知
+    resetDataAndGetNotifications() {
+      this.showNotification = null;
+      this.getMyNotifications();
+    },
+
     // 获取回复我的通知
     getMyNotifications() {
 
