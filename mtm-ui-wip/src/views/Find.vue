@@ -33,7 +33,7 @@
              rounded
              @click="genDb">
         <v-icon>mdi-cached</v-icon>
-        <span>Update Search Engine</span>
+        <span>Detected Data Changes... Click here to Update Data</span>
       </v-btn>
 
       <!-- 没有网页数据的时候，提示生成数据 -->
@@ -46,9 +46,9 @@
             <v-col class="grow">
               The Search-Engine Database has no data for searching.
               You will NOT get any search results unless you
-              Generate the Database.
+              Generate Website Data.
               Please <a href="javascript:void(0)" @click="genDb" style="color: aliceblue">click here</a> or the right
-              button to Generate the Database.
+              button to Generate Website Data.
             </v-col>
             <v-col class="shrink">
               <v-btn class="text-none" @click="genDb">Generate</v-btn>
@@ -57,8 +57,23 @@
         </v-alert>
       </div>
 
-      <!-- 搜索网页时的更多选项 -->
-      <div v-show="searchMode === 'web'" style="margin-top: 1%">
+      <div style="margin-top: 1%">
+        <!-- 显示网页热搜 -->
+        <v-btn
+            v-show="searchMode === 'web'"
+            class="mx-2"
+            color="red"
+            dark
+            small
+            fab
+            @click="showTrending =! showTrending"
+        >
+          <v-icon dark>
+            {{ showTrending ? 'mdi-fire' : 'mdi-close' }}
+          </v-icon>
+        </v-btn>
+
+        <!-- 点击更多选项 -->
         <v-btn
             class="mx-2"
             color="#808080"
@@ -71,16 +86,18 @@
             {{ hidden ? 'mdi-cog' : 'mdi-close' }}
           </v-icon>
         </v-btn>
-        <v-fab-transition
-            v-for="tile in tiles"
+
+        <!-- 展开网页相关的更多选项 -->
+        <v-expand-x-transition
+            v-for="tile in searchMode === 'web' ? tiles : userTitles"
         >
-          <v-btn
-              class="text-none"
+          <v-chip
               :key="tile.title"
               v-show="!hidden"
-              rounded
               outlined
               @click="moreOptions(tile.tId)"
+              style="margin: 2px"
+              :text-color="tile.color"
           >
             <v-icon
                 left
@@ -89,25 +106,9 @@
               {{ tile.icon }}
             </v-icon>
             {{ tile.title }}
-          </v-btn>
-        </v-fab-transition>
-
-        <!-- 显示热搜 -->
-        <v-btn
-            class="mx-2"
-            color="red"
-            dark
-            small
-            fab
-            @click="showTrending =! showTrending"
-        >
-          <v-icon dark>
-            {{ showTrending ? 'mdi-fire' : 'mdi-close' }}
-          </v-icon>
-        </v-btn>
+          </v-chip>
+        </v-expand-x-transition>
       </div>
-
-
 
       <!-- 进度条 -->
       <v-progress-linear
@@ -116,6 +117,7 @@
           indeterminate
           rounded
           height="30px"
+          style="margin-top: 1%;margin-bottom: 1%"
       >
         <div style="size: 20px">{{ processing }}</div>
       </v-progress-linear>
@@ -291,6 +293,7 @@ export default {
     // 是否正在搜索
     isSearching: false,
     // 操作搜索数据库相关
+    // 搜索网页时的选项
     tiles: [
       {
         title: 'Delete All Trending Tags',
@@ -299,18 +302,25 @@ export default {
         color: 'red lighten-1'
       },
       {
-        title: 'Generate (Update) Search-Engine Database',
+        title: 'Generate (Update) Website Data',
         tId: 'gen',
         icon: 'mdi-database-refresh',
         color: 'green darken-2'
       },
       {
-        title: 'Delete Search-Engine Database',
+        title: 'Delete All Website Data',
         tId: 'del',
         icon: 'mdi-database-remove',
         color: 'red darken-2'
       },
     ],
+    // 搜索用户时的选项
+    userTitles:[{
+      title: 'Update User Data',
+      tId: 'updateUser',
+      icon: 'mdi-account-convert',
+      color: 'green lighten-1'
+    }],
     // 是否有数据库
     hasDb: true,
     // 是否有新的更新
@@ -384,12 +394,12 @@ export default {
     // 更多操作（打开生成/删除搜索数据库的按钮等）
     moreOptions(tId) {
       if (tId === 'del') {
-        if (confirm("Are you sure you want to Delete Search-Engine Database?")) {
+        if (confirm("Are you sure you want to Delete All Website Data?")) {
           this.delDb();
         }
       }
       if (tId === 'gen') {
-        if (confirm("Are you sure you want to Generate (Update) Search-Engine Database?")) {
+        if (confirm("Are you sure you want to Generate (Update) Website Data?")) {
           this.genDb();
         }
       }
@@ -398,14 +408,37 @@ export default {
           this.delAllTrending();
         }
       }
+      if (tId === 'updateUser') {
+        if (confirm("Are you sure you want to Update User Data?")) {
+          this.updateUserData();
+        }
+      }
       // 最后，让按钮恢复正常
       let btn = document.getElementById("myFindBtn");
       btn.click();
     },
+    // 更新用户数据
+    updateUserData() {
+      this.processing = 'Updating User Data... Please wait a minute.';
+      this.axios.get("/find/build?mode=user").then(res => {
+        if (res.data == true) {
+          alert("Success!");
+        } else {
+          alert("Something went wrong. Please try again.")
+        }
+        this.processing = '';
+      }).catch(error => {
+        if (error.response.data.code === 5001) {
+          this.processing = '';
+          // 5001 表示网络异常
+          alert(error.response.data.msg);
+        }
+      });
+    },
     // 删除搜索数据库
     delDb() {
-      this.processing = 'Deleting The Search-Engine Database.... Please wait a minute.';
-      this.axios.delete("/find/build").then(res => {
+      this.processing = 'Deleting All Website Data.... Please wait a minute.';
+      this.axios.delete("/find/delete").then(res => {
         if (res.data == true) {
           alert("Deleted");
           this.hasDb = false;
@@ -424,7 +457,7 @@ export default {
     // 生成搜索数据库操作
     genDb() {
       this.hasNewUpdate = false;
-      this.processing = 'Generating The Search-Engine Database... Please wait a minute.';
+      this.processing = 'Generating Website Data... Please wait a minute.';
       this.axios.get("/find/build?mode=web").then(res => {
         if (res.data == true) {
           alert("Success!");
@@ -459,7 +492,7 @@ export default {
         alert("Please enter something...");
       } else if (!this.hasDb && this.searchMode === 'web') {
         // 如果数据库中没有数据，且 search mode 为 web，就提示：
-        alert("No Data to Search. Please Generate Search-Engine Database.")
+        alert("No Data to Search. Please Generate Website Data.")
       } else {
         if (this.keyword !== keyword) {
           currentPage = 1;

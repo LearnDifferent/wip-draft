@@ -23,10 +23,13 @@
             v-model="addToSearch"
             color="green"
             :prepend-icon="addToSearch ? 'mdi-magnify' : 'mdi-magnify-minus'"
-            :label="addToSearch ?
-            'Make it searchable on Search Page':
-            'Mark Only'"
+            :label="addToSearch ? 'Make it searchable' : 'Mark Only'"
         ></v-switch>
+      </div>
+      <div v-show="addToSearch" style="margin-bottom: 1%">
+        <a @click="goToSearchPage">
+          <v-icon left>mdi-alert-circle-outline</v-icon>
+          Go to search page</a>
       </div>
       <div>
         <v-btn
@@ -764,7 +767,7 @@ export default {
         document.documentElement.scrollTop = 0;
       }).catch((error) => {
         if (error.response.data.code === 2005) {
-          this.$router.push("/login")
+          this.$router.push("/login");
         }
       });
     },
@@ -865,7 +868,11 @@ export default {
         });
       }
     },
-
+    // 跳转到搜索页面
+    goToSearchPage() {
+      this.$router.push("/find");
+      document.getElementById("myFindBtn").click();
+    }
   },
   computed: {
 
