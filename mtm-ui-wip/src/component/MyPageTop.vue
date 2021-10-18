@@ -6,68 +6,8 @@
           outlined
           style="margin-bottom: 2%;margin-right: 1%"
       >
-        <v-list-item three-line>
-          <v-list-item-content>
-
-            <v-list-item-title class="headline mb-1">
-              <v-textarea
-                  label="Username"
-                  no-resize
-                  readonly
-                  rows="1"
-                  :value="user.userName"
-              ></v-textarea>
-            </v-list-item-title>
-
-            <v-list-item-title class="headline mb-1">
-              <v-textarea
-                  label="ID"
-                  no-resize
-                  readonly
-                  rows="1"
-                  :value="user.userId"
-              ></v-textarea>
-            </v-list-item-title>
-
-            <v-list-item-title class="headline mb-1">
-              <v-textarea
-                  label="Signed in"
-                  no-resize
-                  readonly
-                  rows="1"
-                  :value="user.createTime"
-              ></v-textarea>
-            </v-list-item-title>
-
-            <v-list-item-title class="headline mb-1">
-              <v-textarea
-                  label="Role"
-                  no-resize
-                  readonly
-                  rows="1"
-                  :value="user.role"
-              ></v-textarea>
-            </v-list-item-title>
-
-            <v-list-item-title class="headline mb-1">
-              <v-textarea
-                  label="Your IP"
-                  no-resize
-                  readonly
-                  rows="1"
-                  :value="ip"
-              ></v-textarea>
-            </v-list-item-title>
-
-          </v-list-item-content>
-
-          <v-list-item-avatar
-              size="60"
-              color="black lighten-1"
-          >
-            <span class="white--text headline">{{ firstOfName }}</span>
-          </v-list-item-avatar>
-        </v-list-item>
+        <!-- 用户信息列表 -->
+        <UserInfoList :ip="ip" :user="user"></UserInfoList>
 
         <v-card-actions>
           <v-row no-gutters>
@@ -241,9 +181,12 @@
 </template>
 
 <script>
+import UserInfoList from "./UserInfoList";
+
 export default {
   name: "MyPageTop",
-  data:()=>({
+  components: {UserInfoList},
+  data: () => ({
     // 密码相关：
     show1: false,
     oldPassword: '',
@@ -258,8 +201,6 @@ export default {
     user: '',
     // 当前 IP
     ip: '',
-    // 头像字母
-    firstOfName: '',
     // 是否显示修改密码的框
     showChangePwd: false,
     // 是否正在处理上传的文件
@@ -272,22 +213,18 @@ export default {
     isLoading: false,
   }),
 
-  props:{
-    user:{
+  props: {
+    user: {
       type: Map,
       required: true
     },
-    ip:{
+    ip: {
       type: String,
       required: true,
     },
-    firstOfName:{
-      type: String,
-      required: true
-    }
   },
 
-  methods:{
+  methods: {
 
     // 验证登陆信息，用于修改密码
     validate() {

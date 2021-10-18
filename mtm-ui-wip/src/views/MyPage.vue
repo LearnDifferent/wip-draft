@@ -4,7 +4,6 @@
     <MyPageTop
         :user="user"
         :ip="ip"
-        :first-of-name="firstOfName"
         @getMyWebsDataByCurrentPage="getMyWebsDataByCurrentPage"
     ></MyPageTop>
 
@@ -188,9 +187,6 @@ export default {
     user: '',
     // 当前 IP
     ip: '',
-    // 头像字母
-    firstOfName: '',
-
     // response 信息
     status: '',
     // 显示该 webId 的评论
@@ -217,7 +213,6 @@ export default {
     getPersonalInfo() {
       this.axios.get("mypage").then(res => {
         this.user = res.data.data.user;
-        this.firstOfName = this.user.userName.charAt(0);
         this.ip = res.data.data.ip;
         this.totalNotifications = res.data.data.totalReplyNotifications;
       }).catch((error) => {

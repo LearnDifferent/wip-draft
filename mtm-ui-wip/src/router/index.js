@@ -12,6 +12,7 @@ import ReplyToThisComment from "../component/ReplyToThisComment";
 import FilterWebsiteData from "../component/FilterWebsiteData";
 import MyPageTop from "../component/MyPageTop";
 import MyPageNotification from "../component/MyPageNotification";
+import UserInfoList from "../component/UserInfoList";
 
 Vue.use(VueRouter)
 
@@ -28,7 +29,8 @@ const routes = [
     {path: "/replyToThisComment", component: ReplyToThisComment},
     {path: "/filterWebsiteData", component: FilterWebsiteData},
     {path: "/myPageTop", component: MyPageTop},
-    {path: "/myPageNotification", component: MyPageNotification}
+    {path: "/myPageNotification", component: MyPageNotification},
+    {path: "/userInfoList", component: UserInfoList},
 ]
 
 const router = new VueRouter({
