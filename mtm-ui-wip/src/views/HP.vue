@@ -1,11 +1,5 @@
 <template>
   <v-container fill-height>
-
-    <!--  <v-card-->
-    <!--      max-width="80%"-->
-    <!--      class="mx-auto"-->
-    <!--  >-->
-
     <!-- 发送框 -->
     <v-container
         style="border-radius: 25px;
@@ -28,9 +22,9 @@
         <v-switch
             v-model="addToSearch"
             color="green"
-            :prepend-icon="addToSearch ? 'mdi-sync' : 'mdi-sync-off'"
+            :prepend-icon="addToSearch ? 'mdi-magnify' : 'mdi-magnify-minus'"
             :label="addToSearch ?
-            'Mark and Synchronize Website to Search Engine':
+            'Make it searchable on Search Page':
             'Mark Only'"
         ></v-switch>
       </div>
@@ -467,7 +461,6 @@
         </v-col>
       </v-row>
     </v-container>
-    <!--  </v-card>-->
   </v-container>
 </template>
 
@@ -507,7 +500,7 @@ export default {
     // 是否将网页公开
     publicPrivacy: true,
     // 是否在收藏的同时，加入到搜索引擎中
-    addToSearch: true,
+    addToSearch: false,
     // 是否现实刷新信息
     refreshShow: false,
     // 是否正在解析网页
