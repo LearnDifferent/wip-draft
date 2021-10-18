@@ -23,39 +23,29 @@
 
     <v-container fill-height>
 
-      <!-- 网页相关的选项提示等 -->
       <!-- 提示更新网页搜索的数据库 -->
-      <v-btn v-show="hasNewUpdate && hasDb && searchMode!== 'user'"
-             class="text-none"
-             block
-             color="orange"
-             outlined
-             rounded
-             @click="genDb">
-        <v-icon>mdi-cached</v-icon>
-        <span>Detected Data Changes... Click here to Update Data</span>
-      </v-btn>
+      <AlertWhenDataHasChanges
+          v-show="hasNewUpdate && hasDb && searchMode === 'web'"
+          :update-data="genDb"
+      />
+
+      <!-- 提示更新用户搜索的数据库 -->
+      <AlertWhenDataHasChanges
+          v-show="hasNewUserUpdate && hasUserData && searchMode === 'user'"
+          :update-data="updateUserData"
+      />
 
       <!-- 没有网页数据的时候，提示生成数据 -->
-      <div v-show="!hasDb && searchMode!== 'user'">
-        <v-alert
-            prominent
-            type="error"
-        >
-          <v-row align="center">
-            <v-col class="grow">
-              The Search-Engine Database has no data for searching.
-              You will NOT get any search results unless you
-              Generate Website Data.
-              Please <a href="javascript:void(0)" @click="genDb" style="color: aliceblue">click here</a> or the right
-              button to Generate Website Data.
-            </v-col>
-            <v-col class="shrink">
-              <v-btn class="text-none" @click="genDb">Generate</v-btn>
-            </v-col>
-          </v-row>
-        </v-alert>
-      </div>
+      <AlertWhenNoData
+          v-show="!hasDb && searchMode === 'web'"
+          :update-data="genDb"
+          :search-mode="searchMode"/>
+
+      <!-- 没有用户数据的时候，提示生成数据 -->
+      <AlertWhenNoData
+          v-show="!hasUserData && searchMode === 'user'"
+          :update-data="updateUserData"
+          :search-mode="searchMode"/>
 
       <div style="margin-top: 1%">
         <!-- 显示网页热搜 -->
@@ -264,9 +254,11 @@
 
 <script>
 import UserInfoList from "../component/UserInfoList";
+import AlertWhenNoData from "../component/AlertWhenNoData";
+import AlertWhenDataHasChanges from "../component/AlertWhenDataHasChanges";
 
 export default {
-  components: {UserInfoList},
+  components: {AlertWhenDataHasChanges, AlertWhenNoData, UserInfoList},
   name: "Find",
   data: () => ({
     // 是否隐藏更多选项
@@ -315,16 +307,28 @@ export default {
       },
     ],
     // 搜索用户时的选项
-    userTitles:[{
-      title: 'Update User Data',
-      tId: 'updateUser',
-      icon: 'mdi-account-convert',
-      color: 'green lighten-1'
-    }],
-    // 是否有数据库
+    userTitles: [
+      {
+        title: 'Update User Data',
+        tId: 'updateUser',
+        icon: 'mdi-account-convert',
+        color: 'green lighten-1'
+      },
+      {
+        title: 'Delete All User Data',
+        tId: 'deleteAllUsers',
+        icon: 'mdi-account-off',
+        color: 'red lighten-1'
+      }
+    ],
+    // 是否有用户数据
+    hasUserData: true,
+    // 是否有网页
     hasDb: true,
-    // 是否有新的更新
+    // 网页数据是否发生了变化
     hasNewUpdate: false,
+    // 用户数据是否发生了变化
+    hasNewUserUpdate: false,
     // 正在进行搜索数据库相关操作
     processing: '',
     // search mode
@@ -347,6 +351,20 @@ export default {
       this.currentPage = 0;
       this.totalPage = 1;
       this.isSearching = false;
+      // 获取数据状态
+      this.axios.get("/find/status?mode=" + this.searchMode).then(res => {
+        let exists = res.data.exists;
+        let hasChanges = res.data.hasChanges;
+
+
+        if (searchMode === 'user') {
+          this.hasUserData = exists;
+          this.hasNewUserUpdate = hasChanges;
+        } else {
+          this.hasDb = exists;
+          this.hasNewUpdate = hasChanges;
+        }
+      });
     },
 
     // 删除某个热搜词
@@ -413,16 +431,42 @@ export default {
           this.updateUserData();
         }
       }
+      if (tId === 'deleteAllUsers') {
+        if (confirm("Are you sure you want to Delete All User Data?")) {
+          this.deleteAllUserData();
+        }
+      }
       // 最后，让按钮恢复正常
       let btn = document.getElementById("myFindBtn");
       btn.click();
     },
     // 更新用户数据
     updateUserData() {
+      this.hasNewUserUpdate = false;
       this.processing = 'Updating User Data... Please wait a minute.';
       this.axios.get("/find/build?mode=user").then(res => {
         if (res.data == true) {
           alert("Success!");
+          this.hasUserData = true;
+        } else {
+          alert("Something went wrong. Please try again.")
+        }
+        this.processing = '';
+      }).catch(error => {
+        if (error.response.data.code === 5001) {
+          this.processing = '';
+          // 5001 表示网络异常
+          alert(error.response.data.msg);
+        }
+      });
+    },
+    // 删除用户数据
+    deleteAllUserData() {
+      this.processing = 'Deleting All User Data.... Please wait a minute.';
+      this.axios.delete("/find/delete?mode=user").then(res => {
+        if (res.data == true) {
+          alert("Deleted");
+          this.hasUserData = false;
         } else {
           alert("Something went wrong. Please try again.")
         }
@@ -438,7 +482,7 @@ export default {
     // 删除搜索数据库
     delDb() {
       this.processing = 'Deleting All Website Data.... Please wait a minute.';
-      this.axios.delete("/find/delete").then(res => {
+      this.axios.delete("/find/delete?mode=web").then(res => {
         if (res.data == true) {
           alert("Deleted");
           this.hasDb = false;
@@ -493,6 +537,8 @@ export default {
       } else if (!this.hasDb && this.searchMode === 'web') {
         // 如果数据库中没有数据，且 search mode 为 web，就提示：
         alert("No Data to Search. Please Generate Website Data.")
+      } else if (!this.hasUserData && this.searchMode === 'user') {
+        alert("No Data to Search. Please Generate User Data.")
       } else {
         if (this.keyword !== keyword) {
           currentPage = 1;
@@ -565,5 +611,3 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
