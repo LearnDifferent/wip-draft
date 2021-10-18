@@ -217,7 +217,7 @@ export default {
     getPersonalInfo() {
       this.axios.get("mypage").then(res => {
         this.user = res.data.data.user;
-        this.firstOfName = res.data.data.firstCharOfName;
+        this.firstOfName = this.user.userName.charAt(0);
         this.ip = res.data.data.ip;
         this.totalNotifications = res.data.data.totalReplyNotifications;
       }).catch((error) => {
