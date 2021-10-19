@@ -21,13 +21,14 @@
           v-model="addToSearch"
           color="green"
           :prepend-icon="addToSearch ? 'mdi-magnify' : 'mdi-magnify-minus'"
-          :label="addToSearch ? 'Mark & Make it searchable' : 'Mark Only'"
+          :label="addToSearch ? 'Make it searchable' : 'Don\'t make it searchable'"
       ></v-switch>
     </div>
     <div v-show="addToSearch" style="margin-bottom: 1%">
       <a @click="goToSearchPage">
         <v-icon left>mdi-alert-circle-outline</v-icon>
-        Go to search page</a>
+        This Website will be searchable on Search Page
+      </a>
     </div>
     <div>
       <v-btn
@@ -57,7 +58,7 @@
 export default {
   name: 'MarkUrl',
 
-  data:()=>({
+  data: () => ({
     // 当前用户
     username: '',
     // 是否在收藏的同时，加入到搜索引擎中
@@ -81,7 +82,7 @@ export default {
     }
   },
 
-  methods:{
+  methods: {
     // 跳转到搜索页面
     goToSearchPage() {
       document.getElementById("myFindBtn").click();
@@ -100,26 +101,37 @@ export default {
       };
 
       this.axios.post("/web/new", data).then(res => {
-            console.log(res.data);
-            let toDatabase = res.data[0];
-            let toElasticsearch = res.data[1];
 
-            if (toDatabase == false) {
-              this.saveWebMsg = "Fail to save this website.";
-              this.saveWebMsgColor = 'color: red';
+            let hasSavedToDatabase = res.data.data.hasSavedToDatabase;
+            let hasSavedToElasticsearch = res.data.data.hasSavedToElasticsearch;
+
+            if (hasSavedToElasticsearch === null) {
+              // 无需同步到 Elasticsearch 的情况
+              if (hasSavedToDatabase === true) {
+                this.saveWebMsg = "Success!";
+                this.saveWebMsgColor = 'color: green';
+                this.$emit("showRefresh");
+              } else {
+                this.saveWebMsg = "Fail to save this website.";
+                this.saveWebMsgColor = 'color: red';
+              }
+            } else {
+              // 需要同步到数据库的情况
+              if (hasSavedToDatabase === true && hasSavedToElasticsearch === true) {
+                this.saveWebMsg = "Success!";
+                this.saveWebMsgColor = 'color: green';
+                this.$emit("showRefresh");
+              } else if (hasSavedToDatabase === true && hasSavedToElasticsearch === false) {
+                this.saveWebMsg = "Saved successfully, but fail to make it searchable";
+                this.saveWebMsgColor = 'color: orange';
+                this.$emit("showRefresh");
+              } else {
+                // 只要没有存入数据库，就当作失败处理
+                this.saveWebMsg = "Fail to save this website.";
+                this.saveWebMsgColor = 'color: red';
+              }
             }
 
-            if (toDatabase == true && toElasticsearch == true) {
-              this.saveWebMsg = "Success!";
-              this.saveWebMsgColor = 'color: green';
-              this.$emit("showRefresh");
-            }
-
-            if (toDatabase == true && toElasticsearch == false) {
-              this.saveWebMsg = "Save successfully, but fail to make it searchable";
-              this.saveWebMsgColor = 'color: orange';
-              this.$emit("showRefresh");
-            }
           }
       ).catch(error => {
         this.saveWebMsg = error.response.data.msg;

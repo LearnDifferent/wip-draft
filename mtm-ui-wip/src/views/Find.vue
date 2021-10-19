@@ -210,28 +210,7 @@
             </v-card>
 
             <!-- 网页搜索结果 -->
-            <v-card v-show="searchMode==='web'">
-              <div class="d-flex flex-no-wrap justify-space-between">
-                <div>
-                  <v-card-title
-                      class="headline"
-                      v-html="item.title"
-                      @click="jump(item.url)"
-                  ></v-card-title>
-
-                  <v-card-subtitle v-html="item.desc" @click="jump(item.url)"></v-card-subtitle>
-                </div>
-
-                <v-avatar
-                    class="ma-3"
-                    size="125"
-                    tile
-                    @click="jump(item.url)"
-                >
-                  <v-img :src="item.img"></v-img>
-                </v-avatar>
-              </div>
-            </v-card>
+            <WebsiteSearchResults :item="item" v-show="searchMode==='web'"/>
           </v-col>
         </v-row>
 
@@ -256,9 +235,10 @@
 import UserInfoList from "../component/UserInfoList";
 import AlertWhenNoData from "../component/AlertWhenNoData";
 import AlertWhenDataHasChanges from "../component/AlertWhenDataHasChanges";
+import WebsiteSearchResults from "./WebsiteSearchResults";
 
 export default {
-  components: {AlertWhenDataHasChanges, AlertWhenNoData, UserInfoList},
+  components: {WebsiteSearchResults, AlertWhenDataHasChanges, AlertWhenNoData, UserInfoList},
   name: "Find",
   data: () => ({
     // 是否隐藏更多选项
@@ -514,10 +494,7 @@ export default {
         }
       });
     },
-    // 跳转页面
-    jump(url) {
-      window.open(url, '_blank')
-    },
+
     changePage(keyword, currentPage) {
       var keyword = keyword;
       var currentPage = currentPage;
