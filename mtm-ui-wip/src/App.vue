@@ -41,24 +41,6 @@
         </v-btn-toggle>
       </div>
 
-      <!--      <div class="d-flex order-last">-->
-      <!--        <v-avatar color="grey lighten-2" max-width="36" max-height="36" size="34">-->
-      <!--          <span class="black&#45;&#45;text headline">{{ firstName }}</span>-->
-      <!--        </v-avatar>-->
-      <!--      </div>-->
-
-      <!--      <div class="d-flex order-last">-->
-      <!--        <v-img-->
-      <!--            alt="Logo"-->
-      <!--            class="shrink mr-2"-->
-      <!--            contain-->
-      <!--            src="./assets/logo.png"-->
-      <!--            transition="scale-transition"-->
-      <!--            width="40"-->
-      <!--        />-->
-      <!--      </div>-->
-
-
       <div class="text-center d-flex order-last">
         <v-btn
             id="infoBtn"

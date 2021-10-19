@@ -356,7 +356,6 @@ export default {
         let exists = res.data.exists;
         let hasChanges = res.data.hasChanges;
 
-
         if (searchMode === 'user') {
           this.hasUserData = exists;
           this.hasNewUserUpdate = hasChanges;
