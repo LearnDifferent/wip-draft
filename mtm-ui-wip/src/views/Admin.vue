@@ -1,38 +1,20 @@
 <template>
   <v-container>
 
-    <!--    <v-alert-->
-    <!--        v-show="isAdmin===false"-->
-    <!--        class="mx-auto"-->
-    <!--        outlined-->
-    <!--        color="grey"-->
-    <!--        max-width="60%"-->
-    <!--    >-->
-    <!--      <div class="title">-->
-    <!--        普通用户可以做什么？-->
-    <!--      </div>-->
-    <!--      <div>发送通知（查看通知的按钮在右上角）</div>-->
-    <!--      <div class="title">-->
-    <!--        管理员可以做什么？-->
-    <!--      </div>-->
-    <!--      <div>查看所有用户和系统日志</div>-->
-    <!--      <div class="title">-->
-    <!--        怎么注册管理员？-->
-    <!--      </div>-->
-    <!--      <div>如果使用非管理员账号查看此页面，下方会出现注册窗口</div>-->
-    <!--      <div>*邀请码为<span style="color: black"> 1234</span>（发送邀请码的功能请参照 GitHub 上的源码）</div>-->
-    <!--    </v-alert>-->
-
-
     <v-expansion-panels style="margin-top: 1%">
 
       <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Send System Notifications</h3>
         </v-expansion-panel-header>
+
+        <v-expansion-panel-content style="font-size: small">
+          Note: Everyone has the permission to send
+        </v-expansion-panel-content>
         <v-expansion-panel-content style="font-size: small">
           Note: The limit for system notifications is 20
         </v-expansion-panel-content>
+
         <v-expansion-panel-content>
           <v-textarea
               name="input-7-1"
@@ -55,7 +37,7 @@
           </v-btn>
           <v-btn
               class="mr-4 text-none"
-              @click="clickInfo"
+              @click="getSystemNotifications"
           >
             <v-icon left>
               mdi-email-open-outline
@@ -449,10 +431,6 @@ export default {
   }),
 
   methods: {
-    // 打开通知
-    clickInfo() {
-      document.getElementById("infoBtn").click();
-    },
     // 删除所有通知
     delNotify() {
       if (confirm("Remove All System Notifications?")) {
@@ -520,8 +498,6 @@ export default {
     // 回车发送通知
     toSendNotify() {
       this.sendNotify();
-      let btn = document.getElementById("myAdminBtn");
-      btn.focus();
     },
     // 发送邮件
     sendEmail() {
@@ -621,10 +597,11 @@ export default {
     }
   },
 
+  props:{
+    getSystemNotifications:{},
+  },
+
   created() {
-    window.onload = function () {
-      document.getElementById("myAdminBtn").click();
-    }
     this.getInfo();
   }
 }

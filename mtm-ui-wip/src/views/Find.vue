@@ -309,7 +309,7 @@ export default {
     // 搜索用户时的选项
     userTitles: [
       {
-        title: 'Update User Data',
+        title: 'Update (Generate) User Data',
         tId: 'updateUser',
         icon: 'mdi-account-convert',
         color: 'green lighten-1'
@@ -426,7 +426,7 @@ export default {
         }
       }
       if (tId === 'updateUser') {
-        if (confirm("Are you sure you want to Update User Data?")) {
+        if (confirm("Are you sure you want to Update (Generate) User Data?")) {
           this.updateUserData();
         }
       }
@@ -435,9 +435,6 @@ export default {
           this.deleteAllUserData();
         }
       }
-      // 最后，让按钮恢复正常
-      let btn = document.getElementById("myFindBtn");
-      btn.click();
     },
     // 更新用户数据
     updateUserData() {

@@ -178,9 +178,8 @@ export default {
           let tokenName = res.data.data.tokenName;
           localStorage.setItem('tokenValue', tokenValue);
           localStorage.setItem('tokenName', tokenName);
-
+          // 因为可能在其他标签页内登陆，所以使用点击的方式跳转
           document.getElementById("myHomeBtn").click();
-          this.$router.push("/home");
         }
       }).catch(error => {
         if (error.response.data.code === 2006) {
@@ -192,16 +191,16 @@ export default {
           this.status = error.response.data.msg;
         }
       }).finally(() => {
-        this.isLoading = false
+        this.isLoading = false;
       });
     },
     // 跳转到注册页面
     createAccount() {
-      this.$router.push("/register")
+      this.$router.push("/register");
     },
     // 清除表单的内容
     reset() {
-      this.$refs.form.reset()
+      this.$refs.form.reset();
     },
     // 获取随机字符串
     getRandomStr() {

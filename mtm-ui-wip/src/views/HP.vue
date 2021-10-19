@@ -8,7 +8,7 @@
       <v-text-field
           label="Paste a Website Link (URL) here"
           v-model="newWebUrl"
-          @keyup.enter="toSaveNewWeb"
+          @keyup.enter="saveNewWeb"
       ></v-text-field>
       <div>
         <v-switch
@@ -771,13 +771,7 @@ export default {
         }
       });
     },
-    // 点击 mark 按钮
-    toSaveNewWeb() {
-      this.saveNewWeb();
-      let btn = document.getElementById("myHomeBtn");
-      btn.focus();
-    },
-    // 根据URL保存新的网页
+    // 点击 mark 按钮，根据URL保存新的网页
     saveNewWeb() {
       this.saveWebMsg = "Saving this Web Page. Please wait......";
       this.isLoading = true;
@@ -870,7 +864,6 @@ export default {
     },
     // 跳转到搜索页面
     goToSearchPage() {
-      this.$router.push("/find");
       document.getElementById("myFindBtn").click();
     }
   },

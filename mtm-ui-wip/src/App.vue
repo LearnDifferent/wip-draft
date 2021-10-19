@@ -16,42 +16,38 @@
 
       <v-spacer></v-spacer>
       <div class="d-flex justify-center">
-        <v-btn-toggle
-            v-model="toggle_exclusive"
-            mandatory
+
+        <v-tabs
+            center-active
+            color="dark"
         >
-          <v-btn icon id="myHomeBtn" depressed large @click="changePage('/home')">
-            <v-icon>mdi-home</v-icon>
-          </v-btn>
+          <v-tab id="myHomeBtn" @click="changePage('/home')">
+            <v-icon left>mdi-home</v-icon>
+            Home
+          </v-tab>
 
-          <v-btn icon id="myFindBtn" depressed large @click="changePage('/find')">
-            <v-icon>mdi-magnify</v-icon>
-          </v-btn>
-          <v-btn icon id="myPageBtn" depressed large @click="changePage('/mypage')">
-            <v-icon>mdi-account</v-icon>
-          </v-btn>
+          <v-tab id="myFindBtn" @click="changePage('/find')">
+            <v-icon left>mdi-magnify</v-icon>
+            Search
+          </v-tab>
 
-          <v-btn icon id="myAdminBtn" depressed large @click="changePage('/admin')">
-            <v-icon>mdi-head-cog</v-icon>
-          </v-btn>
-
-          <v-btn icon id="myLogoutBtn" depressed large @click="logoutNow()">
-            <v-icon color="red darken-2">mdi-logout</v-icon>
-          </v-btn>
-        </v-btn-toggle>
+          <v-tab id="myUserBtn" @click="changePage('/user')">
+            <v-icon left>mdi-account</v-icon>
+            User
+          </v-tab>
+        </v-tabs>
       </div>
 
       <div class="text-center d-flex order-last">
         <v-btn
-            id="infoBtn"
             dark
             icon
             small
-            color="yellow darken-2"
-            @click="showNotice"
+            color="red darken-2"
+            @click="logoutNow()"
         >
           <v-icon>
-            mdi-bell-ring
+            mdi-logout
           </v-icon>
         </v-btn>
       </div>
@@ -60,24 +56,6 @@
     </v-app-bar>
     <v-main>
       <router-view/>
-      <v-snackbar
-          v-model="snackbar"
-          vertical="true"
-      >
-
-        <span v-html="notice"></span>
-
-        <template v-slot:action="{ attrs }">
-          <v-btn
-              color="red"
-              text
-              v-bind="attrs"
-              @click="snackbar = false"
-          >
-            Close
-          </v-btn>
-        </template>
-      </v-snackbar>
     </v-main>
   </v-app>
 </template>
@@ -89,25 +67,7 @@ export default {
 
   components: {},
 
-  data: () => ({
-    value: 1,
-    toggle_exclusive: undefined,
-    // 通知相关
-    snackbar: false,
-    notice: '',
-  }),
   methods: {
-    // 查看通知按钮
-    showNotice() {
-      this.getNotify();
-      this.snackbar = true;
-    },
-    // 获取通知
-    getNotify() {
-      this.axios.get("/notify").then(res => {
-        this.notice = res.data.data;
-      });
-    },
     // 切换页面
     changePage(page) {
       this.$router.push({path: page})
@@ -124,9 +84,6 @@ export default {
       }
     }
   },
-  created() {
-    this.getNotify()
-  }
 };
 </script>
 

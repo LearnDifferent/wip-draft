@@ -75,7 +75,7 @@ export default {
           alert("You account has been deleted");
         } else if (res.data.code == 500) {
           alert(res.data.msg);
-          this.$router.push("/mypage");
+          document.getElementById("myUserBtn").click();
         } else {
           alert(res.data.msg);
           this.$router.push("/login");
@@ -83,13 +83,13 @@ export default {
       }).catch(error => {
         if (error.response.data.code == 2009) {
           alert("'" + this.username + "' is not your account. You can only delete your own account.")
-          this.$router.push("/mypage");
+          document.getElementById("myUserBtn").click();
         } else if (error.response.data.code == 2006) {
           alert(error.response.data.msg);
           location.reload();
         } else {
           alert("Fail to delete for some reasons. Please try again later.");
-          this.$router.push("/home");
+          document.getElementById("myHomeBtn").click();
         }
       }).finally(() => {
         this.deleting = false

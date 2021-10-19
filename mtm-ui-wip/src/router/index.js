@@ -13,6 +13,7 @@ import FilterWebsiteData from "../component/FilterWebsiteData";
 import MyPageTop from "../component/MyPageTop";
 import MyPageNotification from "../component/MyPageNotification";
 import UserInfoList from "../component/UserInfoList";
+import UserPage from "../views/UserPage";
 
 Vue.use(VueRouter)
 
@@ -31,6 +32,7 @@ const routes = [
     {path: "/myPageTop", component: MyPageTop},
     {path: "/myPageNotification", component: MyPageNotification},
     {path: "/userInfoList", component: UserInfoList},
+    {path: "/user", component: UserPage},
 ]
 
 const router = new VueRouter({

@@ -36,7 +36,24 @@
         <v-icon left>
           mdi-at
         </v-icon>
-        Notifications
+        My Notifications
+      </v-btn>
+
+      <v-divider
+          class="mx-2"
+          vertical
+      ></v-divider>
+
+      <v-btn
+          class="text-none text-center"
+          color="yellow darken-2"
+          outlined
+          @click="getSystemNotifications"
+      >
+        <v-icon left>
+          mdi-bell-ring-outline
+        </v-icon>
+        System Notifications
       </v-btn>
     </div>
 
@@ -335,10 +352,11 @@ export default {
 
   },
 
+  props:{
+    getSystemNotifications: {},
+  },
+
   created() {
-    window.onload = function () {
-      document.getElementById("myPageBtn").click();
-    }
     this.getPersonalInfo();
   }
 }
