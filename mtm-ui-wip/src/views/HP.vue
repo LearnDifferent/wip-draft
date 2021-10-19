@@ -1,59 +1,7 @@
 <template>
   <v-container fill-height>
     <!-- 发送框 -->
-    <v-container
-        style="border-radius: 25px;
-        border: 2px solid grey;
-        padding: 20px;">
-      <v-text-field
-          label="Paste a Website Link (URL) here"
-          v-model="newWebUrl"
-          @keyup.enter="saveNewWeb"
-      ></v-text-field>
-      <div>
-        <v-switch
-            v-model="publicPrivacy"
-            color="green"
-            :label="publicPrivacy ? 'Public: Anyone on this website': 'Private: Only Me'"
-            :prepend-icon="publicPrivacy ? 'mdi-earth' : 'mdi-lock'"
-        ></v-switch>
-      </div>
-      <div v-show="publicPrivacy">
-        <v-switch
-            v-model="addToSearch"
-            color="green"
-            :prepend-icon="addToSearch ? 'mdi-magnify' : 'mdi-magnify-minus'"
-            :label="addToSearch ? 'Make it searchable' : 'Mark Only'"
-        ></v-switch>
-      </div>
-      <div v-show="addToSearch" style="margin-bottom: 1%">
-        <a @click="goToSearchPage">
-          <v-icon left>mdi-alert-circle-outline</v-icon>
-          Go to search page</a>
-      </div>
-      <div>
-        <v-btn
-            color="success"
-            class="mr-4"
-            @click="saveNewWeb"
-        >
-          <v-icon left>
-            mdi-plus-box-multiple
-          </v-icon>
-          mark
-        </v-btn>
-        <span style="color: slategray" v-show="!saveWebMsg">⬅ Press the MARK button</span>
-        <span v-bind:style="saveWebMsgColor" v-show="saveWebMsg">{{ saveWebMsg }}</span>
-        <v-progress-linear
-            v-show="isLoading"
-            color="orange accent-4"
-            indeterminate
-            rounded
-            height="6"
-            style="margin-top: 5px"
-        ></v-progress-linear>
-      </div>
-    </v-container>
+    <MarkUrl :username="currentUser" @showRefresh="showRefresh"/>
     <v-divider></v-divider>
     <br>
     <v-container>
@@ -470,9 +418,11 @@
 <script>
 import Comment from "../component/Comment";
 import FilterWebsiteData from "../component/FilterWebsiteData";
+import MarkUrl from "../component/MarkUrl";
 
 export default {
   components: {
+    MarkUrl,
     // 评论区
     Comment: Comment,
     // 数据筛选
@@ -489,25 +439,17 @@ export default {
     totalPage: 1,
     // 当前用户
     currentUser: '',
-    // 需要存储的网页链接
-    newWebUrl: '',
-    // 存储网页链接后返回的信息
-    saveWebMsg: '',
-    // 返回信息的颜色
-    saveWebMsgColor: 'color: orange',
+
     // myWebs 存放遍历的 website 的数据：webId,userName,url,img,title,desc
     // （还可能有 count 数据和是否公开 isPublic）
     items: '',
     // 显示该 webId 的评论
     showComment: -1,
-    // 是否将网页公开
-    publicPrivacy: true,
-    // 是否在收藏的同时，加入到搜索引擎中
-    addToSearch: false,
+
+
     // 是否现实刷新信息
     refreshShow: false,
-    // 是否正在解析网页
-    isLoading: false,
+
     //显示该 web id 帖子的排除用户的按钮
     showExcludeUserBtn: -1,
     // 显示该 web id 帖子的创建时间
@@ -534,6 +476,11 @@ export default {
     ifDesc: false,
   }),
   methods: {
+    // 显示 refreshShow
+    showRefresh() {
+      this.refreshShow = true;
+    },
+
     // 查看所有的网页
     findAll() {
       this.recent();
@@ -747,11 +694,6 @@ export default {
           "userName": this.toUserName
         }
       }).then(res => {
-        if (res.data.code === 2005) {
-          // 2005 表示没有登陆
-          this.saveWebMsg = res.data.msg;
-          this.saveWebMsgColor = 'color: red';
-        }
         this.currentUser = res.data.data.currentUser;
         this.items = res.data.data.websInfo.webs;
         this.totalPage = res.data.data.websInfo.totalPage;
@@ -771,49 +713,7 @@ export default {
         }
       });
     },
-    // 点击 mark 按钮，根据URL保存新的网页
-    saveNewWeb() {
-      this.saveWebMsg = "Saving this Web Page. Please wait......";
-      this.isLoading = true;
 
-      let data = {
-        url: this.newWebUrl,
-        username: this.currentUser,
-        syncToElasticsearch: this.addToSearch,
-        isPublic: this.publicPrivacy
-      };
-
-      this.axios.post("/web/new", data).then(res => {
-            console.log(res.data);
-            let toDatabase = res.data[0];
-            let toElasticsearch = res.data[1];
-
-            if (toDatabase == false) {
-              this.saveWebMsg = "Fail to mark this website.";
-              this.saveWebMsgColor = 'color: red';
-            }
-
-            if (toDatabase == true && toElasticsearch == true) {
-              this.saveWebMsg = "Success!";
-              this.saveWebMsgColor = 'color: green';
-              this.refreshShow = true;
-            }
-
-            if (toDatabase == true && toElasticsearch == false) {
-              this.saveWebMsg = "Mark this website successfully, but fail to synchronize data into the search-engine database";
-              this.saveWebMsgColor = 'color: orange';
-              this.refreshShow = true;
-            }
-          }
-      ).catch(error => {
-        this.saveWebMsg = error.response.data.msg;
-        this.saveWebMsgColor = 'color: red';
-      }).finally(() => {
-        this.isLoading = false;
-      });
-
-      this.newWebUrl = '';
-    },
     // 下载（导出）用户的网页数据
     exportHtmlFile() {
       let username = this.toUserName;
@@ -862,10 +762,7 @@ export default {
         });
       }
     },
-    // 跳转到搜索页面
-    goToSearchPage() {
-      document.getElementById("myFindBtn").click();
-    }
+
   },
   computed: {
 
@@ -896,6 +793,3 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
