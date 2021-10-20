@@ -229,9 +229,9 @@ export default {
     // 加载用户信息
     getPersonalInfo() {
       this.axios.get("mypage").then(res => {
-        this.user = res.data.data.user;
-        this.ip = res.data.data.ip;
-        this.totalNotifications = res.data.data.totalReplyNotifications;
+        this.user = res.data.user;
+        this.ip = res.data.ip;
+        this.totalNotifications = res.data.totalReplyNotifications;
       }).catch((error) => {
         if (error.response.data.code === 2005) {
           this.$router.push("/login")
@@ -257,7 +257,7 @@ export default {
         }
       }).then(res => {
         // total page
-        this.totalPage = res.data.data.totalPages;
+        this.totalPage = res.data.totalPages;
 
         if (this.totalPage < this.currentPage && this.totalPage !== 0) {
           this.currentPage = this.totalPage;
@@ -265,7 +265,7 @@ export default {
         }
 
         // 网页数据
-        this.myWebs = res.data.data.myWebs;
+        this.myWebs = res.data.myWebsiteData;
 
         if (this.myWebs.length === 0) {
           alert("No Bookmarks");

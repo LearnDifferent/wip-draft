@@ -228,16 +228,17 @@ export default {
         if (code === 200) {
           this.notificationList = res.data.data;
           this.countNotifications = this.notificationList.length;
-        } else if (code === 2009) {
-          // 没有权限
-          alert(res.data.msg);
         } else {
           alert("Something went wrong... Please try again later.")
         }
       }).catch(error => {
-        if (error.response.data.code === 2013) {
+        let code = error.response.data.code;
+        if (code === 2013) {
           // 2013 表示没有数据
           alert("No Notifications Yet");
+        } else if (code === 2009) {
+          // 2009 表示没有权限
+          alert(error.response.data.msg);
         } else {
           alert("Something went wrong... Please try again later.")
         }

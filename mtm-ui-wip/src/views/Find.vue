@@ -446,13 +446,22 @@ export default {
         } else {
           alert("Something went wrong. Please try again.")
         }
-        this.processing = '';
       }).catch(error => {
-        if (error.response.data.code === 5001) {
-          this.processing = '';
+        let code = error.response.data.code;
+        let message = error.response.data.msg;
+
+        if (code === 5001) {
           // 5001 表示网络异常
-          alert(error.response.data.msg);
+          alert(message);
+        } else if (code === 2009) {
+          // 2009 表示没有权限
+          alert("Only Admin Can Delete User Data.\n\n"
+              + "Normal User Can Only Generate Or Update Data.");
+        } else {
+          alert(message);
         }
+      }).finally(() => {
+        this.processing = '';
       });
     },
     // 删除搜索数据库
@@ -465,13 +474,22 @@ export default {
         } else {
           alert("Something went wrong. Please try again.")
         }
-        this.processing = '';
       }).catch(error => {
-        if (error.response.data.code === 5001) {
-          this.processing = '';
+        let code = error.response.data.code;
+        let message = error.response.data.msg;
+
+        if (code === 5001) {
           // 5001 表示网络异常
-          alert(error.response.data.msg);
+          alert(message);
+        } else if (code === 2009) {
+          // 2009 表示没有权限
+          alert("Only Admin Can Delete Website Data.\n\n"
+              + "Normal User Can Only Generate Or Update Data.");
+        } else {
+          alert(message);
         }
+      }).finally(() => {
+        this.processing = '';
       });
     },
     // 生成搜索数据库操作
@@ -561,9 +579,9 @@ export default {
     },
     load() {
       this.axios.get("/find/load").then(res => {
-        this.trending = res.data.data.trendingList;
-        this.hasDb = res.data.data.dataStatus;
-        this.hasNewUpdate = res.data.data.hasNewUpdate;
+        this.trending = res.data.trendingList;
+        this.hasDb = res.data.dataStatus;
+        this.hasNewUpdate = res.data.hasNewUpdate;
       }).catch((error) => {
         if (error.response.data.code === 2005) {
           this.$router.push("/login")

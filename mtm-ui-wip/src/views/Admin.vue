@@ -237,9 +237,9 @@ export default {
       localStorage.setItem("verifyToken", verifyToken);
 
       this.axios.get("/admin").then(res => {
-        this.isAdmin = res.data.data.admin;
-        this.logs = res.data.data.logs;
-        this.users = res.data.data.users;
+        this.isAdmin = res.data.admin;
+        this.logs = res.data.logs;
+        this.users = res.data.users;
       }).catch((error) => {
         if (error.response.data.code === 2009) {
           // 代码 2009 表示没有权限，此时获取验证码来注册管理员

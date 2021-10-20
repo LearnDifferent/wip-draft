@@ -581,10 +581,10 @@ export default {
           "userName": this.toUserName
         }
       }).then(res => {
-        this.currentUser = res.data.data.currentUser;
-        this.items = res.data.data.websInfo.webs;
-        this.totalPage = res.data.data.websInfo.totalPage;
-        this.toUserName = res.data.data.optUsername;
+        this.currentUser = res.data.currentUser;
+        this.items = res.data.websiteDataInfo.webs;
+        this.totalPage = res.data.websiteDataInfo.totalPage;
+        this.toUserName = res.data.optUsername;
 
         if (this.totalPage < this.currentPage && this.totalPage !== 0) {
           this.currentPage = this.totalPage;
