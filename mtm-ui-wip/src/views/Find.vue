@@ -358,7 +358,7 @@ export default {
           }
         }).catch(error => {
           if (error.response.data.code === 2009) {
-            alert("You are now Login as Guest and Guest can't delete this tag.\n\n" +
+            alert("You are now Login as Guest. Guest can't delete this tag.\n\n" +
                 "Please Login as Normal User or Admin to delete.");
           } else {
             alert("Something went wrong. Please try again later.")
@@ -456,7 +456,7 @@ export default {
         } else if (code === 2009) {
           // 2009 表示没有权限
           alert("Only Admin Can Delete User Data.\n\n"
-              + "Normal User Can Only Generate Or Update Data.");
+              + "Normal User Or Guest Can Only Generate Or Update Data.");
         } else {
           alert(message);
         }
@@ -484,7 +484,7 @@ export default {
         } else if (code === 2009) {
           // 2009 表示没有权限
           alert("Only Admin Can Delete Website Data.\n\n"
-              + "Normal User Can Only Generate Or Update Data.");
+              + "Normal User Or Guest Can Only Generate Or Update Data.");
         } else {
           alert(message);
         }
@@ -514,8 +514,6 @@ export default {
     },
 
     changePage(keyword, currentPage) {
-      var keyword = keyword;
-      var currentPage = currentPage;
       this.searchRequest(keyword, currentPage);
 
       // 让页面返回顶部
