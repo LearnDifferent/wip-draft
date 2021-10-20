@@ -252,7 +252,7 @@ export default {
 
     // 删除该通知
     deleteReplyNotification(index, notificationData) {
-      if (confirm("Are you sure you want to delete this one?")) {
+      if (confirm("Are you sure you want to delete it?")) {
         this.axios.post("/notify/reply/delete", notificationData).then(res => {
           // 删除数组中的元素
           this.notificationList.splice(index, 1);

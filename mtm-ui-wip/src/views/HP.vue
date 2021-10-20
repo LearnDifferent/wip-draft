@@ -143,7 +143,7 @@
                     <v-icon left>
                       mdi-heart-plus
                     </v-icon>
-                    Mark
+                    Add
                   </v-chip>
 
                   <v-chip
@@ -209,7 +209,7 @@
                       vertical
                   ></v-divider>
 
-                  <div style="color: grey" v-show="item.count">Marked by {{ item.count }} user<span
+                  <div style="color: grey" v-show="item.count">Saved by {{ item.count }} user<span
                       v-show="item.count > 1">s</span>
                   </div>
 
@@ -396,11 +396,11 @@ export default {
     // 不查看某人的收藏网页
     dontShowUser(userName) {
       if (userName === this.currentUser) {
-        if (confirm("Don't show your websites?")) {
+        if (confirm("Don't show yours?")) {
           this.findOthers();
         }
       } else {
-        if (confirm("Don't show the websites marked by user \"" + userName + "\" ?")) {
+        if (confirm("Don't show " + userName + "?")) {
           this.isOut = 'dontShow';
           this.pattern = 'withoutUserPage';
           this.toUserName = userName;
@@ -412,11 +412,11 @@ export default {
     // 查找某个用户收藏的所有网页
     toUser(userName) {
       if (userName === this.currentUser) {
-        if (confirm("View the Websites you've marked?")) {
+        if (confirm("View You Bookmarks?")) {
           this.findMine();
         }
       } else {
-        if (confirm("Check the websites marked by user \"" + userName + "\" ?")) {
+        if (confirm("View Bookmarks Shared By " + userName + "?")) {
           this.toUserName = userName;
           this.pattern = 'userPage';
           this.currentPage = 1;
@@ -545,7 +545,7 @@ export default {
     },
     // 删除收藏的网页
     delWeb(webId, arrayIndex) {
-      if (confirm("Are you sure you want to delete this one?")) {
+      if (confirm("Are you sure you want to delete it?")) {
         this.axios.delete("/web", {
           params: {
             "webId": webId,
@@ -621,7 +621,7 @@ export default {
     ,
     // 此用户保存已经存放在数据库内的网页
     mark(item) {
-      if (confirm("Are you sure you want to MARK this one?")) {
+      if (confirm("Add it to your Bookmarks?")) {
         let website = {
           title: item.title,
           url: item.url,

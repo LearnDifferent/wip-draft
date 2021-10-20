@@ -109,7 +109,7 @@
                   <v-btn
                       class="ma-2"
                       outlined
-                      color="green"
+                      color="#bf783a"
                       small
                       @click="jump(item.url)"
                   >
@@ -312,7 +312,7 @@ export default {
     },
     // 删除收藏的网页
     delWeb(webId, arrayIndex) {
-      if (confirm("Are you sure you want to delete this one?")) {
+      if (confirm("Are you sure you want to delete it?")) {
         this.axios.delete("/web", {
           params: {
             "webId": webId,

@@ -33,15 +33,15 @@
     <div>
       <v-btn
           color="success"
-          class="mr-4"
+          class="mr-4 text-none"
           @click="saveNewWeb"
       >
         <v-icon left>
           mdi-plus-box-multiple
         </v-icon>
-        mark
+        Bookmark
       </v-btn>
-      <span style="color: slategray" v-show="!saveWebMsg">⬅ Press the MARK button</span>
+      <span style="color: slategray" v-show="!saveWebMsg">⬅ Press this button</span>
       <span v-bind:style="saveWebMsgColor" v-show="saveWebMsg">{{ saveWebMsg }}</span>
       <v-progress-linear
           v-show="isLoading"
