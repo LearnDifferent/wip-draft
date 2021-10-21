@@ -9,6 +9,21 @@
         ></v-card-title>
 
         <v-card-subtitle v-html="item.desc" @click="jump(item.url)"></v-card-subtitle>
+
+        <v-card-actions v-show="item.createTime">
+
+          <v-chip
+              class="ma-2"
+              color="#8AC009"
+              label
+              outlined
+          >
+            <v-icon left>
+              mdi-clock-outline
+            </v-icon>
+            {{ item.createTime }}
+          </v-chip>
+        </v-card-actions>
       </div>
 
       <v-avatar

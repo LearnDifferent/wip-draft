@@ -2,6 +2,7 @@
   <div>
     <!-- 切换搜索模式 -->
     <v-tabs
+        v-show="!showBookmarks"
         fixed-tabs
         background-color="#474a4d"
         color="white"
@@ -21,33 +22,41 @@
       </v-tab>
     </v-tabs>
 
+    <!-- 不查看 Bookmarks，返回搜索页面 -->
+    <v-btn block v-show="showBookmarks" class="text-none" color="#d0af4c" @click="backToSearch">
+      <v-icon left>
+        mdi-keyboard-backspace
+      </v-icon>
+      You are now viewing {{showBookmarks}}'s bookmarks. Click here to go back.
+    </v-btn>
+
     <v-container fill-height>
 
       <!-- 提示更新网页搜索的数据库 -->
       <AlertWhenDataHasChanges
-          v-show="hasNewUpdate && hasDb && searchMode === 'web'"
+          v-show="hasNewUpdate && hasDb && searchMode === 'web' && !showBookmarks"
           :update-data="genDb"
       />
 
       <!-- 提示更新用户搜索的数据库 -->
       <AlertWhenDataHasChanges
-          v-show="hasNewUserUpdate && hasUserData && searchMode === 'user'"
+          v-show="hasNewUserUpdate && hasUserData && searchMode === 'user' && !showBookmarks"
           :update-data="updateUserData"
       />
 
       <!-- 没有网页数据的时候，提示生成数据 -->
       <AlertWhenNoData
-          v-show="!hasDb && searchMode === 'web'"
+          v-show="!hasDb && searchMode === 'web' && !showBookmarks"
           :update-data="genDb"
           :search-mode="searchMode"/>
 
       <!-- 没有用户数据的时候，提示生成数据 -->
       <AlertWhenNoData
-          v-show="!hasUserData && searchMode === 'user'"
+          v-show="!hasUserData && searchMode === 'user' && !showBookmarks"
           :update-data="updateUserData"
           :search-mode="searchMode"/>
 
-      <div style="margin-top: 1%">
+      <div style="margin-top: 1%" v-show="!showBookmarks">
         <!-- 显示网页热搜 -->
         <v-btn
             v-show="searchMode === 'web'"
@@ -113,7 +122,7 @@
       </v-progress-linear>
 
       <!--搜索框-->
-      <v-row style="margin-top: 1%">
+      <v-row style="margin-top: 1%" v-show="!showBookmarks">
         <v-col>
           <v-text-field
               id="inputField"
@@ -144,7 +153,7 @@
       </v-progress-linear>
 
       <!-- 网页热搜数据 -->
-      <div class="text-center" v-show="this.showTrending && searchMode !== 'user'">
+      <div class="text-center" v-show="this.showTrending && searchMode !== 'user' && !showBookmarks">
         <v-row>
           <v-col
               class="text-center"
@@ -205,12 +214,20 @@
               cols="12"
           >
             <!-- 用户搜索结果 -->
-            <v-card v-show="searchMode==='user'">
+            <v-card v-show="searchMode==='user' && !showBookmarks">
               <UserInfoList :user="item" v-show="searchMode==='user'"></UserInfoList>
+              <v-card-actions>
+                <v-btn class="text-none" color="#e198b4" @click="checkoutBookmarks(item.userName, item.webCount)">
+                  <v-icon left>mdi-bookmark-outline</v-icon>
+                  {{
+                    item.webCount > 0 ? 'View Bookmarks' : 'No Bookmarks'
+                  }}
+                </v-btn>
+              </v-card-actions>
             </v-card>
 
             <!-- 网页搜索结果 -->
-            <WebsiteSearchResults :item="item" v-show="searchMode==='web'"/>
+            <WebsiteSearchResults :item="item" v-show="searchMode==='web' || showBookmarks"/>
           </v-col>
         </v-row>
 
@@ -235,7 +252,7 @@
 import UserInfoList from "../component/UserInfoList";
 import AlertWhenNoData from "../component/AlertWhenNoData";
 import AlertWhenDataHasChanges from "../component/AlertWhenDataHasChanges";
-import WebsiteSearchResults from "./WebsiteSearchResults";
+import WebsiteSearchResults from "../component/WebsiteSearchResults";
 
 export default {
   components: {WebsiteSearchResults, AlertWhenDataHasChanges, AlertWhenNoData, UserInfoList},
@@ -311,16 +328,14 @@ export default {
     hasNewUserUpdate: false,
     // 正在进行搜索数据库相关操作
     processing: '',
-    // search mode
-    searchMode: 'web'
+    // search mode: web, user
+    searchMode: 'web',
+    // 查看 bookmarks，value 为用户名
+    showBookmarks: null,
   }),
   methods: {
 
-    // 切换搜索模式
-    changeSearchMode(searchMode) {
-      // 切换模式
-      this.searchMode = searchMode;
-      // 重置数据
+    resetData() {
       this.items = '';
       this.hidden = true;
       this.inputMsg = '';
@@ -331,6 +346,14 @@ export default {
       this.currentPage = 0;
       this.totalPage = 1;
       this.isSearching = false;
+    },
+
+    // 切换搜索模式
+    changeSearchMode(searchMode) {
+      // 切换模式
+      this.searchMode = searchMode;
+      // 重置数据
+      this.resetData();
       // 获取数据状态
       this.axios.get("/find/status?mode=" + this.searchMode).then(res => {
         let exists = res.data.exists;
@@ -513,8 +536,38 @@ export default {
       });
     },
 
+    // 取消查看 bookmarks，返回搜索
+    backToSearch() {
+      this.showBookmarks = null;
+      this.resetData();
+    },
+
+    checkoutBookmarks(username, websiteDataCount) {
+      if (websiteDataCount < 1) {
+        alert("No Bookmarks");
+      } else {
+        this.showBookmarks = username;
+        this.checkOutUserBookmarks(1);
+      }
+    },
+    // 查看该用户收藏的网页
+    checkOutUserBookmarks(currentPage) {
+      this.axios.get("/web/get/" + this.showBookmarks, {
+        params: {currentPage: currentPage}
+      }).then(res => {
+        this.items = res.data.data.websiteData;
+        this.totalPage = res.data.data.totalPages;
+      });
+    },
+
+    // 切换下一页
     changePage(keyword, currentPage) {
-      this.searchRequest(keyword, currentPage);
+      if (this.showBookmarks) {
+        // 在 showBookmarks 模式下
+        this.checkOutUserBookmarks(currentPage);
+      } else {
+        this.searchRequest(keyword, currentPage);
+      }
 
       // 让页面返回顶部
       document.body.scrollTop = 0;
@@ -553,8 +606,8 @@ export default {
           this.totalPage = resp.data.data.totalPage;
           let totalCount = resp.data.data.totalCount;
           if (totalCount === 0 || !totalCount) {
-            // 没有搜索结果的时候，显示热搜
-            this.showTrending = true;
+            // 没有搜索结果的时候，清除数据
+            this.items = '';
           }
           this.totalCount = totalCount;
           this.keyword = keyword;
@@ -566,6 +619,9 @@ export default {
           this.processing = '';
           this.errorMsg = error.response.data.msg;
           this.isSearching = false;
+          this.items = '';
+          this.totalCount = 0;
+          this.totalPage = 0;
         });
 
         this.clearMessage(keyword);
