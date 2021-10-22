@@ -220,7 +220,7 @@
                 <v-btn class="text-none" color="#e198b4" @click="checkoutBookmarks(item.userName, item.webCount)">
                   <v-icon left>mdi-bookmark-outline</v-icon>
                   {{
-                    item.webCount > 0 ? 'View Bookmarks' : 'No Bookmarks'
+                    item.webCount > 0 ? 'View Bookmarks (' + item.webCount + ')' : 'No Bookmarks'
                   }}
                 </v-btn>
               </v-card-actions>
