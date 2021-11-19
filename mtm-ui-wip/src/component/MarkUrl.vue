@@ -24,6 +24,7 @@
           :label="addToSearch ? 'Make it searchable' : 'Don\'t make it searchable'"
       ></v-switch>
     </div>
+
     <div v-show="addToSearch" style="margin-bottom: 1%">
       <a @click="goToSearchPage">
         <v-icon left>mdi-alert-circle-outline</v-icon>
@@ -52,6 +53,19 @@
           style="margin-top: 5px"
       ></v-progress-linear>
     </div>
+
+    <v-alert
+        v-show="analyseError"
+        style="margin-top: 1%"
+        border="top"
+        close-text="Close Alert"
+        outlined
+        color="#f2a0a1"
+        dark
+        dismissible
+    >
+      {{ analyseError }}
+    </v-alert>
   </v-container>
 </template>
 <script>
@@ -73,6 +87,8 @@ export default {
     saveWebMsg: '',
     // 返回信息的颜色
     saveWebMsgColor: 'color: orange',
+    // 展示错误信息排查
+    analyseError: '',
   }),
 
   props: {
@@ -90,6 +106,7 @@ export default {
 
     // 点击 mark 按钮，根据URL保存新的网页
     saveNewWeb() {
+      this.analyseError = '';
       this.saveWebMsg = "Saving this Web Page. Please wait......";
       this.isLoading = true;
 
@@ -134,6 +151,19 @@ export default {
 
           }
       ).catch(error => {
+        let code = error.response.data.code;
+        if (code === 2012) {
+          // 网页链接被拒绝
+          this.analyseError = "Access denied because " +
+              "the server is blocked by the website or " +
+              "the server is located in the country that has blocked the website";
+        } else if (code === 5001) {
+          // 连接超时
+          this.analyseError = 'There seems to be a problem with your Network Connection. ' +
+              'Or the server is located in the country that has blocked the website';
+        } else {
+          this.analyseError = '';
+        }
         this.saveWebMsg = error.response.data.msg;
         this.saveWebMsgColor = 'color: red';
       }).finally(() => {
